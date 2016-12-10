@@ -3,21 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "copy-webpack-plugin": "^4.0.1",
-    "del": "^2.2.2",
-    "fs-extra": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-add-src": "^0.2.0",
-    "gulp-change": "^1.0.0",
-    "gulp-if": "^2.0.2",
-    "mv": "^2.1.1",
-    "raw-loader": "^0.5.1",
     "react-scripts": "0.8.1",
-    "react-tap-event-plugin": "^2.0.1",
-    "webpack": "^1.14.0"
+    "react-tap-event-plugin": "^2.0.1"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
     "fetch": "^1.1.0",
     "font-awesome": "^4.7.0",
     "global": "^4.3.1",
@@ -33,6 +24,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "prod": "gulp move"
+    "copy-resources": "gulp copy-resources"
   }
 }

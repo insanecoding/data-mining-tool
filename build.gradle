@@ -45,11 +45,11 @@ dependencies {
     // web
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-websocket')
-    compile ('org.springframework.boot:spring-boot-starter-undertow:1.4.2.RELEASE')
-    compile group: 'io.undertow', name: 'undertow-websockets-jsr', version: '1.4.6.Final'
+    compile('org.springframework.boot:spring-boot-starter-undertow:1.4.2.RELEASE')
+    compile('io.undertow:undertow-websockets-jsr:1.4.6.Final')
     // db
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile ('com.zaxxer:HikariCP')
+    compile('com.zaxxer:HikariCP')
     compile('org.springframework.boot:spring-boot-starter-jdbc')
     runtime('com.h2database:h2')
     runtime('org.postgresql:postgresql')
@@ -57,7 +57,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-aop')
     optional('org.springframework.boot:spring-boot-devtools')
     compileOnly('org.projectlombok:lombok')
-    compile group: 'com.google.guava', name: 'guava', version: '20.0'
+    compile('com.google.guava:guava:20.0')
     // test
     testCompile('org.springframework.boot:spring-boot-starter-test')
     //    logging
@@ -73,21 +73,34 @@ configurations {
     compile.exclude module: 'undertow-websockets-jsr'
 }
 
-task myScript(type: NodeTask) {
-    args = ['arg1', 'arg2']
-}
-
-task installFrontend(type: YarnTask) {
-    // add the express package only
+/**
+ * install everything from package.json
+ */
+task installFrontendDeps(type: YarnTask) {
+    // 'yarn install' command
     args = ['install']
     execOverrides {
         it.workingDir = "${project.projectDir}/src/main/frontend"
     }
 }
 
+/**
+ * transpile all JS into ES5
+ */
 task buildProduction(type: YarnTask) {
-    // add the express package only
+    // 'yarn build' command
     args = ['build']
+    execOverrides {
+        it.workingDir = "${project.projectDir}/src/main/frontend"
+    }
+}
+
+/**
+ * after production building, copy files into resources folder
+ */
+task copyFrontendResources(type: YarnTask) {
+    // put frontend assets into 'resources' folder
+    args = ['copy-resources']
     execOverrides {
         it.workingDir = "${project.projectDir}/src/main/frontend"
     }
