@@ -9,20 +9,23 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath 'org.springframework:springloaded:1.2.0.RELEASE'
+//        classpath 'org.springframework:springloaded:1.2.0.RELEASE'
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
         classpath "com.moowork.gradle:gradle-node-plugin:1.0.1"
     }
 }
-
+// main plugins
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
+// Provides additional optional and provided dependency configurations
+// for Gradle along with Maven POM generation support.
 apply plugin: 'propdeps'
 apply plugin: 'propdeps-maven'
 apply plugin: 'propdeps-idea'
 apply plugin: 'propdeps-eclipse'
+// frontend plugin
 apply plugin: "com.moowork.node"
 
 jar {
@@ -104,6 +107,16 @@ task copyFrontendResources(type: YarnTask) {
     execOverrides {
         it.workingDir = "${project.projectDir}/src/main/frontend"
     }
+}
+
+// sequence of tasks to run
+def taskNames = ['clean', 'installFrontendDeps', 'buildProduction',
+                 'copyFrontendResources', 'bootRun']
+task runMe(dependsOn: taskNames)
+// make sure that their order will be as in list
+taskNames.inject(null) { acc, val ->
+    if (acc != null) tasks[val].mustRunAfter acc
+    tasks[val]
 }
 
 node {
