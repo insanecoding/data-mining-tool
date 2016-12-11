@@ -9,7 +9,7 @@ class MyApp extends Component {
     }
 
     getInfo() {
-        fetch('http://localhost:4000/athletes').then(function (response) {
+        fetch('http://localhost:8080/api').then(function (response) {
             return response.json()
         }).then(function (response) {
             console.log('content type = ' + response.headers.get('Content-Type'));
@@ -21,7 +21,7 @@ class MyApp extends Component {
     }
 
     myGet() {
-        fetch('http://localhost:4000/athletes').then(function (response) {
+        fetch('http://localhost:8080/api').then(function (response) {
             return response.json()
         }).then(function (json) {
             console.log('parsed json', json)
@@ -31,7 +31,7 @@ class MyApp extends Component {
     }
 
     myPost() {
-        fetch('http://localhost:4000/athletes', {
+        fetch('http://localhost:8080/api/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

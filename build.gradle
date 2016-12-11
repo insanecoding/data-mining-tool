@@ -109,15 +109,24 @@ task copyFrontendResources(type: YarnTask) {
     }
 }
 
-// sequence of tasks to run
-def taskNames = ['clean', 'installFrontendDeps', 'buildProduction',
-                 'copyFrontendResources', 'bootRun']
-task runMe(dependsOn: taskNames)
-// make sure that their order will be as in list
-taskNames.inject(null) { acc, val ->
-    if (acc != null) tasks[val].mustRunAfter acc
-    tasks[val]
+// make sure that the tasks will be executed exactly how the're in the list
+private void keepOrder(List<String> taskNames) {
+    taskNames.inject(null) { acc, val ->
+        if (acc != null) tasks[val].mustRunAfter acc
+        tasks[val]
+    }
 }
+
+// first run
+def allTasks = ['clean', 'installFrontendDeps', 'buildProduction',
+                 'copyFrontendResources', 'bootRun']
+task runMe(dependsOn: allTasks)
+keepOrder(allTasks)
+
+// only frontend assets
+def reloadFrontend = ['buildProduction',  'copyFrontendResources'];
+task updateResources(dependsOn: reloadFrontend)
+keepOrder(reloadFrontend)
 
 node {
     // Version of node to use.
