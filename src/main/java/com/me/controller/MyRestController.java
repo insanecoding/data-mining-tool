@@ -1,5 +1,6 @@
 package com.me.controller;
 
+import com.me.domain.DTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ public class MyRestController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @GetMapping
+    @GetMapping("retrieve")
     public DTO returnDTO() {
         logger.info(" >>> [get] client connected");
         return new DTO("John", "Doe");

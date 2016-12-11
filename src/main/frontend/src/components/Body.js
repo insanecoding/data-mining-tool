@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import LinearProgress from 'material-ui/LinearProgress';
+import React, {Component} from "react";
+import RaisedButton from "material-ui/RaisedButton";
+import LinearProgress from "material-ui/LinearProgress";
 import ListItem from "./ListItem";
-import fetch from './../rest/ReactFetch';
+import fetch from "./../rest/ReactFetch";
 
 class Body extends Component {
 
@@ -86,7 +86,7 @@ class Body extends Component {
     };
 
     getRest() {
-        let myRequest = new Request('http://localhost:8080/api');
+        let myRequest = new Request('api/retrieve');
         let myInit = {
             method: 'GET',
             headers: {
@@ -114,7 +114,7 @@ class Body extends Component {
         };
 
 
-        let myRequest = new Request('http://localhost:8080/api/add');
+        let myRequest = new Request('api/add');
         let myInit = {
             method: 'POST',
             headers: {
