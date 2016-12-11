@@ -1,11 +1,10 @@
-import React, {Component} from 'react';
-import AppBar from 'material-ui/AppBar';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
-import Build from 'material-ui/svg-icons/action/build';
-import FlatButton from 'material-ui/FlatButton';
+import React, {Component} from "react";
+import AppBar from "material-ui/AppBar";
+import IconButton from "material-ui/IconButton";
+import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
+import IconMenu from "material-ui/IconMenu";
+import MenuItem from "material-ui/MenuItem";
+import Build from "material-ui/svg-icons/action/build";
 import MyDialog from "./MyDialog";
 
 class Header extends Component {
@@ -19,24 +18,24 @@ class Header extends Component {
         };
     }
 
-    handleRequestClose() {
+    handleRequestClose = () => {
         this.setState({
             isHelpOpen: false,
             isAboutOpen: false
         });
-    }
+    };
 
-    showHelp() {
+    showHelp = () => {
         this.setState({
             isHelpOpen: true,
         });
-    }
+    };
 
-    showAbout() {
+    showAbout = () => {
         this.setState({
             isAboutOpen: true
         })
-    }
+    };
 
     helpText = "Here you'll get help";
     aboutText = "We are great! Learn more about us!";
@@ -45,12 +44,9 @@ class Header extends Component {
         <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
                   targetOrigin={{horizontal: 'right', vertical: 'top'}}
                   anchorOrigin={{horizontal: 'right', vertical: 'top'}}>
-            <MenuItem primaryText="Help" onTouchTap={this.showHelp.bind(this)}/>
-            <MenuItem primaryText="About" onTouchTap={this.showAbout.bind(this)}/>
+            <MenuItem primaryText="Help" onTouchTap={this.showHelp}/>
+            <MenuItem primaryText="About" onTouchTap={this.showAbout}/>
         </IconMenu>;
-
-    standardActions =
-        <FlatButton label="Ok" primary={true} onTouchTap={this.handleRequestClose.bind(this)}/>;
 
     render() {
         return (
@@ -61,13 +57,11 @@ class Header extends Component {
                     iconElementRight={this.iconMenu}
                 />
 
-                <MyDialog amIOpen={this.state.isHelpOpen}
-                          title="I'm help!" standardActions={this.standardActions}
-                          handleRequestClose={this.handleRequestClose.bind(this)} textMain={this.helpText}/>
+                <MyDialog amIOpen={this.state.isHelpOpen} title="I'm help!" textMain={this.helpText}
+                          handleRequestClose={this.handleRequestClose}/>
 
-                <MyDialog amIOpen={this.state.isAboutOpen}
-                          title="I'm about!" standardActions={this.standardActions}
-                          handleRequestClose={this.handleRequestClose.bind(this)} textMain={this.aboutText}/>
+                <MyDialog amIOpen={this.state.isAboutOpen} title="I'm about!" textMain={this.aboutText}
+                          handleRequestClose={this.handleRequestClose}/>
             </div>
         );
     }

@@ -3,6 +3,7 @@ import RaisedButton from "material-ui/RaisedButton";
 import LinearProgress from "material-ui/LinearProgress";
 import ListItem from "./ListItem";
 import {getQuery, postQuery} from "./../rest/rest-client";
+import MyDialog from "./MyDialog";
 
 class Body extends Component {
 
@@ -11,8 +12,10 @@ class Body extends Component {
         this.state = {
             expanded: false,
             completed: 0,
+            isDialogOpen: false,
+            dialogText: "",
         };
-    }
+    };
 
     componentDidMount() {
         this.timer = setTimeout(() => this.progress(5), 1000);
@@ -32,7 +35,6 @@ class Body extends Component {
         }
     }
 
-
     handleExpandChange = (expanded) => {
         this.setState({expanded: expanded});
     };
@@ -49,25 +51,40 @@ class Body extends Component {
         this.setState({expanded: false});
     };
 
-    getRest() {
-        getQuery('api/retrieve').then(function (res) {
-            console.log(res);
+    updateDialogText = (res) => {
+        this.setState({
+            isDialogOpen: true,
+            dialogText: res.firstName + ' ' + res.lastName
         });
-    }
+    };
 
-    getPost() {
+    getRest = (e) => {
+        e.preventDefault();
+        getQuery('api/retrieve').then( (res) => {
+            this.updateDialogText(res);
+        });
+    };
+
+    getPost = (e) => {
+        e.preventDefault();
         let myObj = {
             firstName: "My",
             lastName: "New Object",
         };
-        postQuery('api/add', myObj).then(function (res) {
-            console.log(res);
-        })
-    }
+        postQuery('api/add', myObj).then( (res) => {
+            this.updateDialogText(res);
+        });
+    };
 
+    handleClose = (e) => {
+        e.preventDefault();
+        this.setState({
+            isDialogOpen: false,
+            dialogText: ""
+        });
+    };
 
-
-    render(){
+    render() {
         return (
             <div id="main">
                 <div id="header">
@@ -80,12 +97,16 @@ class Body extends Component {
                 <ListItem name="Something more"/>
 
                 <div id="buttons">
-                    <RaisedButton className={"button"} label="Get" secondary={true} onTouchTap={this.getRest} />
-                    <RaisedButton className={"button"} label="Post" secondary={true} onTouchTap={this.getPost}/>
+                    <RaisedButton className={"button"} label="Get" secondary={true}
+                                  onTouchTap={this.getRest}/>
+                    <RaisedButton className={"button"} label="Post" secondary={true}
+                                  onTouchTap={this.getPost}/>
                 </div>
 
                 <LinearProgress mode="determinate" value={this.state.completed} style={{margin: "auto", width: "50%"}}/>
-
+                <MyDialog amIOpen={this.state.isDialogOpen}
+                          title="I'm rest result" textMain={this.state.dialogText}
+                          handleRequestClose={this.handleClose}/>
 
                 {/*<Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>*/}
                 {/*<CardHeader showExpandableButton={true} title={"BlacklistImporter"}>*/}
