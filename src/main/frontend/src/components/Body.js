@@ -50,7 +50,9 @@ class Body extends Component {
     };
 
     getRest() {
-        getQuery('api/retrieve');
+        getQuery('api/retrieve').then(function (res) {
+            console.log(res);
+        });
     }
 
     getPost() {
@@ -58,7 +60,9 @@ class Body extends Component {
             firstName: "My",
             lastName: "New Object",
         };
-        postQuery('api/add', myObj);
+        postQuery('api/add', myObj).then(function (res) {
+            console.log(res);
+        })
     }
 
 
