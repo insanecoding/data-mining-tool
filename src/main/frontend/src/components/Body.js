@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import LinearProgress from "material-ui/LinearProgress";
 import ListItem from "./ListItem";
-import fetch from "./../rest/ReactFetch";
+import {getQuery, postQuery} from "./../rest/rest-client";
 
 class Body extends Component {
 
@@ -13,42 +13,6 @@ class Body extends Component {
             completed: 0,
         };
     }
-
-    // getInfo() {
-    //     fetch('http://localhost:8080/api').then(function (response) {
-    //         return response.json()
-    //     }).then(function (response) {
-    //         console.log('content type = ' + response.headers.get('Content-Type'));
-    //         console.log('date = ' + response.headers.get('Date'));
-    //         console.log('status = ' + response.status);
-    //         console.log('status text = ' + response.statusText);
-    //         console.log('resp data = ' + response.data)
-    //     })
-    // }
-    //
-    // myGet() {
-    //     fetch('http://localhost:8080/api').then(function (response) {
-    //         return response.json()
-    //     }).then(function (json) {
-    //         console.log('parsed json', json)
-    //     }).catch(function (ex) {
-    //         console.log('parsing failed', ex)
-    //     });
-    // }
-    //
-    // myPost() {
-    //     fetch('http://localhost:8080/api/add', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         mode: 'no-cors',
-    //         body: JSON.stringify({
-    //             name: 'Hubot',
-    //             login: 'hubot',
-    //         })
-    //     })
-    // }
 
     componentDidMount() {
         this.timer = setTimeout(() => this.progress(5), 1000);
@@ -86,25 +50,7 @@ class Body extends Component {
     };
 
     getRest() {
-        let myRequest = new Request('api/retrieve');
-        let myInit = {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
-
-        fetch(myRequest, myInit).then(function(response) {
-            if(response.status === 200)
-                return response.json();
-            else
-                throw new Error('Something went wrong on api server!');
-        }).then(function (body) {
-            console.log(body);
-        }).catch(function (ex) {
-            console.log('parsing failed', ex)
-        });
+        getQuery('api/retrieve');
     }
 
     getPost() {
@@ -112,62 +58,10 @@ class Body extends Component {
             firstName: "My",
             lastName: "New Object",
         };
-
-
-        let myRequest = new Request('api/add');
-        let myInit = {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(myObj)
-        };
-
-        fetch(myRequest, myInit)
-            .then(function(response) {
-                if(response.status === 200) return response.json();
-                else throw new Error('Something went wrong on api server!');
-            })
-            .then(function(response) {
-                console.debug(response);
-            })
-            .catch(function(error) {
-                console.error(error);
-            });
-
-
-        // fetch(myRequest, myInit);
-        //
-        // fetch(myRequest, {
-        //         method: 'get',
-        //         mode: 'no-cors'
-        //     })
-        //     .then(function (response) {
-        //         return response.text()
-        //     })
-        //     .then(function(text) {
-        //         return text ? JSON.parse(text) : {"me": "me"}
-        //     })
-        //     .then(function (json) {
-        //     console.log('parsed json', json)
-        //     })
-        //     .catch(function (ex) {
-        //     console.log('parsing failed', ex)
-        // });
-        // const text = '{"firstName":"John","lastName":"Johnson"}';
-        // const obj = JSON.parse(text);
-        //
-        // fetch('http://localhost:8080/api/add', {
-        //     method: 'POST',
-        //     mode: 'no-cors',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify( {firstName: "Hubot",lastName: "hubot"} )
-        // })
-
+        postQuery('api/add', myObj);
     }
+
+
 
     render(){
         return (
