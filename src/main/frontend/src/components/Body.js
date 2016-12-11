@@ -4,26 +4,56 @@ import LinearProgress from "material-ui/LinearProgress";
 import ListItem from "./ListItem";
 import {getQuery, postQuery} from "./../rest/rest-client";
 import MyDialog from "./MyDialog";
+import {WebsocketClient} from "./../rest/websocket";
+import "./../../node_modules/font-awesome/css/font-awesome.min.css";
+
+const style = {
+    title: {
+        textAlign: "center"
+    },
+    buttons: {
+        position: "relative",
+        padding: "5px",
+        margin: "auto auto",
+        // "width": "15%"
+    },
+    progress: {
+        margin: "auto",
+        width: "50%"
+    },
+    buttonContainer: {
+        margin: "auto",
+        width: "11.5%",
+        padding: "20px",
+    },
+    Items: {
+        margin: "auto",
+        width: "30%"
+    }
+};
 
 class Body extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            expanded: false,
             completed: 0,
             isDialogOpen: false,
             dialogText: "",
+            dialogHeader: "",
         };
     };
 
-    componentDidMount() {
+    componentDidMount = () => {
         this.timer = setTimeout(() => this.progress(5), 1000);
-    }
+        this.client = new WebsocketClient();
+    };
 
-    componentWillUnmount() {
+    componentWillUnmount = () => {
         clearTimeout(this.timer);
-    }
+        this.client.disconnect();
+        this.client = null;
+    };
 
     progress(completed) {
         if (completed > 100) {
@@ -35,33 +65,18 @@ class Body extends Component {
         }
     }
 
-    handleExpandChange = (expanded) => {
-        this.setState({expanded: expanded});
-    };
-
-    handleToggle = (event, toggle) => {
-        this.setState({expanded: toggle});
-    };
-
-    handleExpand = () => {
-        this.setState({expanded: true});
-    };
-
-    handleReduce = () => {
-        this.setState({expanded: false});
-    };
-
-    updateDialogText = (res) => {
+    updateDialogText = (res, type) => {
         this.setState({
             isDialogOpen: true,
-            dialogText: res.firstName + ' ' + res.lastName
+            dialogText: res.firstName + ' ' + res.lastName,
+            dialogHeader: type + " response"
         });
     };
 
     getRest = (e) => {
         e.preventDefault();
-        getQuery('api/retrieve').then( (res) => {
-            this.updateDialogText(res);
+        getQuery('api/retrieve').then((res) => {
+            this.updateDialogText(res, 'GET');
         });
     };
 
@@ -71,8 +86,8 @@ class Body extends Component {
             firstName: "My",
             lastName: "New Object",
         };
-        postQuery('api/add', myObj).then( (res) => {
-            this.updateDialogText(res);
+        postQuery('api/add', myObj).then((res) => {
+            this.updateDialogText(res, 'POST');
         });
     };
 
@@ -80,43 +95,32 @@ class Body extends Component {
         e.preventDefault();
         this.setState({
             isDialogOpen: false,
-            dialogText: ""
+            dialogText: "",
+            dialogHeader: "",
         });
     };
 
     render() {
         return (
-            <div id="main">
-                <div id="header">
-                    <h1>Welcome to website classification utility</h1>
+            <div>
+                <h1 style={style.title}>Welcome to website classification utility</h1>
+                <div style={style.Items}>
+                    <ListItem name="Import Blacklist"/>
+                    <ListItem name="Uncompress Blacklist"/>
+                    <ListItem name="Add Features"/>
+                    <ListItem name="Something more"/>
                 </div>
-
-                <ListItem name="Import Blacklist"/>
-                <ListItem name="Uncompress Blacklist"/>
-                <ListItem name="Add Features"/>
-                <ListItem name="Something more"/>
-
-                <div id="buttons">
+                <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Get" secondary={true}
-                                  onTouchTap={this.getRest}/>
+                                  onTouchTap={this.getRest} style={style.buttons}/>
                     <RaisedButton className={"button"} label="Post" secondary={true}
-                                  onTouchTap={this.getPost}/>
+                                  onTouchTap={this.getPost} style={style.buttons}/>
                 </div>
 
-                <LinearProgress mode="determinate" value={this.state.completed} style={{margin: "auto", width: "50%"}}/>
+                <LinearProgress mode="determinate" value={this.state.completed} style={style.progress}/>
                 <MyDialog amIOpen={this.state.isDialogOpen}
-                          title="I'm rest result" textMain={this.state.dialogText}
+                          title={this.state.dialogHeader} textMain={this.state.dialogText}
                           handleRequestClose={this.handleClose}/>
-
-                {/*<Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange}>*/}
-                {/*<CardHeader showExpandableButton={true} title={"BlacklistImporter"}>*/}
-                {/*<Toggle label={"bla"} labelPosition={"right"}/>*/}
-                {/*</CardHeader>*/}
-                {/*<CardText expandable={true}>*/}
-                {/*<h3>Lorem ipsum dolor sit amet </h3>*/}
-                {/*<DatePicker hintText="Date of import"/>*/}
-                {/*</CardText>*/}
-                {/*</Card>*/}
             </div>
         )
     }

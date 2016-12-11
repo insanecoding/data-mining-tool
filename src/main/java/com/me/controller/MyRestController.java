@@ -14,7 +14,7 @@ public class MyRestController {
     @GetMapping("retrieve")
     public DTO returnDTO() {
         logger.info(" >>> [get] client connected");
-        return new DTO("John", "Doe");
+        return new DTO("Welcome,", "guest");
     }
 
     @PostMapping("add")
@@ -23,6 +23,6 @@ public class MyRestController {
     DTO saveMe(@RequestBody DTO dto) {
         logger.info(" >>> [post] client connected");
         logger.info("data received: {}", dto);
-        return new DTO("nice", "job");
+        return new DTO("Some", "result");
     }
 }
