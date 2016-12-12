@@ -9,10 +9,11 @@ const nearbyIcon = <FontIcon className="fa fa-location-arrow"/>;
 
 const style = {
     footer: {
-        "position": "fixed",
-        "bottom": "0",
-        "left": "0",
-        "width": "100%"
+        position: "fixed",
+        bottom: "0",
+        left: "0",
+        width: "100%",
+        boxShadow: "none",
     }
 };
 

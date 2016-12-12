@@ -16,22 +16,10 @@ const muiTheme = getMuiTheme({
 
 const style = {
     appBar: {
-        height: "50px",
-    },
-    titleStyle: {
-        lineHeight: "2.2"
+        minWidth: "390px",
     },
     toggleStyle: {
-        padding: "7px"
-    },
-    icon: {
-        width: "40px",
-        height: "40px",
-        padding: "6px"
-    },
-    iconStyle: {
-        width: "40px",
-        height: "40px"
+        padding: "11px"
     }
 };
 
@@ -43,7 +31,7 @@ class ListItem extends Component {
                     style={style.appBar}
                     title={this.props.name}
                     titleStyle={style.titleStyle}
-                    iconElementLeft={ <Toggle style={style.toggleStyle}/>}
+                    iconElementLeft={ <Toggle style={style.toggleStyle} labelPosition="right"/>}
                     iconElementRight={
                         <IconButton iconStyle={style.iconStyle} style={style.icon}>
                             <FontIcon className="fa fa-bars fa-fw"/>

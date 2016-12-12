@@ -15,6 +15,7 @@ const style = {
         position: "relative",
         padding: "5px",
         margin: "auto auto",
+        boxShadow: "none"
         // "width": "15%"
     },
     progress: {
