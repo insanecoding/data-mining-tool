@@ -1,44 +1,18 @@
 import React, {Component} from "react";
-import Toggle from "material-ui/Toggle";
-import AppBar from "material-ui/AppBar";
 import IconButton from "material-ui/IconButton";
 import FontIcon from "material-ui/FontIcon";
-import {white, fullBlack} from "material-ui/styles/colors";
-import getMuiTheme from "material-ui/styles/getMuiTheme";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-
-const muiTheme = getMuiTheme({
-    appBar: {
-        color: white,
-        textColor: fullBlack,
-    },
-});
-
-const style = {
-    appBar: {
-        minWidth: "390px",
-    },
-    toggleStyle: {
-        padding: "11px"
-    }
-};
+import {ListItem} from "material-ui/List";
+import "./../../node_modules/font-awesome/css/font-awesome.min.css";
+import Toggle from "material-ui/Toggle";
 
 class MyListItem extends Component {
     render() {
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
-                <AppBar
-                    style={style.appBar}
-                    title={this.props.name}
-                    titleStyle={style.titleStyle}
-                    iconElementLeft={ <Toggle style={style.toggleStyle} labelPosition="right"/>}
-                    iconElementRight={
-                        <IconButton iconStyle={style.iconStyle} style={style.icon}>
-                            <FontIcon className="fa fa-bars fa-fw"/>
-                        </IconButton>
-                    }
-                />
-            </MuiThemeProvider>
+            <ListItem leftCheckbox={<Toggle/>} primaryText={this.props.text} rightIconButton={
+                <IconButton>
+                    <FontIcon className="fa fa-bars fa-fw"/>
+                </IconButton>
+            }/>
         )
     }
 }
