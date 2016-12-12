@@ -6,6 +6,7 @@ import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import Header from "./components/Header";
 import Body from "./components/Body";
 import Footer from "./components/Footer";
+import {Container} from "react-grid-system";
 
 // prevent warnings with Material UI
 injectTapEventPlugin();
@@ -45,11 +46,11 @@ class App extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
-                <div>
+                <Container>
                     <Header />
                     <Body/>
                     <Footer/>
-                </div>
+                </Container>
             </MuiThemeProvider>
         );
     }

@@ -19,6 +19,7 @@
     "react-addons-css-transition-group": "^15.4.1",
     "react-addons-transition-group": "^15.4.1",
     "react-dom": "^15.4.1",
+    "react-grid-system": "^2.0.3",
     "react-toolbox": "^1.3.2",
     "sockjs-client": "^1.1.1",
     "stompjs": "^2.3.3"

@@ -23,7 +23,7 @@ const style = {
     }
 };
 
-class ListItem extends Component {
+class MyListItem extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
@@ -42,4 +42,4 @@ class ListItem extends Component {
         )
     }
 }
-export default ListItem;
+export default MyListItem;
