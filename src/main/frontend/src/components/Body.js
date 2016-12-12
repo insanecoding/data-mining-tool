@@ -16,7 +16,11 @@ import IconButton from "material-ui/IconButton";
 
 const style = {
     title: {
-        textAlign: "center"
+        textAlign: "center",
+        marginTop: "20px",
+        marginLeft: "20px",
+        marginRight: "20px",
+        marginBottom: "1px"
     },
     buttons: {
         padding: "5px",
@@ -25,14 +29,15 @@ const style = {
     },
     progress: {
         margin: "auto",
-        width: "50%"
+        width: "50%",
+        padding: "10px",
+        backgroundColor: "white"
     },
     buttonContainer: {
-        margin: "auto",
-        width: "11.5%",
+        textAlign: "center",
         padding: "20px",
     },
-    imageInput: {
+    fileChooser: {
         cursor: 'pointer',
         position: 'absolute',
         top: 0,
@@ -41,6 +46,9 @@ const style = {
         left: 0,
         width: '100%',
         opacity: 0,
+    },
+    inlineForm: {
+        textAlign: "center"
     }
 };
 
@@ -118,27 +126,31 @@ class Body extends Component {
             <div>
 
                 <h1 style={style.title}>Welcome to website classification utility</h1>
-                <div style={{display: 'flex', flexDirection: 'row', padding: 0,}}>
-                    <label>Current working directory</label>
-                    <TextField
-                        hintText="Specify working directory..."
-                    />
-                    <FlatButton label="Choose" labelPosition="before">
-                        <input type="file" style={style.imageInput}/>
-                    </FlatButton>
-                </div>
-
-
 
                 <Row>
-                    <Col xs={6} md={6}>
+                    <Col xs={12}>
+                        <div style={style.inlineForm}>
+                            <TextField
+                                hintText="Press 'Choose' to set directory..."
+                                floatingLabelText={"Working directory"}
+                                floatingLabelFixed={true}
+                            />
+                            <FlatButton label="Choose" labelPosition="before" icon={<FontIcon className="fa fa-search"/>}>
+                                <input type="file" style={style.fileChooser}/>
+                            </FlatButton>
+                        </div>
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col xs={6} >
                         <MyListItem text="Download Blacklist"/>
                         <MyListItem text="Uncompress Blacklist"/>
                         <MyListItem text="Import Blacklist"/>
                         <MyListItem text="Add features"/>
                         <MyListItem text="Run experiments"/>
                     </Col>
-                    <Col xs={6} md={6}>
+                    <Col xs={6}>
                         <div>
                             <TextField
                                 hintText="Hint Text"
@@ -165,9 +177,6 @@ class Body extends Component {
                             <List>
                                 <Subheader inset={true}>Blacklists</Subheader>
                                 <Col xs={2}>
-                                    <FlatButton primary={false} icon={<FontIcon className="fa fa-plus"/>}>
-                                        <input type="file" style={style.imageInput}/>
-                                    </FlatButton>
                                     <IconButton tooltip="Add item">
                                         <FontIcon className="fa fa-plus"/>
                                     </IconButton>
@@ -184,36 +193,32 @@ class Body extends Component {
                                         </IconButton>}
                                     />
                                 </Col>
-
-
-
-
-
-
-
-
-
                             </List>
                         </div>
                     </Col>
                 </Row>
 
+                <Row>
+                        <div style={style.progress}>
+                            <LinearProgress mode="determinate" value={this.state.completed} />
+                        </div>
+                </Row>
+
+                <div style={style.inlineForm}>
+                    Bla
+                </div>
+
 
                 <div style={style.buttonContainer}>
                     <Row>
-                        <Col xs={6}>
                             <RaisedButton className={"button"} label="Start" secondary={true}
                                           onTouchTap={this.getRest} style={style.buttons}/>
-                        </Col>
-                        <Col xs={6}>
                             <RaisedButton className={"button"} label="Pause" secondary={true}
                                           onTouchTap={this.getPost} style={style.buttons}/>
-                        </Col>
                     </Row>
-
                 </div>
 
-                <LinearProgress mode="determinate" value={this.state.completed} style={style.progress}/>
+
                 <MyDialog amIOpen={this.state.isDialogOpen}
                           title={this.state.dialogHeader} textMain={this.state.dialogText}
                           handleRequestClose={this.handleClose}/>

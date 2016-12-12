@@ -7,6 +7,12 @@ import MenuItem from "material-ui/MenuItem";
 import Build from "material-ui/svg-icons/action/build";
 import MyDialog from "./MyDialog";
 
+const styles = {
+    title: {
+        textAlign: "center"
+    }
+};
+
 class Header extends Component {
 
     constructor(props, context) {
@@ -52,7 +58,8 @@ class Header extends Component {
         return (
             <div>
                 <AppBar
-                    title="Website classification tool"
+                    title="Comsec laboratory at SPIIRAS"
+                    titleStyle={styles.title}
                     iconElementLeft={<IconButton><Build /></IconButton>}
                     iconElementRight={this.iconMenu}
                 />

@@ -35,17 +35,17 @@ class Footer extends Component {
             <Paper zDepth={1} style={style.footer}>
                 <BottomNavigation selectedIndex={this.state.selectedIndex}>
                     <BottomNavigationItem
-                        label="Recents"
+                        label="Check website"
                         icon={recentsIcon}
                         onTouchTap={() => this.select(0)}
                     />
                     <BottomNavigationItem
-                        label="Favorites"
+                        label="Experiments"
                         icon={favoritesIcon}
                         onTouchTap={() => this.select(1)}
                     />
                     <BottomNavigationItem
-                        label="Nearby"
+                        label="Results"
                         icon={nearbyIcon}
                         onTouchTap={() => this.select(2)}
                     />
