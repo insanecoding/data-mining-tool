@@ -77,7 +77,7 @@ configurations {
 }
 
 /**
- * install everything from package.json
+ * make sure that node, npm, yarn and everything from package.json is installed
  */
 task installFrontendDeps(type: YarnTask) {
     // 'yarn install' command
@@ -88,7 +88,7 @@ task installFrontendDeps(type: YarnTask) {
 }
 
 /**
- * transpile all JS into ES5
+ * transpile all JS into ES5, concatenate JS and CSS into production-ready files
  */
 task buildProduction(type: YarnTask) {
     // 'yarn build' command
@@ -99,17 +99,8 @@ task buildProduction(type: YarnTask) {
 }
 
 /**
- * after production building, copy files into resources folder
+ * make sure that the tasks will be executed exactly how the're in the list
  */
-task copyFrontendResources(type: YarnTask) {
-    // put frontend assets into 'resources' folder
-    args = ['copy-resources']
-    execOverrides {
-        it.workingDir = "${project.projectDir}/src/main/frontend"
-    }
-}
-
-// make sure that the tasks will be executed exactly how the're in the list
 private void keepOrder(List<String> taskNames) {
     taskNames.inject(null) { acc, val ->
         if (acc != null) tasks[val].mustRunAfter acc
@@ -117,19 +108,32 @@ private void keepOrder(List<String> taskNames) {
     }
 }
 
-tast cleanResources {
-    delete fileTree(dir: 'app/styles' , include: '**/*.*')
+/**
+ *  delete previous versions of production frontend assets
+ */
+task deleteAssets(type: Delete) {
+    delete "src/main/resources/static", "src/main/resources/asset-manifest.json",
+            "src/main/resources/favicon.ico", "src/main/resources/index.html"
+}
+
+/**
+ * copy newly built frontend assets
+ */
+task copyTask(type: Copy) {
+    from 'src/main/frontend/build'
+    into 'src/main/resources'
 }
 
 // first run
-def allTasks = ['clean', 'installFrontendDeps', 'buildProduction',
-                 'copyFrontendResources', 'bootRun']
+def allTasks = ['clean', 'installFrontendDeps', 'buildProduction', 'deleteAssets',
+                'copyTask', 'bootRun']
 task runMe(dependsOn: allTasks)
 keepOrder(allTasks)
 
 // only frontend assets
-def reloadFrontend = ['buildProduction',  'copyFrontendResources'];
-task updateResources(dependsOn: reloadFrontend)
+def reloadFrontend = ['buildProduction',  'deleteAssets',
+                      'copyTask'];
+task updateFrontend(dependsOn: reloadFrontend)
 keepOrder(reloadFrontend)
 
 node {
