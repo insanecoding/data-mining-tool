@@ -117,6 +117,10 @@ private void keepOrder(List<String> taskNames) {
     }
 }
 
+tast cleanResources {
+    delete fileTree(dir: 'app/styles' , include: '**/*.*')
+}
+
 // first run
 def allTasks = ['clean', 'installFrontendDeps', 'buildProduction',
                  'copyFrontendResources', 'bootRun']
