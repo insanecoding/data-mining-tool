@@ -1,7 +1,7 @@
 package com.me;
 
-import com.me.domain.State;
-import com.me.domain.States;
+import com.me.core.domain.dto.State;
+import com.me.core.domain.dto.States;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

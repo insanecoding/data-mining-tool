@@ -98,7 +98,6 @@ class Body extends Component {
         });
     };
 
-
     cancelService = () => {
         getQuery('api/cancel');
     };
@@ -108,7 +107,7 @@ class Body extends Component {
         console.log("response is: ", response);
         this.setState(
             {
-                wsMsg: response.progress,
+                wsMsg: response.info,
                 completed: response.progress
             }
         );

@@ -59,6 +59,8 @@ dependencies {
     optional('org.springframework.boot:spring-boot-devtools')
     compileOnly('org.projectlombok:lombok')
     compile('com.google.guava:guava:20.0')
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+
     // test
     testCompile('org.springframework.boot:spring-boot-starter-test')
     //    logging

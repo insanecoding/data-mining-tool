@@ -1,8 +1,8 @@
 package com.me.controller;
 
-import com.me.domain.DTO;
-import com.me.service.async.AsyncExecutor;
-import com.me.service.exampleservice.MockService;
+import com.me.common.AsyncExecutor;
+import com.me.core.domain.dto.DTO;
+import com.me.core.service.exampleservice.MockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
