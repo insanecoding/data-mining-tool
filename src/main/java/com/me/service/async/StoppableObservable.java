@@ -23,6 +23,10 @@ public abstract class StoppableObservable extends Observable{
         notifyObservers(state);
     }
 
+    protected void updateMeta(String message) {
+        updateInfo(message, States.META, -1, -1);
+    }
+
     protected void checkCancel() throws InterruptedException {
         if (Thread.interrupted()) {
             logger.warn("cancel called at {}", this.getClass().getName());

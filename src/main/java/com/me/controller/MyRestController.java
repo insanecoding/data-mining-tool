@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("api")
 public class MyRestController {
@@ -16,6 +19,7 @@ public class MyRestController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AsyncExecutor executor;
     private final MockService service;
+    private boolean cancelFlag = false;
 
     @Autowired
     public MyRestController(AsyncExecutor executor, @Qualifier("mockService") MockService service) {
@@ -23,21 +27,35 @@ public class MyRestController {
         this.service = service;
     }
 
-    @GetMapping("result")
-    public DTO returnDTO() {
+//    @GetMapping("result")
+//    public DTO returnDTO() {
+//        logger.info(" >>> [get] client connected");
+//        return new DTO("Welcome,", "guest");
+//    }
+
+    @GetMapping("cancel")
+    public void cancelService() {
         logger.info(" >>> [get] client connected");
-        return new DTO("Welcome,", "guest");
+        cancelFlag = true;
+        executor.stop();
     }
 
     @PostMapping("invoke")
     public
     @ResponseBody
-    DTO saveMe(@RequestBody DTO dto) {
+    Map<String, String> invokeService(@RequestBody DTO dto) {
         logger.info(" >>> [post] client connected");
         logger.info("data received: {}", dto);
 
         executor.invoke(service, false);
+        Map<String, String> result = new LinkedHashMap<>();
 
-        return new DTO("Some", "result");
+        if (!cancelFlag) {
+            result.put("status", "finished");
+        } else {
+            cancelFlag = false;
+            result.put("status", "cancelled");
+        }
+        return result;
     }
 }

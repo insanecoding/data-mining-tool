@@ -17,15 +17,14 @@ public class MockService extends StoppableObservable implements MyExecutable {
 
     @Override
     public void execute(Object... args) throws Exception {
-        super.updateInfo("just started", States.META, -1, -1);
-        for (int i = 0; i < 5; i++) {
-            Thread.sleep(1000);
-//            for (int j = 1; j < 100_000_000; j++) {
-//                super.checkCancel();
-//            }
+        super.updateMeta("just started");
+        for (int i = 0; i < 20; i++) {
+            for (int j = 1; j < 100_000_000; j++) {
+                super.checkCancel();
+            }
             int iter = i;
             super.updateAndCheck("I'm on iteration #" + ++iter, States.WORKING, iter, 5);
         }
-//        super.updateInfo("just finished", States.WORKING, 5, 5);
+        super.updateMeta("just finished");
     }
 }
