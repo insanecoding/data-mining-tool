@@ -4,10 +4,9 @@ import InlineForm from "./InlineForm";
 import RightSideForm from "./RightSideForm";
 import MyListItem from "./MyListItem";
 import MyProgressBar from "./MyProgressBar";
-import {getQuery, postQuery} from "./../rest/rest-client";
-import MyDialog from "./MyDialog";
+import {getQuery, postQuery} from "../connection/rest";
 import {Row, Col} from "react-grid-system";
-import {WebsocketClient} from "./../rest/websocket";
+import {WebsocketClient} from "./../connection/websocket";
 import "./../../node_modules/font-awesome/css/font-awesome.min.css";
 
 const style = {
@@ -55,76 +54,64 @@ class Body extends Component {
             password: "",
             dbName: "",
             port: "",
+            wsMsg: ""
         };
     };
 
     formHandler = (elem, event) => {
-        this.setState(
-            {
-                elem: event.target.value
-            }
-        )
+        this.setState({elem: event.target.value})
     };
 
     componentDidMount = () => {
-        this.timer = setTimeout(() => this.progress(5), 1000);
-        this.client = new WebsocketClient();
-        this.client.connect();
+        this.websocket = new WebsocketClient();
+        this.websocket.connect(this.outputWebSocket);
     };
 
     componentWillUnmount = () => {
-        clearTimeout(this.timer);
-        // this.client.disconnect();
-        // this.client = null;
+        this.websocket.disconnect();
+        this.websocket = null;
     };
 
-    progress(completed) {
-        if (completed > 100) {
-            this.setState({completed: 100});
-        } else {
-            this.setState({completed});
-            const diff = Math.random() * 10;
-            this.timer = setTimeout(() => this.progress(completed + diff), 1000);
-        }
-    }
+    // getRest = (e) => {
+    //     e.preventDefault();
+    //     getQuery('api/result').then((res) => {
+    //         this.updateDialogText(res, 'GET');
+    //     });
+    // };
 
-    updateDialogText = (res, type) => {
-        this.setState({
-            isDialogOpen: true,
-            dialogText: res.firstName + ' ' + res.lastName,
-            dialogHeader: type + " response"
-        });
-    };
-
-    getRest = (e) => {
-        e.preventDefault();
-        console.log("current state", this.state);
-        getQuery('api/result').then((res) => {
-            this.updateDialogText(res, 'GET');
-        });
-    };
-
-    getPost = (e) => {
-        e.preventDefault();
+    startService = () => {
+        this.setState({wsMsg: "", completed: 0});
         let myObj = {
             firstName: "My",
             lastName: "New Object",
         };
 
-        this.client.send(JSON.stringify(myObj));
+        this.websocket.send();
 
         postQuery('api/invoke', myObj).then((res) => {
-            this.updateDialogText(res, 'POST');
+            this.setState(
+                {
+                    wsMsg: res.status,
+                    completed: 0
+                }
+            );
         });
     };
 
-    handleClose = (e) => {
-        e.preventDefault();
-        this.setState({
-            isDialogOpen: false,
-            dialogText: "",
-            dialogHeader: "",
-        });
+
+    cancelService = () => {
+        getQuery('api/cancel');
+    };
+
+    outputWebSocket = (resp) => {
+        const response = JSON.parse(resp.body);
+        console.log("response is: ", response);
+        this.setState(
+            {
+                wsMsg: response.progress,
+                completed: response.progress
+            }
+        );
     };
 
     render() {
@@ -156,20 +143,16 @@ class Body extends Component {
                     </Col>
                 </Row>
 
-                <MyProgressBar completed={this.state.completed}/>
+                <MyProgressBar completed={this.state.completed} status={this.state.wsMsg}/>
 
                 <div style={style.buttonContainer}>
                     <Row>
                         <RaisedButton className={"button"} label="Start" secondary={true}
-                                      onTouchTap={this.getRest} style={style.buttons}/>
+                                      onTouchTap={this.startService} style={style.buttons}/>
                         <RaisedButton className={"button"} label="Pause" secondary={true}
-                                      onTouchTap={this.getPost} style={style.buttons}/>
+                                      onTouchTap={this.cancelService} style={style.buttons}/>
                     </Row>
                 </div>
-
-                <MyDialog amIOpen={this.state.isDialogOpen}
-                          title={this.state.dialogHeader} textMain={this.state.dialogText}
-                          handleRequestClose={this.handleClose}/>
             </div>
         )
     }

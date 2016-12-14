@@ -27,7 +27,7 @@ class MyProgressBar extends Component {
                 </Row>
 
                 <div style={style.notificationBar}>
-                    Bla
+                    {this.props.status}
                 </div>
             </div>
         )

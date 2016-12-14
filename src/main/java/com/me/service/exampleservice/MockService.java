@@ -17,7 +17,7 @@ public class MockService extends StoppableObservable implements MyExecutable {
     @Override
     public void execute(Object... args) throws Exception {
         super.updateMeta("just started");
-        double maxIteration = 20;
+        double maxIteration = 50;
         for (int i = 0; i < maxIteration; i++) {
             for (int j = 1; j < 100_000_000; j++) {
                 super.checkCancel();
