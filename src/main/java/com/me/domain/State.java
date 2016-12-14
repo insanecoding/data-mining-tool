@@ -13,7 +13,5 @@ public class State {
 
     private States state;
 
-    private int currentIteration;
-
-    private int maxIterations;
+    private double progress;
 }

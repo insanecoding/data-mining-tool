@@ -1,6 +1,5 @@
 package com.me.service.exampleservice;
 
-import com.me.domain.States;
 import com.me.service.async.MyExecutable;
 import com.me.service.async.ProgressWatcher;
 import com.me.service.async.StoppableObservable;
@@ -18,13 +17,13 @@ public class MockService extends StoppableObservable implements MyExecutable {
     @Override
     public void execute(Object... args) throws Exception {
         super.updateMeta("just started");
-        for (int i = 0; i < 20; i++) {
+        double maxIteration = 20;
+        for (int i = 0; i < maxIteration; i++) {
             for (int j = 1; j < 100_000_000; j++) {
                 super.checkCancel();
             }
-            int iter = i;
-            super.updateAndCheck("I'm on iteration #" + ++iter, States.WORKING, iter, 5);
+            double iter = i;
+            updateWorkingCheck("I'm on iteration #" + ++iter, calculateProgress(iter, maxIteration));
         }
-        super.updateMeta("just finished");
     }
 }

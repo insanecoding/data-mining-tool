@@ -16,9 +16,9 @@ public class DataMiningToolApplicationTests {
 
     @Test
     public void contextLoads() {
-        State state = new State("info", States.WORKING, 10, 100);
-        State state2 = new State("info", States.WORKING, 11, 100);
-        State state3 = new State("info", States.WORKING, 10, 100);
+        State state = new State("info", States.WORKING, 0);
+        State state2 = new State("info", States.WORKING, 0);
+        State state3 = new State("info", States.WORKING, 0);
         State state4 = null;
 
         assertNotEquals(state, state4);

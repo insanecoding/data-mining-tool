@@ -24,7 +24,7 @@ public class ProgressWatcher implements Observer {
     }
 
     private State initializeState() {
-        return new State("not started", States.IDLE, -1, -1);
+        return new State("not started", States.IDLE,0);
     }
 
     @Override

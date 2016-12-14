@@ -12,19 +12,21 @@ public abstract class StoppableObservable extends Observable{
     private State state = new State();
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected void updateInfo(String message, States currentState, int currentIteration,
-                              int maxIterations) {
-        state.setCurrentIteration(currentIteration);
-        state.setState(currentState);
-        state.setMaxIterations(maxIterations);
+    private void updateInfo(String message, States currentState, double progress) {
         state.setInfo(message);
-
+        state.setProgress(progress);
+        state.setState(currentState);
         setChanged();
         notifyObservers(state);
     }
 
     protected void updateMeta(String message) {
-        updateInfo(message, States.META, -1, -1);
+        updateInfo(message, States.META, 0);
+    }
+
+    protected void updateWorkingCheck(String message, double progress) throws InterruptedException {
+        updateInfo(message, States.WORKING, progress);
+        checkCancel();
     }
 
     protected void checkCancel() throws InterruptedException {
@@ -41,9 +43,13 @@ public abstract class StoppableObservable extends Observable{
     /**
      * convenience method: creates the message to update and checks for cancel command
      */
-    protected void updateAndCheck(String message, States currentState, int currentIteration,
-                                  int maxIterations) throws InterruptedException {
-        updateInfo(message, currentState, currentIteration, maxIterations);
+    protected void updateAndCheck(String message, States currentState, int progress)
+            throws InterruptedException {
+        updateInfo(message, currentState, progress);
         checkCancel();
+    }
+
+    protected double calculateProgress(double current, double max) {
+        return Math.round(current / max * 100);
     }
 }
