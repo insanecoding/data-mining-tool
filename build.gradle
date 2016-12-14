@@ -9,7 +9,6 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-//        classpath 'org.springframework:springloaded:1.2.0.RELEASE'
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
         classpath "com.moowork.gradle:gradle-node-plugin:1.0.1"
     }
@@ -48,8 +47,7 @@ dependencies {
     // web
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.boot:spring-boot-starter-websocket')
-    compile('org.springframework.boot:spring-boot-starter-undertow:1.4.2.RELEASE')
-    compile('io.undertow:undertow-websockets-jsr:1.4.6.Final')
+    compile('org.springframework.boot:spring-boot-starter-undertow')
     // db
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('com.zaxxer:HikariCP')
@@ -64,16 +62,15 @@ dependencies {
     // test
     testCompile('org.springframework.boot:spring-boot-starter-test')
     //    logging
-    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.7'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
-    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.21'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    compile ('ch.qos.logback:logback-core:1.1.7')
+    compile ('ch.qos.logback:logback-classic:1.1.7')
+    compile ('org.slf4j:jcl-over-slf4j:1.7.21')
+    compile ('org.slf4j:slf4j-api:1.7.21')
 }
 
 configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
     compile.exclude module: "tomcat-jdbc"
-    compile.exclude module: 'undertow-websockets-jsr'
 }
 
 /**

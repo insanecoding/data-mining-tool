@@ -16,22 +16,30 @@ class RightSideForm extends Component {
                     hintText="Hint Text"
                     floatingLabelText="Username"
                     floatingLabelFixed={true}
+                    value={this.props.userName}
+                    onChange={ () => this.props.formHandler("userName")}
                 />
                 <TextField
                     hintText="Hint Text 2"
                     floatingLabelText="Password"
                     floatingLabelFixed={true}
                     type="password"
+                    value={this.props.password}
+                    onChange={() => this.props.formHandler("password")}
                 />
                 <TextField
                     hintText="Hint Text 2"
                     floatingLabelText="Database name"
                     floatingLabelFixed={true}
+                    value={this.props.dbName}
+                    onChange={() => this.props.formHandler("dbName")}
                 />
                 <TextField
                     hintText="Hint Text 2"
                     floatingLabelText="Port"
                     floatingLabelFixed={true}
+                    value={this.props.port}
+                    onChange={ () => this.props.formHandler("port")}
                 />
 
                 <List>

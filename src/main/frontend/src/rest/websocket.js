@@ -7,15 +7,15 @@ export class WebsocketClient {
     }
 
     connect = () => {
-        const socket = new SockJS('/gs-guide-websocket');
+        // create socket with the following client identifier
+        const socket = new SockJS('/web-app-client');
         this.stompClient = Stomp.over(socket);
-        this.stompClient.connect({}, (frame) => {
-            console.log('Connected: ' + frame);
-            this.stompClient.subscribe('/topic/greetings', (greeting) => {
-                const resp = JSON.parse(greeting.body);
-                console.log("resonse: ", resp);
+        this.stompClient.connect({}, () => {
+            // connect to message broker and subscribe to it
+            this.stompClient.subscribe('/topic/broker', (response) => {
+                const resp = JSON.parse(response.body);
+                console.log("response: ", resp);
             });
-            this.stompClient.send("/app/hello", {}, JSON.stringify({'name': "foo"}));
         });
     };
 
@@ -26,8 +26,24 @@ export class WebsocketClient {
         console.log("Disconnected");
     };
 
-    sendName = () => {
-        this.stompClient.send("/app/hello", {}, JSON.stringify({'name': "foo"}));
-    }
+    send = (obj) => {
+        // send json object to the application
+        this.stompClient.send("/socket/progress", {}, obj);
+    };
+
+    connectAndSend = (myObj) => {
+        return new Promise(() => {
+            this.connect()
+        }).then( () => {
+            this.send(myObj)
+        });
+    };
+
+
+    promiseConnect = () => {
+        return new Promise(() => {
+            this.connect()
+        })
+    };
 }
 

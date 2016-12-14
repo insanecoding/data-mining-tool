@@ -6,26 +6,22 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
 @Component("progressWatcher")
 public class ProgressWatcher implements Observer {
-
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    private SimpMessageSendingOperations simpMessageSendingOperations;
-
-    @Autowired
-    public ProgressWatcher(SimpMessageSendingOperations simpMessageSendingOperations) {
-        this.simpMessageSendingOperations = simpMessageSendingOperations;
-    }
-
     @Getter
     private State state = initializeState();
+    private final WebSocketMessageSender sender;
+
+    @Autowired
+    public ProgressWatcher(WebSocketMessageSender sender) {
+        this.sender = sender;
+    }
 
     private State initializeState() {
         return new State("not started", States.IDLE, -1, -1);
@@ -33,16 +29,14 @@ public class ProgressWatcher implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        // update state
         this.state = (State) arg;
         logger.info("{}", state);
+        sender.sendMessage(state);
     }
 
     public void reset() {
         this.state = initializeState();
     }
 
-    public void sendState() throws Exception {
-        logger.info("working now, {}", new Date().getTime());
-        simpMessageSendingOperations.convertAndSend("/topic/greetings", getState());
-    }
 }

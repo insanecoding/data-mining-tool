@@ -15,12 +15,15 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
-        config.setApplicationDestinationPrefixes("/app");
+        config.setApplicationDestinationPrefixes("/socket");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/gs-guide-websocket").withSockJS();
+        // client identifier. 'web-app-client' is allowed to communicate with server
+        registry.addEndpoint("/web-app-client")
+                .setAllowedOrigins("http://localhost:3000")
+                .withSockJS();
     }
 
 }

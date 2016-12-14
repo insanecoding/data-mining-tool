@@ -2,8 +2,8 @@ import React, {Component} from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import InlineForm from "./InlineForm";
 import RightSideForm from "./RightSideForm";
-import LinearProgress from "material-ui/LinearProgress";
 import MyListItem from "./MyListItem";
+import MyProgressBar from "./MyProgressBar";
 import {getQuery, postQuery} from "./../rest/rest-client";
 import MyDialog from "./MyDialog";
 import {Row, Col} from "react-grid-system";
@@ -23,12 +23,6 @@ const style = {
         margin: "auto auto",
         boxShadow: "none"
     },
-    progress: {
-        margin: "auto",
-        width: "50%",
-        padding: "10px",
-        backgroundColor: "white"
-    },
     buttonContainer: {
         textAlign: "center",
         padding: "20px",
@@ -46,10 +40,6 @@ const style = {
     inlineForm: {
         textAlign: "center"
     },
-    notificationBar: {
-        textAlign: "center",
-        marginTop: "13px"
-    }
 };
 
 class Body extends Component {
@@ -61,18 +51,31 @@ class Body extends Component {
             isDialogOpen: false,
             dialogText: "",
             dialogHeader: "",
+            userName: "",
+            password: "",
+            dbName: "",
+            port: "",
         };
+    };
+
+    formHandler = (elem, event) => {
+        this.setState(
+            {
+                elem: event.target.value
+            }
+        )
     };
 
     componentDidMount = () => {
         this.timer = setTimeout(() => this.progress(5), 1000);
         this.client = new WebsocketClient();
+        this.client.connect();
     };
 
     componentWillUnmount = () => {
         clearTimeout(this.timer);
-        this.client.disconnect();
-        this.client = null;
+        // this.client.disconnect();
+        // this.client = null;
     };
 
     progress(completed) {
@@ -95,7 +98,8 @@ class Body extends Component {
 
     getRest = (e) => {
         e.preventDefault();
-        getQuery('api/retrieve').then((res) => {
+        console.log("current state", this.state);
+        getQuery('api/result').then((res) => {
             this.updateDialogText(res, 'GET');
         });
     };
@@ -106,7 +110,10 @@ class Body extends Component {
             firstName: "My",
             lastName: "New Object",
         };
-        postQuery('api/add', myObj).then((res) => {
+
+        this.client.send(JSON.stringify(myObj));
+
+        postQuery('api/invoke', myObj).then((res) => {
             this.updateDialogText(res, 'POST');
         });
     };
@@ -140,20 +147,16 @@ class Body extends Component {
                         <MyListItem text="Run experiments"/>
                     </Col>
                     <Col xs={6}>
-                        <RightSideForm/>
+                        <RightSideForm userName={this.state.userName}
+                                       password={this.state.password}
+                                       dbName={this.state.dbName}
+                                       port={this.state.port}
+                                       formHandler={this.formHandler}
+                        />
                     </Col>
                 </Row>
 
-                <Row>
-                    <div style={style.progress}>
-                        <LinearProgress mode="determinate" value={this.state.completed}/>
-                    </div>
-                </Row>
-
-                <div style={style.notificationBar}>
-                    Bla
-                </div>
-
+                <MyProgressBar completed={this.state.completed}/>
 
                 <div style={style.buttonContainer}>
                     <Row>

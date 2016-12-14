@@ -19,7 +19,7 @@ public class MockService extends StoppableObservable implements MyExecutable {
     public void execute(Object... args) throws Exception {
         super.updateInfo("just started", States.META, -1, -1);
         for (int i = 0; i < 5; i++) {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
 //            for (int j = 1; j < 100_000_000; j++) {
 //                super.checkCancel();
 //            }
