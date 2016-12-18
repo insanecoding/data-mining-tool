@@ -6,7 +6,11 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class DTO {
-    private final String firstName;
+    private final String userName;
 
-    private final String lastName;
+    private final String password;
+
+    private final String dbName;
+
+    private final int port;
 }

@@ -1,6 +1,6 @@
 package com.me.core.service.importbl;
 
-import com.me.common.Executable;
+import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
 import com.me.core.domain.dto.ConfigEntry;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Component
 @PropertySource("classpath:settings.properties")
-public class BlacklistImporterService extends StoppableObservable implements Executable {
+public class BlacklistImporterService extends StoppableObservable implements MyExecutable {
 
     @Getter
     @Setter
@@ -49,11 +49,6 @@ public class BlacklistImporterService extends StoppableObservable implements Exe
             super.updateMetaCheck("doing task for: " + blacklist.getBlacklistName());
             addBehaviour.importBlacklist(blacklist, filePath);
         }
-    }
-
-    @Override
-    public void afterCancel() {
-
     }
 
     @Override
