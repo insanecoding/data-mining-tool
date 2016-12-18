@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import LinearProgress from "material-ui/LinearProgress";
-import {Row} from "react-grid-system";
 import "./../../node_modules/font-awesome/css/font-awesome.min.css";
 
 const style = {
@@ -16,15 +15,13 @@ const style = {
     }
 };
 
-class MyProgressBar extends Component {
+export default class MyProgressBar extends Component {
     render(){
         return(
             <div>
-                <Row>
                     <div style={style.progress}>
                         <LinearProgress mode="determinate" value={this.props.completed}/>
                     </div>
-                </Row>
 
                 <div style={style.notificationBar}>
                     {this.props.status}
@@ -33,4 +30,3 @@ class MyProgressBar extends Component {
         )
     }
 }
-export default MyProgressBar;

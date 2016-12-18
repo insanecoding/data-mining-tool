@@ -1,12 +1,13 @@
 package com.me.controller;
 
 import com.me.common.AsyncExecutor;
+import com.me.common.MyExecutable;
 import com.me.core.domain.dto.DTO;
 import com.me.core.service.exampleservice.MockService;
+import com.me.core.service.importbl.BlacklistImporterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -19,12 +20,16 @@ public class MyRestController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AsyncExecutor executor;
     private final MockService service;
+    private MyExecutable executable;
     private boolean cancelFlag = false;
+    private final BlacklistImporterService importerService;
 
     @Autowired
-    public MyRestController(AsyncExecutor executor, @Qualifier("mockService") MockService service) {
+    public MyRestController(AsyncExecutor executor, MockService service,
+                            BlacklistImporterService importerService) {
         this.executor = executor;
         this.service = service;
+        this.importerService = importerService;
     }
 
 //    @GetMapping("result")
@@ -32,6 +37,15 @@ public class MyRestController {
 //        logger.info(" >>> [get] client connected");
 //        return new DTO("Welcome,", "guest");
 //    }
+
+    private void decisionMaker(int num) {
+        if (num == 1)
+            executable = service;
+        else if (num == 2)
+            executable = importerService;
+        else
+            executable = null;
+    }
 
     @GetMapping("cancel")
     public void cancelService() {
@@ -47,7 +61,8 @@ public class MyRestController {
         logger.info(" >>> [post] client connected");
         logger.info("data received: {}", dto);
 
-        executor.invoke(service, false);
+        decisionMaker(2);
+        executor.invoke(executable, false);
         Map<String, String> result = new LinkedHashMap<>();
 
         if (!cancelFlag) {

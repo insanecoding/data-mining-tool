@@ -5,7 +5,7 @@ import {ListItem} from "material-ui/List";
 import "./../../node_modules/font-awesome/css/font-awesome.min.css";
 import Toggle from "material-ui/Toggle";
 
-class MyListItem extends Component {
+export default class MyListItem extends Component {
     render() {
         return (
             <ListItem leftCheckbox={<Toggle/>} primaryText={this.props.text} rightIconButton={
@@ -16,4 +16,3 @@ class MyListItem extends Component {
         )
     }
 }
-export default MyListItem;

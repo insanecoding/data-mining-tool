@@ -22,10 +22,18 @@ const styles = {
         margin: "0",
         padding: "0",
         fontFamily: "sans-serif",
-    }
+    },
+    container: {
+        display: "flex",
+        minHeight: "100vh",
+        flexDirection: "column",
+    },
+    main: {
+        flex: "1"
+    },
 };
 
-class App extends Component {
+export default class App extends Component {
 
     componentDidMount = () => {
         for(let entry in styles.body){
@@ -46,14 +54,12 @@ class App extends Component {
     render() {
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
-                <Container>
+                <Container style={styles.container}>
                     <Header />
-                    <Body/>
+                        <Body style={styles.main}/>
                     <Footer/>
                 </Container>
             </MuiThemeProvider>
         );
     }
 }
-
-export default App;

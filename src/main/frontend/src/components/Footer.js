@@ -7,17 +7,7 @@ const recentsIcon = <FontIcon className="fa fa-undo"/>;
 const favoritesIcon = <FontIcon className="fa fa-heart"/>;
 const nearbyIcon = <FontIcon className="fa fa-location-arrow"/>;
 
-const style = {
-    footer: {
-        position: "fixed",
-        bottom: "0",
-        left: "0",
-        width: "100%",
-        boxShadow: "none",
-    }
-};
-
-class Footer extends Component {
+export default class Footer extends Component {
 
     constructor(props, context) {
         super(props, context);
@@ -29,10 +19,9 @@ class Footer extends Component {
 
     select = (index) => this.setState({selectedIndex: index});
 
-
     render() {
         return (
-            <Paper zDepth={1} style={style.footer}>
+            <Paper zDepth={0}>
                 <BottomNavigation selectedIndex={this.state.selectedIndex}>
                     <BottomNavigationItem
                         label="Check website"
@@ -54,5 +43,3 @@ class Footer extends Component {
         )
     }
 }
-
-export default Footer;

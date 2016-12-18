@@ -14,16 +14,13 @@ const style = {
         left: 0,
         width: '100%',
         opacity: 0,
-    },
-    inlineForm: {
-        textAlign: "center"
     }
 };
 
-class InlineForm extends Component {
+export default class InlineForm extends Component {
     render() {
         return(
-            <div style={style.inlineForm}>
+            <div {...this.props}>
                 <TextField
                     hintText="Press 'Choose' to set directory..."
                     floatingLabelText={"Working directory"}
@@ -36,5 +33,3 @@ class InlineForm extends Component {
         )
     }
 }
-
-export default InlineForm;

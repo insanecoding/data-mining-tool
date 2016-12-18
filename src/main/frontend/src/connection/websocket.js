@@ -12,6 +12,7 @@ export class WebsocketClient {
         this.stompClient = Stomp.over(socket);
         this.stompClient.connect({}, () => {
             // connect to message broker and subscribe to it
+            // callback action will be performed when each message is received
             this.stompClient.subscribe('/topic/broker', callback);
         });
     };

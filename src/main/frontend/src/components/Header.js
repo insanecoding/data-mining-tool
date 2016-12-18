@@ -13,7 +13,7 @@ const styles = {
     }
 };
 
-class Header extends Component {
+export default class Header extends Component {
 
     constructor(props, context) {
         super(props, context);
@@ -50,8 +50,8 @@ class Header extends Component {
         <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
                   targetOrigin={{horizontal: 'right', vertical: 'top'}}
                   anchorOrigin={{horizontal: 'right', vertical: 'top'}}>
-            <MenuItem primaryText="Help" onTouchTap={this.showHelp}/>
-            <MenuItem primaryText="About" onTouchTap={this.showAbout}/>
+            <MenuItem primaryText="Help" name="help" onTouchTap={this.showHelp}/>
+            <MenuItem primaryText="About" name="about" onTouchTap={this.showAbout}/>
         </IconMenu>;
 
     render() {
@@ -64,13 +64,14 @@ class Header extends Component {
                     iconElementRight={this.iconMenu}
                 />
 
-                <MyDialog amIOpen={this.state.isHelpOpen} title="I'm help!" textMain={this.helpText}
-                          handleRequestClose={this.handleRequestClose}/>
+                <MyDialog amIOpen={this.state.isHelpOpen} title="I'm help!" handleRequestClose={this.handleRequestClose}>
+                    {this.helpText}
+                </MyDialog>
 
-                <MyDialog amIOpen={this.state.isAboutOpen} title="I'm about!" textMain={this.aboutText}
-                          handleRequestClose={this.handleRequestClose}/>
+                <MyDialog amIOpen={this.state.isAboutOpen} title="I'm about!" handleRequestClose={this.handleRequestClose}>
+                    {this.aboutText}
+                </MyDialog>
             </div>
         );
     }
 }
-export default Header;

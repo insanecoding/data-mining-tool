@@ -41,7 +41,7 @@ const style = {
     },
 };
 
-class Body extends Component {
+export default class Body extends Component {
 
     constructor(props) {
         super(props);
@@ -54,12 +54,12 @@ class Body extends Component {
             password: "",
             dbName: "",
             port: "",
-            wsMsg: ""
+            wsMsg: "Ready"
         };
     };
 
-    formHandler = (elem, event) => {
-        this.setState({elem: event.target.value})
+    formHandler = (e) => {
+        this.setState({[e.target.name]: e.target.value});
     };
 
     componentDidMount = () => {
@@ -82,15 +82,20 @@ class Body extends Component {
     startService = () => {
         this.setState({wsMsg: "", completed: 0});
         let myObj = {
-            firstName: "My",
-            lastName: "New Object",
+            userName: this.state.userName,
+            password: this.state.password,
+            dbName: this.state.dbName,
+            port: this.state.port
         };
+        console.log(myObj);
 
         this.websocket.send();
 
         postQuery('api/invoke', myObj).then((res) => {
+            console.log(res);
             this.setState(
                 {
+                    // 'finished' or 'cancelled'
                     wsMsg: res.status,
                     completed: 0
                 }
@@ -107,7 +112,7 @@ class Body extends Component {
         console.log("response is: ", response);
         this.setState(
             {
-                wsMsg: response.info,
+                wsMsg: response.info + " (" + response.progress + "%)",
                 completed: response.progress
             }
         );
@@ -115,46 +120,34 @@ class Body extends Component {
 
     render() {
         return (
-            <div>
+            <div {...this.props}>
                 <h1 style={style.title}>Welcome to website classification utility</h1>
 
-                <Row>
-                    <Col xs={12}>
-                        <InlineForm/>
-                    </Col>
-                </Row>
+                <InlineForm style={style.inlineForm}/>
 
+                
                 <Row>
-                    <Col xs={6}>
+                    <Col xs={12} md={6}>
                         <MyListItem text="Download Blacklist"/>
                         <MyListItem text="Uncompress Blacklist"/>
                         <MyListItem text="Import Blacklist"/>
                         <MyListItem text="Add features"/>
                         <MyListItem text="Run experiments"/>
                     </Col>
-                    <Col xs={6}>
-                        <RightSideForm userName={this.state.userName}
-                                       password={this.state.password}
-                                       dbName={this.state.dbName}
-                                       port={this.state.port}
-                                       formHandler={this.formHandler}
-                        />
+                    <Col xs={12} md={6}>
+                        <RightSideForm formHandler={this.formHandler}/>
                     </Col>
                 </Row>
 
                 <MyProgressBar completed={this.state.completed} status={this.state.wsMsg}/>
 
                 <div style={style.buttonContainer}>
-                    <Row>
                         <RaisedButton className={"button"} label="Start" secondary={true}
                                       onTouchTap={this.startService} style={style.buttons}/>
                         <RaisedButton className={"button"} label="Pause" secondary={true}
                                       onTouchTap={this.cancelService} style={style.buttons}/>
-                    </Row>
                 </div>
             </div>
         )
     }
 }
-
-export default Body;

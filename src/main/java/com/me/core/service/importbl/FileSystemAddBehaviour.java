@@ -64,7 +64,7 @@ public class FileSystemAddBehaviour extends StoppableObservable implements AddBe
         List<Website> websites = extractWebsites(blacklist, domainFile, category);
         dao.batchSaveWebsites(websites);
         super.updateWorking("done with category: " + category.getCategoryName(),
-                domainFiles.indexOf(domainFile), domainFiles.size());
+                domainFiles.indexOf(domainFile) + 1, domainFiles.size());
     }
 
     private Stream<Path> getAllDomainFiles(String root) throws IOException {
