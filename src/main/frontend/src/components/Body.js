@@ -1,13 +1,12 @@
 import React, {Component} from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import InlineForm from "./InlineForm";
-import RightSideForm from "./RightSideForm";
+import {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment} from "./forms/RightSideForm";
 import MyListItem from "./MyListItem";
 import MyProgressBar from "./MyProgressBar";
 import {getQuery, postQuery} from "../connection/rest";
 import {Row, Col} from "react-grid-system";
 import {WebsocketClient} from "./../connection/websocket";
-import "./../../node_modules/font-awesome/css/font-awesome.min.css";
 
 const style = {
     title: {
@@ -54,7 +53,15 @@ export default class Body extends Component {
             password: "",
             dbName: "",
             port: "",
-            wsMsg: "Ready"
+            wsMsg: "Ready",
+            path: "C:\\DataMining\\experiments\\blacklists2\\uncompressed\\",
+            isSuccess: 0,
+            isStarted: false,
+            asideElem: <FormWelcome/>,
+            toggled0: false,
+            toggled1: false,
+            toggled2: false,
+            toggled3: false,
         };
     };
 
@@ -80,12 +87,19 @@ export default class Body extends Component {
     // };
 
     startService = () => {
-        this.setState({wsMsg: "", completed: 0});
+        this.setState(
+            {
+                wsMsg: "",
+                completed: 0,
+                isStarted: true
+            }
+        );
         let myObj = {
-            userName: this.state.userName,
-            password: this.state.password,
-            dbName: this.state.dbName,
-            port: this.state.port
+            path: this.state.path,
+            toggle0: this.state.toggled0,
+            toggle1: this.state.toggled1,
+            toggle2: this.state.toggled2,
+            toggle3: this.state.toggled3
         };
         console.log(myObj);
 
@@ -97,7 +111,8 @@ export default class Body extends Component {
                 {
                     // 'finished' or 'cancelled'
                     wsMsg: res.status,
-                    completed: 0
+                    completed: 0,
+                    isStarted: false
                 }
             );
         });
@@ -118,34 +133,103 @@ export default class Body extends Component {
         );
     };
 
+    onBlur = (e) => {
+        const input = e.target.value;
+
+        const windowsFilePathPattern = /^(?:(?:[a-z]:|\\\\[a-z0-9_.$?-]+\\[a-z0-9_.$?-]+)\\|\\?[^\\/:*?"<>|\r\n]+\\?)(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/i;
+
+        if (!windowsFilePathPattern.test(input)) {
+            console.log("error");
+            this.setState(
+                {
+                    isSuccess: -1,
+                }
+            );
+        } else {
+            console.log("ok");
+            this.setState(
+                {
+                    isSuccess: 1,
+                }
+            );
+            console.log(this.state.path);
+        }
+    };
+
+    onChangeEvent = (e) => {
+        this.setState(
+            {path: e.target.value}
+        );
+    };
+
+    iconButtonClickEvent = (index) => {
+        let newActiveForm = null;
+
+        switch (index) {
+            case 0:
+                newActiveForm = <FormUncompress formHandler={this.formHandler}/>;
+                break;
+            case 1:
+                newActiveForm = <FormImport formHandler={this.formHandler}/>;
+                break;
+            case 2:
+                newActiveForm = <FormFeatures formHandler={this.formHandler}/>;
+                break;
+            case 3:
+                newActiveForm = <FormExperiment formHandler={this.formHandler}/>;
+                break;
+            default:
+                newActiveForm = <FormWelcome/>;
+        }
+
+        this.setState(
+            {asideElem: newActiveForm}
+        );
+    };
+
+
+    toggleEvent = (index) => {
+        this.setState({[index]: !this.state[index]});
+    };
+
+
     render() {
         return (
             <div {...this.props}>
-                <h1 style={style.title}>Welcome to website classification utility</h1>
 
-                <InlineForm style={style.inlineForm}/>
+                    <h1 style={style.title}>Welcome to website classification utility</h1>
 
-                
-                <Row>
-                    <Col xs={12} md={6}>
-                        <MyListItem text="Download Blacklist"/>
-                        <MyListItem text="Uncompress Blacklist"/>
-                        <MyListItem text="Import Blacklist"/>
-                        <MyListItem text="Add features"/>
-                        <MyListItem text="Run experiments"/>
-                    </Col>
-                    <Col xs={12} md={6}>
-                        <RightSideForm formHandler={this.formHandler}/>
-                    </Col>
-                </Row>
+                    <InlineForm style={style.inlineForm} onBlur={this.onBlur} isSuccess={this.state.isSuccess}
+                                onChangeEvent={this.onChangeEvent} value={this.state.path}/>
 
-                <MyProgressBar completed={this.state.completed} status={this.state.wsMsg}/>
+                    <Row>
+                        <Col xs={12} md={6}>
+                            <MyListItem text="Uncompress Blacklist" handleClick={() => this.iconButtonClickEvent(0)}
+                                        toggleMe={() => this.toggleEvent("toggled0")}/>
+                            <MyListItem text="Import Blacklist" handleClick={() => this.iconButtonClickEvent(1)}
+                                        toggleMe={() => this.toggleEvent("toggled1")}/>
+                            <MyListItem text="Add features" handleClick={() => this.iconButtonClickEvent(2)}
+                                        toggleMe={() => this.toggleEvent("toggled2")}/>
+                            <MyListItem text="Run experiments" handleClick={() => this.iconButtonClickEvent(3)}
+                                        toggleMe={() => this.toggleEvent("toggled3")}/>
+                        </Col>
+                        <Col xs={12} md={6}>
+                            {this.state.asideElem}
+                        </Col>
+                    </Row>
+
+
+                <MyProgressBar visible={this.state.isStarted}
+                               completed={this.state.completed} status={this.state.wsMsg}/>
+
 
                 <div style={style.buttonContainer}>
-                        <RaisedButton className={"button"} label="Start" secondary={true}
-                                      onTouchTap={this.startService} style={style.buttons}/>
-                        <RaisedButton className={"button"} label="Pause" secondary={true}
-                                      onTouchTap={this.cancelService} style={style.buttons}/>
+                    <RaisedButton className={"button"} label="Start" secondary={true}
+                                  onTouchTap={this.startService}
+                                  disabled={this.state.isSuccess < 0 || this.state.isStarted} style={style.buttons}/>
+                    <RaisedButton className={"button"} label="Pause" secondary={true}
+                                  disabled={!this.state.isStarted}
+                                  onTouchTap={this.cancelService} style={style.buttons}/>
                 </div>
             </div>
         )

@@ -3,15 +3,15 @@ import Subheader from "material-ui/Subheader";
 import {List, ListItem} from "material-ui/List";
 import TextField from "material-ui/TextField";
 import {Col, Row} from "react-grid-system";
-import "./../../node_modules/font-awesome/css/font-awesome.min.css";
 import FontIcon from "material-ui/FontIcon";
 import IconButton from "material-ui/IconButton";
 
 
-export default class RightSideForm extends Component {
+export default class RightSideForm_ImportList extends Component {
     render() {
         return(
             <div>
+                <h1>Import blacklist</h1>
                 <Row>
                     <Col xs={12}>
                         <TextField

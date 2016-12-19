@@ -3,7 +3,6 @@ package com.me.controller;
 import com.me.common.AsyncExecutor;
 import com.me.common.MyExecutable;
 import com.me.core.domain.dto.DTO;
-import com.me.core.service.exampleservice.MockService;
 import com.me.core.service.importbl.BlacklistImporterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +18,14 @@ public class MyRestController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private final AsyncExecutor executor;
-    private final MockService service;
     private MyExecutable executable;
     private boolean cancelFlag = false;
     private final BlacklistImporterService importerService;
 
     @Autowired
-    public MyRestController(AsyncExecutor executor, MockService service,
+    public MyRestController(AsyncExecutor executor,
                             BlacklistImporterService importerService) {
         this.executor = executor;
-        this.service = service;
         this.importerService = importerService;
     }
 
@@ -39,9 +36,7 @@ public class MyRestController {
 //    }
 
     private void decisionMaker(int num) {
-        if (num == 1)
-            executable = service;
-        else if (num == 2)
+        if (num == 2)
             executable = importerService;
         else
             executable = null;

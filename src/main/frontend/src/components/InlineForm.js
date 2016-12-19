@@ -1,35 +1,47 @@
 import React, {Component} from "react";
-import FlatButton from "material-ui/FlatButton";
 import TextField from "material-ui/TextField";
-import "./../../node_modules/font-awesome/css/font-awesome.min.css";
 import FontIcon from "material-ui/FontIcon";
 
 const style = {
-    fileChooser: {
-        cursor: 'pointer',
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-        width: '100%',
-        opacity: 0,
-    }
+    inputField: {
+        width: "80%"
+    },
 };
 
+
 export default class InlineForm extends Component {
+
     render() {
-        return(
-            <div {...this.props}>
+        return (
+            <div>
                 <TextField
-                    hintText="Press 'Choose' to set directory..."
-                    floatingLabelText={"Working directory"}
+                    hintText="C:\path\to\my\dir\"
+                    onBlur={this.props.onBlur}
+                    floatingLabelText={"Please, specify working directory"}
                     floatingLabelFixed={true}
+                    name="cwd"
+                    value={this.props.value}
+                    onChange={this.props.onChangeEvent}
+                    style={style.inputField}
                 />
-                <FlatButton label="Choose" labelPosition="before" icon={<FontIcon className="fa fa-search"/>}>
-                    <input type="file" style={style.fileChooser}/>
-                </FlatButton>
+
+                { (this.props.isSuccess > 0) ?
+                    <FontIcon
+                        className="fa fa-check"
+                        color={"green"}
+                    /> : null
+                }
+
+
+                { (this.props.isSuccess < 0) ?
+                    <FontIcon
+                        className="fa fa-times"
+                        color={"red"}
+                    /> : null
+                }
+
             </div>
         )
     }
 }
+

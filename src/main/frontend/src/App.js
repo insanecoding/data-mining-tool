@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import Body from "./components/Body";
 import Footer from "./components/Footer";
 import {Container} from "react-grid-system";
+import "./../node_modules/font-awesome/css/font-awesome.min.css";
 
 // prevent warnings with Material UI
 injectTapEventPlugin();
