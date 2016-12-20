@@ -9,23 +9,23 @@ const style = {
 };
 
 
-export default class InlineForm extends Component {
+export default class AdvancedTextField extends Component {
 
     render() {
         return (
             <div>
                 <TextField
-                    hintText="C:\path\to\my\dir\"
+                    hintText={this.props.hint}
                     onBlur={this.props.onBlur}
-                    floatingLabelText={"Please, specify working directory"}
+                    floatingLabelText={this.props.label}
                     floatingLabelFixed={true}
-                    name="cwd"
+                    name={this.props.name}
                     value={this.props.value}
                     onChange={this.props.onChangeEvent}
                     style={style.inputField}
                 />
 
-                { (this.props.isSuccess > 0) ?
+                { (this.props.validationSuccess > 0) ?
                     <FontIcon
                         className="fa fa-check"
                         color={"green"}
@@ -33,7 +33,7 @@ export default class InlineForm extends Component {
                 }
 
 
-                { (this.props.isSuccess < 0) ?
+                { (this.props.validationSuccess < 0) ?
                     <FontIcon
                         className="fa fa-times"
                         color={"red"}

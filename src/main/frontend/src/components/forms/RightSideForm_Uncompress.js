@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import TextField from "material-ui/TextField";
+import AdvancedTextField from "./../AdvancedTextField";
 import {Col, Row} from "react-grid-system";
 
 
@@ -10,21 +10,14 @@ export default class RightSideForm_Uncompress extends Component {
                 <h1>Uncompress</h1>
                 <Row>
                     <Col xs={12}>
-                        <TextField
-                            hintText="Hint Text"
-                            floatingLabelText="Username"
-                            name="userName"
-                            floatingLabelFixed={true}
-                            onChange={this.props.formHandler}
-                        />
-                        <TextField
-                            hintText="Hint Text 2"
-                            floatingLabelText="Password"
-                            floatingLabelFixed={true}
-                            type="password"
-                            name="password"
-                            onChange={this.props.formHandler}
-                        />
+
+                        <AdvancedTextField onBlur={this.props.onBlur}
+                                           hint="\sub\folder\with\archives"
+                                           label={"Sub-directory with archives"}
+                                           name={"archives"}
+                                           validationSuccess={this.props.validationSuccess}
+                                           onChangeEvent={this.props.onChangeEvent} value={this.props.value}/>
+
                     </Col>
                 </Row>
             </div>

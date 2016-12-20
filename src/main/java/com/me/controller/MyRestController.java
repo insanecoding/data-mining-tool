@@ -57,7 +57,7 @@ public class MyRestController {
         logger.info("data received: {}", dto);
 
         decisionMaker(2);
-        executor.invoke(executable, false);
+//        executor.invoke(executable, false);
         Map<String, String> result = new LinkedHashMap<>();
 
         if (!cancelFlag) {

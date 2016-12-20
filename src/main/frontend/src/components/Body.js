@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import RaisedButton from "material-ui/RaisedButton";
-import InlineForm from "./InlineForm";
+import AdvancedTextField from "./AdvancedTextField";
 import {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment} from "./forms/RightSideForm";
 import MyListItem from "./MyListItem";
 import MyProgressBar from "./MyProgressBar";
@@ -45,17 +45,16 @@ export default class Body extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            cwd: "C:\\DataMining\\experiments\\blacklists2\\uncompressed\\",
+            archives: "\\sub\\folder\\with\\archives\\",
             completed: 0,
-            isDialogOpen: false,
-            dialogText: "",
-            dialogHeader: "",
             userName: "",
             password: "",
             dbName: "",
             port: "",
             wsMsg: "Ready",
-            path: "C:\\DataMining\\experiments\\blacklists2\\uncompressed\\",
-            isSuccess: 0,
+
+            validationSuccess: 0,
             isStarted: false,
             asideElem: <FormWelcome/>,
             toggled0: false,
@@ -95,11 +94,12 @@ export default class Body extends Component {
             }
         );
         let myObj = {
-            path: this.state.path,
-            toggle0: this.state.toggled0,
-            toggle1: this.state.toggled1,
-            toggle2: this.state.toggled2,
-            toggle3: this.state.toggled3
+            cwd: this.state.cwd,
+            // toggle0: this.state.toggled0,
+            // toggle1: this.state.toggled1,
+            // toggle2: this.state.toggled2,
+            // toggle3: this.state.toggled3,
+            archives: this.state.uncompressed.archives
         };
         console.log(myObj);
 
@@ -134,7 +134,7 @@ export default class Body extends Component {
     };
 
     onBlur = (e) => {
-        const input = e.target.value;
+        const input = e.target.value.trim();
 
         const windowsFilePathPattern = /^(?:(?:[a-z]:|\\\\[a-z0-9_.$?-]+\\[a-z0-9_.$?-]+)\\|\\?[^\\/:*?"<>|\r\n]+\\?)(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/i;
 
@@ -142,23 +142,23 @@ export default class Body extends Component {
             console.log("error");
             this.setState(
                 {
-                    isSuccess: -1,
+                    validationSuccess: -1,
                 }
             );
         } else {
             console.log("ok");
             this.setState(
                 {
-                    isSuccess: 1,
+                    validationSuccess: 1,
                 }
             );
-            console.log(this.state.path);
+            console.log(this.state.cwd);
         }
     };
 
     onChangeEvent = (e) => {
         this.setState(
-            {path: e.target.value}
+            {[e.target.name]: e.target.value}
         );
     };
 
@@ -167,7 +167,8 @@ export default class Body extends Component {
 
         switch (index) {
             case 0:
-                newActiveForm = <FormUncompress formHandler={this.formHandler}/>;
+                newActiveForm = <FormUncompress value={this.state.archives} onChangeEvent={this.onChangeEvent}
+                onBlur={this.onBlur}/>;
                 break;
             case 1:
                 newActiveForm = <FormImport formHandler={this.formHandler}/>;
@@ -199,8 +200,12 @@ export default class Body extends Component {
 
                     <h1 style={style.title}>Welcome to website classification utility</h1>
 
-                    <InlineForm style={style.inlineForm} onBlur={this.onBlur} isSuccess={this.state.isSuccess}
-                                onChangeEvent={this.onChangeEvent} value={this.state.path}/>
+                    <AdvancedTextField style={style.inlineForm} onBlur={this.onBlur}
+                                       hint="C:\path\to\my\dir\"
+                                       label={"Please, specify working directory"}
+                                       name={"cwd"}
+                                       validationSuccess={this.state.validationSuccess}
+                                       onChangeEvent={this.onChangeEvent} value={this.state.cwd}/>
 
                     <Row>
                         <Col xs={12} md={6}>
@@ -226,7 +231,7 @@ export default class Body extends Component {
                 <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Start" secondary={true}
                                   onTouchTap={this.startService}
-                                  disabled={this.state.isSuccess < 0 || this.state.isStarted} style={style.buttons}/>
+                                  disabled={this.state.validationSuccess < 0 || this.state.isStarted} style={style.buttons}/>
                     <RaisedButton className={"button"} label="Pause" secondary={true}
                                   disabled={!this.state.isStarted}
                                   onTouchTap={this.cancelService} style={style.buttons}/>
