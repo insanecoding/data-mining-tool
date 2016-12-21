@@ -1,12 +1,12 @@
 import Immutable from "immutable";
 
 export const initialState = Immutable.fromJS({
-    data: {
+    forms: {
         uncompress: {
             key: 1,
             displayName: "Uncompress blacklist",
             isOn: false,
-            archives: "\\some\\sub\\folder"
+            archives: "\\some\\sub\\folder\\"
         },
         import: {
             key: 2,
@@ -31,6 +31,7 @@ export const initialState = Immutable.fromJS({
     pathChooser: {
         cwd: "C:\\DataMining\\experiments\\blacklists2\\",
     },
-    active: 0,
-
+    formActive: 0,
+    hasValidationErrors: false,
+    started: false,
 });

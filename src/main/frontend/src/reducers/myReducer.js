@@ -13,12 +13,12 @@ export default function page(state = initialState, action) {
     switch (action.type) {
 
         case ACTIVE_FORM_CHANGED:
-            return state.setIn(['active'], action.payload);
+            return state.setIn(['formActive'], action.payload);
 
         case COMPONENT_TOGGLED:
             const componentName = action.payload;
-            const prevState = state.getIn(['data', componentName, 'isOn']);
-            return state.setIn(['data', componentName, 'isOn'], !prevState);
+            const prevState = state.getIn(['forms', componentName, 'isOn']);
+            return state.setIn(['forms', componentName, 'isOn'], !prevState);
 
         case FIELD_CHANGED:
             const formName = action.payload.getIn(['formName']);

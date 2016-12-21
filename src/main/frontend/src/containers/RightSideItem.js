@@ -1,5 +1,5 @@
 import React, {PropTypes} from "react";
-import {FormWelcome, FormUncompress, FormImport} from "./../components/forms/index";
+import {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment} from "./../components/forms/index";
 
 const RightSideItem = ({number, archives, userName, password, dbName, port, onInputChange}) => {
 
@@ -15,10 +15,10 @@ const RightSideItem = ({number, archives, userName, password, dbName, port, onIn
                 return <FormImport title="Import blacklist" formName="import"
                                    userName={userName} password={password}
                                    dbName={dbName} port={port} onInputChange={onInputChange}/>;
-            // case 3:
-            //     return <FormFeatures/>;
-            // case 4:
-            //     return <FormExperiment/>;
+            case 3:
+                return <FormFeatures/>;
+            case 4:
+                return <FormExperiment/>;
             default:
                 return null;
         }

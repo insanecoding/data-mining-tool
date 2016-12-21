@@ -6,7 +6,7 @@ import GenericForm from "./GenericForm";
 const RightSideForm_Uncompress = ({formName, title, archives, onInputChange}) => {
 
     const changeEvent = (e) => {
-        onInputChange(e.target.value, e.target.name, formName, "data");
+        onInputChange(e.target.value, e.target.name, formName, "forms");
     };
 
     return(

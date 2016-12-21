@@ -181,7 +181,7 @@ class Body extends Component {
 
     extracted(deeplyNestedObject) {
         let plainArray = [];
-        deeplyNestedObject.getIn(['data'])
+        deeplyNestedObject.getIn(['forms'])
             .map( (k,v) => k.toObject())
             .map( (k,v) => {
                 k.name = v;
@@ -209,12 +209,12 @@ class Body extends Component {
         };
 
         const rightFormParam = {
-            number: myReducer.getIn(['active']),
-            archives: myReducer.getIn(['data', 'uncompress', 'archives']),
-            userName: myReducer.getIn(['data', 'import', 'userName']),
-            password: myReducer.getIn(['data', 'import', 'password']),
-            dbName:  myReducer.getIn(['data', 'import', 'dbName']),
-            port:  myReducer.getIn(['data', 'import', 'port']),
+            number: myReducer.getIn(['formActive']),
+            archives: myReducer.getIn(['forms', 'uncompress', 'archives']),
+            userName: myReducer.getIn(['forms', 'import', 'userName']),
+            password: myReducer.getIn(['forms', 'import', 'password']),
+            dbName:  myReducer.getIn(['forms', 'import', 'dbName']),
+            port:  myReducer.getIn(['forms', 'import', 'port']),
             onInputChange: onInputChange,
         };
 
