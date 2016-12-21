@@ -47,7 +47,8 @@ class AdvancedTextField extends Component {
         const currentValue = e.target.value.trim();
         let result;
         if (pattern === "number") {
-            result = (!isNaN(currentValue));
+            const regex = /^\d+$/;
+            result = (regex.test(currentValue));
             console.log(result);
             this.changeState(result);
             console.log(this.state);

@@ -1,26 +1,24 @@
-import React, {Component} from "react";
+import React, {PropTypes} from "react";
 import AdvancedTextField from "./../AdvancedTextField";
-import {Col, Row} from "react-grid-system";
+import GenericForm from "./GenericForm";
 
 
-export default class RightSideForm_Uncompress extends Component {
-    render() {
-        return(
-            <div>
-                <h1>Uncompress</h1>
-                <Row>
-                    <Col xs={12}>
+const RightSideForm_Uncompress = ({title}) => {
 
-                        <AdvancedTextField onBlur={this.props.onBlur}
-                                           hint="\sub\folder\with\archives"
-                                           label={"Sub-directory with archives"}
-                                           name={"archives"}
-                                           validationSuccess={this.props.validationSuccess}
-                                           onChangeEvent={this.props.onChangeEvent} value={this.props.value}/>
+    return(
+        <GenericForm title={title}>
+            <AdvancedTextField hint="\sub\folder\with\archives"
+                               label={"Sub-directory with archives"}
+                               name={"archives"}
+                               pattern={"path"}
+            />
+        </GenericForm>
+    );
+};
 
-                    </Col>
-                </Row>
-            </div>
-        )
-    }
-}
+RightSideForm_Uncompress.propTypes = {
+    title: PropTypes.string.isRequired,
+};
+
+
+export default RightSideForm_Uncompress;

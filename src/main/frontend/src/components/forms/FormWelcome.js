@@ -1,17 +1,15 @@
-import React, {Component} from "react";
-import {Col, Row} from "react-grid-system";
+import React, {PropTypes} from "react";
+import GenericForm from "./GenericForm";
 
 
-export default class RightSideForm_Welcome extends Component {
-    render() {
+const RightSideForm_Welcome = ({title}) => {
         return(
-            <div>
-                <Row>
-                    <Col xs={12} md={12}>
-                        <h1 style={{textAlign: "center"}}>Click component to see settings</h1>
-                    </Col>
-                </Row>
-            </div>
+            <GenericForm title={title}/>
         )
-    }
-}
+};
+
+RightSideForm_Welcome.propTypes = {
+    title: PropTypes.string.isRequired,
+};
+
+export default RightSideForm_Welcome;

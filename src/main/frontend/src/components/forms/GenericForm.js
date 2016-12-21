@@ -1,13 +1,22 @@
-import React, {Component, PropTypes} from "react";
+import React, {PropTypes} from "react";
 import {Col, Row} from "react-grid-system";
 
+const style = {
+    textAlign: "center"
+};
 
 const RightSideForm_Experiment = ({title, children}) => {
 
         return(
             <div>
-                <h1>{title}</h1>
-                {children}
+                <Row>
+                    <Col xs={12} md={12}>
+                        <h1 style={style}>{title}</h1>
+                    </Col>
+                    <Col xs={12} md={12}>
+                    {children}
+                    </Col>
+                </Row>
             </div>
         )
 };

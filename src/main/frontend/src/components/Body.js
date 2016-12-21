@@ -1,14 +1,11 @@
 import React, {Component} from "react";
-import RaisedButton from "material-ui/RaisedButton";
 import LeftSideItem from "./../components/LeftSideItem";
 import RightSideItem from "./../components/RightSideItem";
-import MyProgressBar from "./MyProgressBar";
 import {Row, Col} from "react-grid-system";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as myActions from "./../actions/myActions";
 import PathChooser from "./../components/PathChooser";
-import GenericForm from "./../components/forms/GenericForm";
 
 const style = {
     title: {
@@ -17,15 +14,6 @@ const style = {
         marginLeft: "20px",
         marginRight: "20px",
         marginBottom: "1px"
-    },
-    buttons: {
-        padding: "5px",
-        margin: "auto auto",
-        boxShadow: "none"
-    },
-    buttonContainer: {
-        textAlign: "center",
-        padding: "20px",
     },
     fileChooser: {
         cursor: 'pointer',
@@ -225,13 +213,10 @@ class Body extends Component {
         };
 
         return (
-            <div>
-
+            <div style={this.props.style}>
                 <h1 style={style.title}>Welcome to website classification utility</h1>
 
                 <PathChooser {...pathChooserParam}/>
-
-                <GenericForm title={"My form"}> {123} </GenericForm>
 
                 <Row>
                     <Col xs={12} md={6}>
@@ -241,15 +226,6 @@ class Body extends Component {
                         <RightSideItem {...rightFormParam}/>
                     </Col>
                 </Row>
-
-                <MyProgressBar/>
-
-                <div style={style.buttonContainer}>
-                    <RaisedButton className={"button"} label="Start" secondary={true}
-                                  style={style.buttons}/>
-                    <RaisedButton className={"button"} label="Pause" secondary={true}
-                                  style={style.buttons}/>
-                </div>
             </div>
         )
     }
