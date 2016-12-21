@@ -1,10 +1,24 @@
-import {SET_YEAR, FORM_CHANGED, GET_PHOTOS_REQUEST, GET_PHOTOS_SUCCESS} from "./../constants/Forms";
+import {
+    FORM_CHANGED,
+    GET_PHOTOS_REQUEST,
+    GET_PHOTOS_SUCCESS,
+    ACTIVE_FORM_CHANGED,
+    COMPONENT_TOGGLED
+} from "../constants/constants";
 import Immutable from "immutable";
 
-export function setYear(year) {
+
+export function activeFormChanged(formNumber) {
     return {
-        type: SET_YEAR,
-        payload: year
+        type: ACTIVE_FORM_CHANGED,
+        payload: formNumber
+    }
+}
+
+export function componentToggled(componentName) {
+    return {
+        type: COMPONENT_TOGGLED,
+        payload: componentName
     }
 }
 

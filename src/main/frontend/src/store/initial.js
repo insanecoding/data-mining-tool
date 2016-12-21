@@ -4,23 +4,23 @@ export const initialState = Immutable.fromJS({
     data: {
         uncompress: {
             key: 1,
-            name: "Uncompress blacklist"
+            displayName: "Uncompress blacklist",
+            isOn: false,
         },
         import: {
             key: 2,
-            name: "Import Blacklist"
+            displayName: "Import Blacklist",
+            isOn: false,
         },
         add: {
             key: 3,
-            name: "Add features"
+            displayName: "Add features",
+            isOn: false,
         },
         run: {
             key: 4,
-            name: "Run experiments"
-        },
-        result: {
-            key: 5,
-            name: "Result"
+            displayName: "Run experiments",
+            isOn: false,
         },
     },
     active: 0

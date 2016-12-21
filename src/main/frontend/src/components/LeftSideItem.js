@@ -1,27 +1,38 @@
 import MyListItem from "./MyListItem";
 import React, {PropTypes} from "react";
-import Immutable from "immutable";
 
-const LeftSideItem = ({names}) => {
+const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {
+
+    const handleClick = (elementId) => {
+        activeFormChanged(elementId);
+    };
+
+    const onToggle = (elementName) => {
+        componentToggled(elementName);
+    };
+
 
     const listGenerator = (elements) => {
-
         return(
-            elements.map( x => x.toObject())
-                .map( elem => <MyListItem text={elem.name} key={elem.key}/>)
+            elements.map( elem => <MyListItem text={elem.displayName} key={elem.key}
+                                          handleClick={ () => handleClick(elem.key)}
+                                          onToggle={ () => onToggle(elem.name)}
+                    />
+                )
         );
-
     };
 
     return (
         <div>
-            { listGenerator(names) }
+            { listGenerator(components) }
         </div>
     )
 };
 
 LeftSideItem.propTypes = {
-    names: PropTypes.instanceOf(Immutable.Set).isRequired,
+    components: PropTypes.array.isRequired,
+    activeFormChanged: PropTypes.func.isRequired,
+    componentToggled: PropTypes.func.isRequired,
 };
 
 export default LeftSideItem;

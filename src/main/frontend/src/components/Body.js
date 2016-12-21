@@ -7,7 +7,7 @@ import MyProgressBar from "./MyProgressBar";
 import {Row, Col} from "react-grid-system";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import * as pageActions from "./../actions/page-actions";
+import * as myActions from "../actions/myActions";
 
 const style = {
     title: {
@@ -189,19 +189,34 @@ class Body extends Component {
     // toggleEvent = (index) => {
     //     this.setState({[index]: !this.state[index]});
     // };
+
+    extracted(myReducer) {
+        let panda = [];
+        myReducer.getIn(['data']).map( (k,v) => k.toObject())
+            .map( (k,v) => {
+                k.name = v;
+                return k;
+            }).map( k => panda.push(k));
+
+        // panda.map( ob => console.log("key = ", ob.key, "name = ", ob.name, "disp = ",
+        //     ob.displayName, "on = ", ob.isOn));
+        return panda;
+    }
+
     render() {
 
-        const { forms } = this.props;
-        // const { setYear, setFName, getPhotos } = this.props.pageActions;
-        const pageParam = {
-            names: forms.getIn(['data']).toSet(),
-        };
-        // forms.getIn(['data']).toSet();
+        const { myReducer } = this.props;
+        const { activeFormChanged, componentToggled } = this.props.myActions;
 
-        const right = {
-            number: forms.getIn(['active']),
+        const leftFormParam = {
+            components: this.extracted(myReducer),
+            activeFormChanged: activeFormChanged,
+            componentToggled: componentToggled,
         };
 
+        const rightFormParam = {
+            number: myReducer.getIn(['active']),
+        };
 
         return (
             <div>
@@ -214,12 +229,10 @@ class Body extends Component {
 
                 <Row>
                     <Col xs={12} md={6}>
-                        <LeftSideItem {...pageParam}/>
+                        <LeftSideItem {...leftFormParam}/>
                     </Col>
                     <Col xs={12} md={6}>
-                        {/*<Page {...pageParam}/>*/}
-                        {/*<User name={user.name} />*/}
-                        <RightSideItem {...right}/>
+                        <RightSideItem {...rightFormParam}/>
                     </Col>
                 </Row>
 
@@ -240,13 +253,13 @@ class Body extends Component {
 
 function mapStateToProps(state) {
     return {
-        forms: state.forms,
+        myReducer: state.myReducer,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        pageActions: bindActionCreators(pageActions, dispatch)
+        myActions: bindActionCreators(myActions, dispatch)
     }
 }
 

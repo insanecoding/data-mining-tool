@@ -1,8 +1,25 @@
-import {SET_YEAR, FORM_CHANGED, GET_PHOTOS_REQUEST, GET_PHOTOS_SUCCESS} from "../constants/Forms";
+import {
+    SET_YEAR,
+    FORM_CHANGED,
+    GET_PHOTOS_REQUEST,
+    GET_PHOTOS_SUCCESS,
+    ACTIVE_FORM_CHANGED,
+    COMPONENT_TOGGLED
+} from "../constants/constants";
 import {initialState} from "./../store/initial";
 
 export default function page(state = initialState, action) {
     switch (action.type) {
+
+        case ACTIVE_FORM_CHANGED:
+            return state.setIn(['active'], action.payload);
+
+        case COMPONENT_TOGGLED:
+            const componentName = action.payload;
+            const prevState = state.getIn(['data', componentName, 'isOn']);
+            console.log(prevState);
+            return state.setIn(['data', componentName, 'isOn'], !prevState);
+
         case SET_YEAR:
             return state.setIn(['year'], action.payload);
 

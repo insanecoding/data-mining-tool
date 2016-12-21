@@ -8,7 +8,7 @@ export default class MyListItem extends Component {
     render() {
         return (
             <ListItem leftCheckbox={
-                <Toggle onToggle={this.props.toggleMe}/>  }
+                <Toggle onToggle={this.props.onToggle}/>  }
                       primaryText={this.props.text} rightIconButton={
                 <IconButton onClick={this.props.handleClick}>
                     <FontIcon className="fa fa-bars fa-fw"/>

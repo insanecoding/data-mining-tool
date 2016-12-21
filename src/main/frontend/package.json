@@ -22,6 +22,7 @@
     "react-redux": "^5.0.1",
     "react-toolbox": "^1.3.2",
     "redux": "^3.6.0",
+    "redux-logger": "^2.7.4",
     "redux-thunk": "^2.1.0",
     "sockjs-client": "^1.1.1",
     "stompjs": "^2.3.3",
