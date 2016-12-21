@@ -4,4 +4,4 @@ import FormImport from "./FormImport";
 import FormFeatures from "./FormFeatures";
 import FormExperiment from "./FormExperiment";
 
-export const MyForms = {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment};
+export {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment};

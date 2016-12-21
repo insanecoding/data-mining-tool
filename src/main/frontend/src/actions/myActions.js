@@ -23,13 +23,14 @@ export function componentToggled(componentName) {
     }
 }
 
-export function onInputChange(formName, fieldName, value) {
+export function onInputChange(value, fieldName, formName, rootObject = {}) {
     return {
         type: FIELD_CHANGED,
         payload: Immutable.Map({
             formName: formName,
             fieldName: fieldName,
             value: value,
+            rootObject: rootObject,
         })
     }
 }

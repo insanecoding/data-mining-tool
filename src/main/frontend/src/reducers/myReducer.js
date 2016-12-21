@@ -18,14 +18,20 @@ export default function page(state = initialState, action) {
         case COMPONENT_TOGGLED:
             const componentName = action.payload;
             const prevState = state.getIn(['data', componentName, 'isOn']);
-            console.log(prevState);
             return state.setIn(['data', componentName, 'isOn'], !prevState);
 
         case FIELD_CHANGED:
             const formName = action.payload.getIn(['formName']);
             const fieldName = action.payload.getIn(['fieldName']);
             const value = action.payload.getIn(['value']);
-            return state.setIn([formName, fieldName], value);
+            const rootObject = action.payload.getIn(['rootObject']);
+
+            if (Object.keys(rootObject).length === 0)
+                // empty object
+                return state.setIn([formName, fieldName], value);
+            else
+                // object has value
+                return state.setIn([rootObject, formName, fieldName], value);
 
         case SET_YEAR:
             return state.setIn(['year'], action.payload);

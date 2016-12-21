@@ -6,11 +6,16 @@ export const initialState = Immutable.fromJS({
             key: 1,
             displayName: "Uncompress blacklist",
             isOn: false,
+            archives: "\\some\\sub\\folder"
         },
         import: {
             key: 2,
             displayName: "Import Blacklist",
             isOn: false,
+            userName: "postgres",
+            password: "postgresql",
+            dbName: "Website_Classification",
+            port: 5432,
         },
         add: {
             key: 3,
@@ -24,7 +29,7 @@ export const initialState = Immutable.fromJS({
         },
     },
     pathChooser: {
-        cwd: "C:\\DataMining\\experiments\\blacklists2\\uncompressed\\",
+        cwd: "C:\\DataMining\\experiments\\blacklists2\\",
     },
     active: 0,
 

@@ -1,11 +1,11 @@
 import React, {Component} from "react";
-import LeftSideItem from "./../components/LeftSideItem";
-import RightSideItem from "./../components/RightSideItem";
+import LeftSideItem from "./LeftSideItem";
+import RightSideItem from "./RightSideItem";
 import {Row, Col} from "react-grid-system";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as myActions from "./../actions/myActions";
-import PathChooser from "./../components/PathChooser";
+import PathChooser from "./../components/forms/PathChooser";
 
 const style = {
     title: {
@@ -210,6 +210,12 @@ class Body extends Component {
 
         const rightFormParam = {
             number: myReducer.getIn(['active']),
+            archives: myReducer.getIn(['data', 'uncompress', 'archives']),
+            userName: myReducer.getIn(['data', 'import', 'userName']),
+            password: myReducer.getIn(['data', 'import', 'password']),
+            dbName:  myReducer.getIn(['data', 'import', 'dbName']),
+            port:  myReducer.getIn(['data', 'import', 'port']),
+            onInputChange: onInputChange,
         };
 
         return (

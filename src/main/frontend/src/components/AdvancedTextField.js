@@ -17,7 +17,6 @@ class AdvancedTextField extends Component {
         };
     }
 
-
     showValidationResult = (validationResult) => {
 
         if (validationResult === 1)
@@ -49,26 +48,17 @@ class AdvancedTextField extends Component {
         if (pattern === "number") {
             const regex = /^\d+$/;
             result = (regex.test(currentValue));
-            console.log(result);
-            this.changeState(result);
-            console.log(this.state);
         } else if (pattern === "not_empty") {
             result = (currentValue !== "");
-            console.log(result);
-            this.changeState(result);
-            console.log(this.state);
         } else if (pattern === "path") {
             const windowsFilePathPattern = /^(?:(?:[a-z]:|\\\\[a-z0-9_.$?-]+\\[a-z0-9_.$?-]+)\\|\\?[^\\/:*?"<>|\r\n]+\\?)(?:[^\\/:*?"<>|\r\n]+\\)*[^\\/:*?"<>|\r\n]*$/i;
             result = (windowsFilePathPattern.test(currentValue));
-            console.log(result);
-            this.changeState(result);
-            console.log(this.state);
         }
-
+        this.changeState(result);
     };
 
     render() {
-        const { placeHolder, pattern, label, fieldName, value, onChangeEvent } = this.props;
+        const { placeHolder, pattern, label, type, fieldName, value, onChangeEvent } = this.props;
         return (
             <div>
                 <TextField
@@ -78,6 +68,7 @@ class AdvancedTextField extends Component {
                     floatingLabelFixed={true}
                     name={fieldName}
                     value={value}
+                    type={type}
                     onChange={onChangeEvent}
                     style={style.inputField}
                 />
@@ -94,7 +85,8 @@ AdvancedTextField.propTypes = {
     pattern: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     fieldName: PropTypes.string.isRequired,
-    value: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    value: PropTypes.any.isRequired,
     onChangeEvent: PropTypes.func.isRequired,
 };
 

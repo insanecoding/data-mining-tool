@@ -8,33 +8,46 @@ import AdvancedTextField from "./../AdvancedTextField";
 import GenericForm from "./GenericForm";
 
 
-const RightSideForm_ImportList = ({title}) => {
+const RightSideForm_ImportList = ({formName, title, userName, password, dbName, port, onInputChange}) => {
+
+    const changeEvent = (e) => {
+        onInputChange(e.target.value, e.target.name, formName, "data");
+    };
 
     return(
         <GenericForm title={title}>
             <Row>
                 <Col xs={12} md={6}>
-                    <AdvancedTextField hint="postgres"
+                    <AdvancedTextField placeHolder="user name"
+                                       pattern={"not_empty"}
                                        label={"user name"}
-                                       name={"userName"}
-                                       pattern={"not_empty"}
+                                       fieldName={"userName"}
+                                       value={userName}
+                                       onChangeEvent={changeEvent}
                     />
-                    <AdvancedTextField hint="password"
-                                       label={"password"}
-                                       name={"password"}
+                    <AdvancedTextField placeHolder="password"
+                                       type={"password"}
                                        pattern={"not_empty"}
+                                       label={"password"}
+                                       fieldName={"password"}
+                                       value={password}
+                                       onChangeEvent={changeEvent}
                     />
                 </Col>
                 <Col xs={12} md={6}>
-                    <AdvancedTextField hint="database name"
-                                       label={"db name"}
-                                       name={"dbName"}
+                    <AdvancedTextField placeHolder="database name"
                                        pattern={"not_empty"}
+                                       label={"db name"}
+                                       fieldName={"dbName"}
+                                       value={dbName}
+                                       onChangeEvent={changeEvent}
                     />
-                    <AdvancedTextField hint="5432"
-                                       label={"port"}
-                                       name={"port"}
+                    <AdvancedTextField placeHolder="port number"
                                        pattern={"number"}
+                                       label={"port number"}
+                                       fieldName={"port"}
+                                       value={port}
+                                       onChangeEvent={changeEvent}
                     />
                 </Col>
             </Row>
@@ -66,7 +79,12 @@ const RightSideForm_ImportList = ({title}) => {
 
 RightSideForm_ImportList.propTypes = {
     title: PropTypes.string.isRequired,
+    formName: PropTypes.string.isRequired,
+    userName: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    dbName: PropTypes.string.isRequired,
+    port: PropTypes.number.isRequired,
+    onInputChange: PropTypes.func.isRequired,
 };
-
 
 export default RightSideForm_ImportList;

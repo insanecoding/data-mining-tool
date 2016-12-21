@@ -1,11 +1,11 @@
 import React, {PropTypes} from "react";
-import AdvancedTextField from "./AdvancedTextField";
+import AdvancedTextField from "./../AdvancedTextField";
 
 
 const PathChooser = ({formName, cwd, onInputChange}) => {
 
     const changeEvent = (e) => {
-        onInputChange(formName, e.target.name, e.target.value);
+        onInputChange(e.target.value, e.target.name, formName);
     };
 
     return (

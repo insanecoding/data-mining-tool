@@ -1,4 +1,4 @@
-import MyListItem from "./MyListItem";
+import MyListItem from "./../components/MyListItem";
 import React, {PropTypes} from "react";
 
 const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {

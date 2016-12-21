@@ -3,14 +3,20 @@ import AdvancedTextField from "./../AdvancedTextField";
 import GenericForm from "./GenericForm";
 
 
-const RightSideForm_Uncompress = ({title}) => {
+const RightSideForm_Uncompress = ({formName, title, archives, onInputChange}) => {
+
+    const changeEvent = (e) => {
+        onInputChange(e.target.value, e.target.name, formName, "data");
+    };
 
     return(
         <GenericForm title={title}>
-            <AdvancedTextField hint="\sub\folder\with\archives"
-                               label={"Sub-directory with archives"}
-                               name={"archives"}
+            <AdvancedTextField placeHolder={"\\sub\\folder\\with\\archives\\"}
                                pattern={"path"}
+                               label={"Sub-directory with archives"}
+                               fieldName={"archives"}
+                               value={archives}
+                               onChangeEvent={changeEvent}
             />
         </GenericForm>
     );
@@ -18,6 +24,9 @@ const RightSideForm_Uncompress = ({title}) => {
 
 RightSideForm_Uncompress.propTypes = {
     title: PropTypes.string.isRequired,
+    formName: PropTypes.string.isRequired,
+    archives: PropTypes.string.isRequired,
+    onInputChange: PropTypes.func.isRequired,
 };
 
 
