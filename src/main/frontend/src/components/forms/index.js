@@ -1,7 +1,7 @@
-import FormWelcome from "./RightSideForm_Welcome";
-import FormUncompress from "./RightSideForm_Uncompress";
-import FormImport from "./RightSideForm_ImportList";
-import FormFeatures from "./RightSideForm_Features";
-import FormExperiment from "./RightSideForm_Experiment";
+import FormWelcome from "./FormWelcome";
+import FormUncompress from "./FormUncompress";
+import FormImport from "./FormImport";
+import FormFeatures from "./FormFeatures";
+import FormExperiment from "./FormExperiment";
 
 export const MyForms = {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment};

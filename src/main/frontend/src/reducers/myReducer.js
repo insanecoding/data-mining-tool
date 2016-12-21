@@ -4,7 +4,8 @@ import {
     GET_PHOTOS_REQUEST,
     GET_PHOTOS_SUCCESS,
     ACTIVE_FORM_CHANGED,
-    COMPONENT_TOGGLED
+    COMPONENT_TOGGLED,
+    FIELD_CHANGED
 } from "../constants/constants";
 import {initialState} from "./../store/initial";
 
@@ -19,6 +20,12 @@ export default function page(state = initialState, action) {
             const prevState = state.getIn(['data', componentName, 'isOn']);
             console.log(prevState);
             return state.setIn(['data', componentName, 'isOn'], !prevState);
+
+        case FIELD_CHANGED:
+            const formName = action.payload.getIn(['formName']);
+            const fieldName = action.payload.getIn(['fieldName']);
+            const value = action.payload.getIn(['value']);
+            return state.setIn([formName, fieldName], value);
 
         case SET_YEAR:
             return state.setIn(['year'], action.payload);

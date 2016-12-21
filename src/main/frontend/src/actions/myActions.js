@@ -3,7 +3,8 @@ import {
     GET_PHOTOS_REQUEST,
     GET_PHOTOS_SUCCESS,
     ACTIVE_FORM_CHANGED,
-    COMPONENT_TOGGLED
+    COMPONENT_TOGGLED,
+    FIELD_CHANGED
 } from "../constants/constants";
 import Immutable from "immutable";
 
@@ -19,6 +20,17 @@ export function componentToggled(componentName) {
     return {
         type: COMPONENT_TOGGLED,
         payload: componentName
+    }
+}
+
+export function onInputChange(formName, fieldName, value) {
+    return {
+        type: FIELD_CHANGED,
+        payload: Immutable.Map({
+            formName: formName,
+            fieldName: fieldName,
+            value: value,
+        })
     }
 }
 

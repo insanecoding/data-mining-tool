@@ -23,5 +23,9 @@ export const initialState = Immutable.fromJS({
             isOn: false,
         },
     },
-    active: 0
+    pathChooser: {
+        cwd: "C:\\DataMining\\experiments\\blacklists2\\uncompressed\\",
+    },
+    active: 0,
+
 });
