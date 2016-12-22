@@ -26,8 +26,6 @@ function genericFetch(url, method, myObj) {
             return response.json();
         else
             throw new Error('Something went wrong on api server!');
-    }).catch(function (ex) {
-        console.log('parsing failed', ex)
     });
 }
 

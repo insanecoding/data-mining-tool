@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,19 +29,6 @@ public class MyRestController {
         this.importerService = importerService;
     }
 
-//    @GetMapping("result")
-//    public DTO returnDTO() {
-//        logger.info(" >>> [get] client connected");
-//        return new DTO("Welcome,", "guest");
-//    }
-
-    private void decisionMaker(int num) {
-        if (num == 2)
-            executable = importerService;
-        else
-            executable = null;
-    }
-
     @GetMapping("cancel")
     public void cancelService() {
         logger.info(" >>> [get] client connected");
@@ -51,10 +39,8 @@ public class MyRestController {
     @PostMapping("invoke")
     public
     @ResponseBody
-    Map<String, String> invokeService(@RequestBody Map<String, String> dto) {
-        logger.info(" >>> [post] client connected");
-        dto.forEach( (k,v) -> logger.info("data received: {} : {}", k, v));
-
+    Map<String, String> invokeService(@RequestBody List<Map<String, String>> dto) {
+        outputClientData(dto);
         decisionMaker(2);
         executor.invoke(executable, false);
         Map<String, String> result = new LinkedHashMap<>();
@@ -66,5 +52,21 @@ public class MyRestController {
             result.put("status", "cancelled");
         }
         return result;
+    }
+
+    private void outputClientData(@RequestBody List<Map<String, String>> dto) {
+        logger.info(" >>> [post] client connected");
+        dto.forEach( k -> {
+            logger.info(" === starting output for k: {}", k);
+            k.forEach( (key, val) -> logger.info("{} = {}", key, val));
+            logger.info(" === finishing output for k: {}", k);
+        });
+    }
+
+    private void decisionMaker(int num) {
+        if (num == 2)
+            executable = importerService;
+        else
+            executable = null;
     }
 }

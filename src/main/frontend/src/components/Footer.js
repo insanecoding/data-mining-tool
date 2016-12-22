@@ -7,6 +7,7 @@ import RaisedButton from "material-ui/RaisedButton";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as connectionActions from "../actions/connectionActions";
+import {mapToArray} from "./../util/misc";
 
 const recentsIcon = <FontIcon className="fa fa-undo"/>;
 const favoritesIcon = <FontIcon className="fa fa-heart"/>;
@@ -37,16 +38,14 @@ class Footer extends Component {
     select = (index) => this.setState({selectedIndex: index});
 
     handleClick = (buttonName) => {
-        const { myConnect } = this.props.connectionActions;
+        const { executePostQuery, executeGetQuery } = this.props.connectionActions;
         const { formReducer } = this.props;
 
         if (buttonName === "start") {
-            const myObj = {
-                cwd: formReducer.getIn(['pathChooser', 'cwd']),
-            };
-            myConnect("api/invoke", myObj);
+            const myObj = mapToArray(formReducer.getIn(['forms']));
+            executePostQuery("api/invoke", myObj);
         } else if (buttonName === "cancel") {
-            myConnect("api/cancel");
+            executeGetQuery("api/cancel");
         }
     };
 
