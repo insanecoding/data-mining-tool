@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {PropTypes} from "react";
 import LinearProgress from "material-ui/LinearProgress";
 
 const style = {
@@ -14,20 +14,28 @@ const style = {
     }
 };
 
-export default class MyProgressBar extends Component {
-    render() {
-        return (
-            <div>
-                {
-                    (this.props.visible === true) ? <div style={style.progress}>
-                            <LinearProgress mode="determinate" value={this.props.completed}/>
-                        </div> : null
-                }
+const MyProgressBar = ({visible, percentsProgress, statusMsg}) => {
 
-                <div style={style.notificationBar}>
-                    {this.props.status}
-                </div>
+    return (
+        <div>
+            {
+                (visible === true) ? <div style={style.progress}>
+                        <LinearProgress mode="determinate" value={percentsProgress}/>
+                    </div> : null
+            }
+
+            <div style={style.notificationBar}>
+                {statusMsg}
             </div>
-        )
-    }
-}
+        </div>
+    )
+};
+
+MyProgressBar.propTypes = {
+    percentsProgress: PropTypes.number.isRequired,
+    visible: PropTypes.bool.isRequired,
+    statusMsg: PropTypes.string.isRequired,
+};
+
+export default MyProgressBar;
+

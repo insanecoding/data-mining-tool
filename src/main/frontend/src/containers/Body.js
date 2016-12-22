@@ -4,7 +4,7 @@ import RightSideItem from "./RightSideItem";
 import {Row, Col} from "react-grid-system";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import * as myActions from "./../actions/myActions";
+import * as formActions from "../actions/formActions";
 import PathChooser from "./../components/forms/PathChooser";
 
 const style = {
@@ -97,8 +97,8 @@ class Body extends Component {
     // postQuery('api/invoke', myObj).then((res) => {
     //     console.log(res);
     //     this.setState(
-    //         {
-    //             'finished' or 'cancelled'
+        //     {
+        //         'finished' or 'cancelled'
     // wsMsg: res.status,
     // completed: 0,
     // isStarted: false
@@ -193,28 +193,28 @@ class Body extends Component {
 
     render() {
 
-        const { myReducer } = this.props;
-        const { activeFormChanged, componentToggled, onInputChange } = this.props.myActions;
+        const { formReducer } = this.props;
+        const { activeFormChanged, componentToggled, onInputChange } = this.props.formActions;
 
         const pathChooserParam = {
             formName: "pathChooser",
-            cwd: myReducer.getIn(['pathChooser', 'cwd']),
+            cwd: formReducer.getIn(['pathChooser', 'cwd']),
             onInputChange: onInputChange,
         };
 
         const leftFormParam = {
-            components: this.extracted(myReducer),
+            components: this.extracted(formReducer),
             activeFormChanged: activeFormChanged,
             componentToggled: componentToggled,
         };
 
         const rightFormParam = {
-            number: myReducer.getIn(['formActive']),
-            archives: myReducer.getIn(['forms', 'uncompress', 'archives']),
-            userName: myReducer.getIn(['forms', 'import', 'userName']),
-            password: myReducer.getIn(['forms', 'import', 'password']),
-            dbName:  myReducer.getIn(['forms', 'import', 'dbName']),
-            port:  myReducer.getIn(['forms', 'import', 'port']),
+            number: formReducer.getIn(['formActive']),
+            archives: formReducer.getIn(['forms', 'uncompress', 'archives']),
+            userName: formReducer.getIn(['forms', 'import', 'userName']),
+            password: formReducer.getIn(['forms', 'import', 'password']),
+            dbName:  formReducer.getIn(['forms', 'import', 'dbName']),
+            port:  formReducer.getIn(['forms', 'import', 'port']),
             onInputChange: onInputChange,
         };
 
@@ -239,13 +239,13 @@ class Body extends Component {
 
 function mapStateToProps(state) {
     return {
-        myReducer: state.myReducer,
+        formReducer: state.formReducer,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        myActions: bindActionCreators(myActions, dispatch)
+        formActions: bindActionCreators(formActions, dispatch)
     }
 }
 

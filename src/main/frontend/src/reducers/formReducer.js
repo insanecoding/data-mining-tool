@@ -1,5 +1,5 @@
+import {initialState} from "./../store/initial";
 import {
-    SET_YEAR,
     FORM_CHANGED,
     GET_PHOTOS_REQUEST,
     GET_PHOTOS_SUCCESS,
@@ -7,9 +7,9 @@ import {
     COMPONENT_TOGGLED,
     FIELD_CHANGED
 } from "../constants/constants";
-import {initialState} from "./../store/initial";
 
-export default function page(state = initialState, action) {
+
+export default function processForm(state = initialState, action) {
     switch (action.type) {
 
         case ACTIVE_FORM_CHANGED:
@@ -32,9 +32,6 @@ export default function page(state = initialState, action) {
             else
                 // object has value
                 return state.setIn([rootObject, formName, fieldName], value);
-
-        case SET_YEAR:
-            return state.setIn(['year'], action.payload);
 
         case FORM_CHANGED: {
             const value = action.payload.getIn(['value']);

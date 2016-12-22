@@ -14,6 +14,10 @@ const RightSideForm_ImportList = ({formName, title, userName, password, dbName, 
         onInputChange(e.target.value, e.target.name, formName, "forms");
     };
 
+    const addBlacklist = () => {
+        alert("I was clicked");
+    };
+
     return(
         <GenericForm title={title}>
             <Row>
@@ -53,29 +57,32 @@ const RightSideForm_ImportList = ({formName, title, userName, password, dbName, 
             </Row>
 
             <List>
-                <Subheader inset={true}>Blacklists</Subheader>
+                <Subheader inset={true}>Press plus to add blacklist</Subheader>
                 <Row>
                     <Col md={2} xs={6}>
-                        <IconButton tooltip="Add item">
+                        <IconButton tooltip="Add item" onClick={addBlacklist}>
                             <FontIcon className="fa fa-plus"/>
                         </IconButton>
                     </Col>
                     <Col md={10} xs={12}>
-                        <ListItem primaryText={"Some blacklist #1"}
-                        rightIconButton={<IconButton tooltip="Remove item">
-                        <FontIcon className="fa fa-minus"/>
-                        </IconButton>}/>
 
-                        <ListItem primaryText={"Some blacklist #1"}
-                                  rightIconButton={<IconButton tooltip="Remove item">
-                                      <FontIcon className="fa fa-minus"/>
-                                  </IconButton>}/>
                     </Col>
                 </Row>
             </List>
         </GenericForm>
     );
 };
+
+
+{/*<ListItem primaryText={"Some blacklist #1"}*/}
+          // rightIconButton={<IconButton tooltip="Remove item">
+              {/*<FontIcon className="fa fa-minus"/>*/}
+          // </IconButton>}/>
+//
+{/*<ListItem primaryText={"Some blacklist #1"}*/}
+// rightIconButton={<IconButton tooltip="Remove item">
+//     <FontIcon className="fa fa-minus"/>
+// </IconButton>}/>
 
 RightSideForm_ImportList.propTypes = {
     title: PropTypes.string.isRequired,

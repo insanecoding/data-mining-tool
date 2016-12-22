@@ -33,5 +33,14 @@ export const initialState = Immutable.fromJS({
     },
     formActive: 0,
     hasValidationErrors: false,
-    started: false,
 });
+
+export const connectionInitialState = Immutable.fromJS({
+        started: true,
+        status: "Ready",
+        percentsProgress: 20,
+        isLoggingIn: false,
+        isLoggedIn: false,
+        error: null
+    }
+);

@@ -8,7 +8,6 @@ import {
 } from "../constants/constants";
 import Immutable from "immutable";
 
-
 export function activeFormChanged(formNumber) {
     return {
         type: ACTIVE_FORM_CHANGED,
