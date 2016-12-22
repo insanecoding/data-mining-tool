@@ -5,7 +5,6 @@ export default function connection(state = connectionInitialState, action) {
     switch (action.type) {
 
         case CONNECTION_SUCCESS:
-            console.log('inside reducer2', action);
             return state.setIn(['status'], action.payload);
 
         case CONNECTION_FAILED:

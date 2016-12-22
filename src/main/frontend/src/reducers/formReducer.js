@@ -7,6 +7,7 @@ import {
     COMPONENT_TOGGLED,
     FIELD_CHANGED
 } from "../constants/constants";
+import {isEmptyObject} from "./../util/misc";
 
 
 export default function processForm(state = initialState, action) {
@@ -26,11 +27,9 @@ export default function processForm(state = initialState, action) {
             const value = action.payload.getIn(['value']);
             const rootObject = action.payload.getIn(['rootObject']);
 
-            if (Object.keys(rootObject).length === 0)
-                // empty object
+            if (isEmptyObject(rootObject))
                 return state.setIn([formName, fieldName], value);
             else
-                // object has value
                 return state.setIn([rootObject, formName, fieldName], value);
 
         case FORM_CHANGED: {

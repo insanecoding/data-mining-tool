@@ -6,6 +6,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as formActions from "../actions/formActions";
 import PathChooser from "./../components/forms/PathChooser";
+import {mapToArray} from "./../util/misc";
 
 const style = {
     title: {
@@ -179,18 +180,6 @@ class Body extends Component {
     //     this.setState({[index]: !this.state[index]});
     // };
 
-    extracted(deeplyNestedObject) {
-        let plainArray = [];
-        deeplyNestedObject.getIn(['forms'])
-            .map( (k,v) => k.toObject())
-            .map( (k,v) => {
-                k.name = v;
-                return k;
-            }).map( k => plainArray.push(k));
-
-        return plainArray;
-    }
-
     render() {
 
         const { formReducer } = this.props;
@@ -203,7 +192,7 @@ class Body extends Component {
         };
 
         const leftFormParam = {
-            components: this.extracted(formReducer),
+            components: mapToArray(formReducer.getIn(['forms'])),
             activeFormChanged: activeFormChanged,
             componentToggled: componentToggled,
         };

@@ -2,7 +2,6 @@ package com.me.controller;
 
 import com.me.common.AsyncExecutor;
 import com.me.common.MyExecutable;
-import com.me.core.domain.dto.DTO;
 import com.me.core.service.importbl.BlacklistImporterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +51,12 @@ public class MyRestController {
     @PostMapping("invoke")
     public
     @ResponseBody
-    Map<String, String> invokeService(@RequestBody DTO dto) {
+    Map<String, String> invokeService(@RequestBody Map<String, String> dto) {
         logger.info(" >>> [post] client connected");
-        logger.info("data received: {}", dto);
+        dto.forEach( (k,v) -> logger.info("data received: {} : {}", k, v));
 
         decisionMaker(2);
-//        executor.invoke(executable, false);
+        executor.invoke(executable, false);
         Map<String, String> result = new LinkedHashMap<>();
 
         if (!cancelFlag) {

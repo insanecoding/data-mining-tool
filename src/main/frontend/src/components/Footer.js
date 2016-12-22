@@ -36,19 +36,28 @@ class Footer extends Component {
 
     select = (index) => this.setState({selectedIndex: index});
 
+    handleClick = (buttonName) => {
+        const { myConnect } = this.props.connectionActions;
+        const { formReducer } = this.props;
+
+        if (buttonName === "start") {
+            const myObj = {
+                cwd: formReducer.getIn(['pathChooser', 'cwd']),
+            };
+            myConnect("api/invoke", myObj);
+        } else if (buttonName === "cancel") {
+            myConnect("api/cancel");
+        }
+    };
+
     render() {
 
-        const { connectionReducer, formReducer} = this.props;
-        const { myConnect } = this.props.connectionActions;
+        const { connectionReducer} = this.props;
 
         const progressBarParam = {
             visible: connectionReducer.getIn(['started']),
             statusMsg: connectionReducer.getIn(['status']),
             percentsProgress: connectionReducer.getIn(['percentsProgress']),
-        };
-
-        const myObj = {
-            cwd: formReducer.getIn(['pathChooser', 'cwd']),
         };
 
         return (
@@ -57,11 +66,9 @@ class Footer extends Component {
 
                 <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Start" secondary={true}
-                                  style={style.buttons}
-                                  //{/*onClick={ myConnect("api/invoke", myObj)}*/}
-                    />
+                                  style={style.buttons} onClick={ () => this.handleClick("start") } />
                     <RaisedButton className={"button"} label="Pause" secondary={true}
-                                  style={style.buttons} onClick={ () => myConnect("api/invoke", myObj)}/>
+                                  style={style.buttons} onClick={() => this.handleClick("cancel")} />
                 </div>
                 <Paper zDepth={0}>
                     <BottomNavigation selectedIndex={this.state.selectedIndex}>
