@@ -38,7 +38,7 @@ export const initialState = Immutable.fromJS({
 export const connectionInitialState = Immutable.fromJS({
         started: true,
         status: "Ready",
-        percentsProgress: 20,
+        percentsProgress: 0,
         isLoggingIn: false,
         isLoggedIn: false,
         error: null

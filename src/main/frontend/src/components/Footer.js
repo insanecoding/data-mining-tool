@@ -8,6 +8,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as connectionActions from "../actions/connectionActions";
 import {mapToArray} from "./../util/misc";
+import {WebsocketClient} from "./../util/websocket";
 
 const recentsIcon = <FontIcon className="fa fa-undo"/>;
 const favoritesIcon = <FontIcon className="fa fa-heart"/>;
@@ -35,6 +36,25 @@ class Footer extends Component {
         };
     }
 
+    componentDidMount = () => {
+        this.websocketClient = new WebsocketClient();
+        this.websocketClient.connect(this.outputWebSocket);
+    };
+
+    componentWillUnmount = () => {
+        this.websocketClient.disconnect();
+        this.websocketClient = null;
+    };
+
+    outputWebSocket = (resp) => {
+        const { onWebsocketMessage } = this.props.connectionActions;
+        const response = JSON.parse(resp.body);
+        console.log("response is: ", response);
+        const status = response.info + " (" + response.progress + "%)";
+        const percentsProgress = response.progress;
+        onWebsocketMessage(status, percentsProgress);
+    };
+
     select = (index) => this.setState({selectedIndex: index});
 
     handleClick = (buttonName) => {
@@ -43,6 +63,7 @@ class Footer extends Component {
 
         if (buttonName === "start") {
             const myObj = mapToArray(formReducer.getIn(['forms']));
+            this.websocketClient.send();
             executePostQuery("api/invoke", myObj);
         } else if (buttonName === "cancel") {
             executeGetQuery("api/cancel");

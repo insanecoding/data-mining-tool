@@ -1,5 +1,6 @@
-import {CONNECTION_FAILED, CONNECTION_SUCCESS} from "../constants/constants";
+import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE} from "../constants/constants";
 import {postQuery, getQuery} from "./../util/rest";
+import Immutable from "immutable";
 
 // Simple pure action creator
 export function connectionFailure(error) {
@@ -36,4 +37,14 @@ export function executeGetQuery(api) {
             error => dispatch(connectionFailure(error))
         )
     };
+}
+
+export function onWebsocketMessage(status, percentsProgress) {
+    return {
+        type: WEBSOCKET_MESSAGE,
+        payload: Immutable.Map({
+            status: status,
+            percentsProgress: percentsProgress,
+        })
+    }
 }
