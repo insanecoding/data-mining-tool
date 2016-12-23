@@ -1,5 +1,5 @@
 import {connectionInitialState} from "./../store/initial";
-import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE} from "../constants/constants";
+import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE, IS_APP_STARTED} from "../constants/constants";
 
 export default function connection(state = connectionInitialState, action) {
     switch (action.type) {
@@ -15,6 +15,9 @@ export default function connection(state = connectionInitialState, action) {
             const status = action.payload.getIn(['status']);
             const percentsProgress = action.payload.getIn(['percentsProgress']);
             return state.setIn(['status'], status).setIn(['percentsProgress'], percentsProgress);
+
+        case IS_APP_STARTED:
+            return state.setIn(['started'], action.payload);
 
         default:
             return state;

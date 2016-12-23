@@ -1,8 +1,7 @@
-import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE} from "../constants/constants";
+import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE, IS_APP_STARTED} from "../constants/constants";
 import {postQuery, getQuery} from "./../util/rest";
 import Immutable from "immutable";
 
-// Simple pure action creator
 export function connectionFailure(error) {
     return {
         type: CONNECTION_FAILED,
@@ -10,7 +9,6 @@ export function connectionFailure(error) {
     };
 }
 
-// Another simple pure action creator
 export function connectionSuccess(status, percentsProgress) {
     return {
         type: CONNECTION_SUCCESS,
@@ -21,17 +19,21 @@ export function connectionSuccess(status, percentsProgress) {
     };
 }
 
+// e.g: start button
 export function executePostQuery(api, object = {}) {
     return dispatch => {
+        dispatch(isAppStarted(true));
         postQuery(api, object).then(
             json => dispatch(connectionSuccess(json.status, json.percentsProgress)),
             error => dispatch(connectionFailure(error))
-        )
+        ).then( () => dispatch(isAppStarted(false)));
     };
 }
 
+// e.g: cancel button
 export function executeGetQuery(api) {
     return dispatch => {
+        dispatch(isAppStarted(false));
         getQuery(api).then(
             json => {
                 if (json !== undefined)
@@ -49,5 +51,12 @@ export function onWebsocketMessage(status, percentsProgress) {
             status: status,
             percentsProgress: percentsProgress,
         })
+    }
+}
+
+export function isAppStarted(started) {
+    return {
+        type: IS_APP_STARTED,
+        payload: started
     }
 }

@@ -80,15 +80,21 @@ class Footer extends Component {
             percentsProgress: connectionReducer.getIn(['percentsProgress']),
         };
 
+        const disableStart = connectionReducer.getIn(['started']);
+        const disableCancel = !disableStart;
+
+
         return (
             <div>
                 <MyProgressBar {...progressBarParam}/>
 
                 <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Start" secondary={true}
-                                  style={style.buttons} onClick={ () => this.handleClick("start") } />
+                                  style={style.buttons} onClick={ () => this.handleClick("start") }
+                                  disabled={disableStart}/>
                     <RaisedButton className={"button"} label="Pause" secondary={true}
-                                  style={style.buttons} onClick={() => this.handleClick("cancel")} />
+                                  style={style.buttons} onClick={() => this.handleClick("cancel")}
+                                  disabled={disableCancel}/>
                 </div>
                 <Paper zDepth={0}>
                     <BottomNavigation selectedIndex={this.state.selectedIndex}>
