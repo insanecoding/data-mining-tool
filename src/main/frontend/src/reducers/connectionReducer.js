@@ -5,7 +5,8 @@ export default function connection(state = connectionInitialState, action) {
     switch (action.type) {
 
         case CONNECTION_SUCCESS:
-            return state.setIn(['status'], action.payload);
+            return state.setIn(['status'], action.payload.getIn(['status']))
+                .setIn(['percentsProgress'], action.payload.getIn(['percentsProgress']));
 
         case CONNECTION_FAILED:
             return state.setIn(['error'], action.payload);

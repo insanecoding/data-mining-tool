@@ -3,6 +3,7 @@ package com.me.controller;
 import com.me.common.AsyncExecutor;
 import com.me.common.MyExecutable;
 import com.me.core.service.importbl.BlacklistImporterService;
+import com.me.core.service.importbl.MockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,14 @@ public class MyRestController {
     private MyExecutable executable;
     private boolean cancelFlag = false;
     private final BlacklistImporterService importerService;
+    private final MockService mockService;
 
     @Autowired
     public MyRestController(AsyncExecutor executor,
-                            BlacklistImporterService importerService) {
+                            BlacklistImporterService importerService, MockService mockService) {
         this.executor = executor;
         this.importerService = importerService;
+        this.mockService = mockService;
     }
 
     @GetMapping("cancel")
@@ -39,11 +42,11 @@ public class MyRestController {
     @PostMapping("invoke")
     public
     @ResponseBody
-    Map<String, String> invokeService(@RequestBody List<Map<String, String>> dto) {
+    Map<String, Object> invokeService(@RequestBody List<Map<String, String>> dto) {
         outputClientData(dto);
-        decisionMaker(2);
+        decisionMaker(1);
         executor.invoke(executable, false);
-        Map<String, String> result = new LinkedHashMap<>();
+        Map<String, Object> result = new LinkedHashMap<>();
 
         if (!cancelFlag) {
             result.put("status", "finished");
@@ -51,6 +54,7 @@ public class MyRestController {
             cancelFlag = false;
             result.put("status", "cancelled");
         }
+        result.put("percentsProgress", 0);
         return result;
     }
 
@@ -64,7 +68,9 @@ public class MyRestController {
     }
 
     private void decisionMaker(int num) {
-        if (num == 2)
+        if (num == 1) {
+            executable = mockService;
+        } else if (num == 2)
             executable = importerService;
         else
             executable = null;

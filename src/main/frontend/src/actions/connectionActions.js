@@ -11,17 +11,20 @@ export function connectionFailure(error) {
 }
 
 // Another simple pure action creator
-export function connectionSuccess(status) {
+export function connectionSuccess(status, percentsProgress) {
     return {
         type: CONNECTION_SUCCESS,
-        payload: status
+        payload:Immutable.Map({
+            status: status,
+            percentsProgress: percentsProgress,
+        })
     };
 }
 
 export function executePostQuery(api, object = {}) {
     return dispatch => {
         postQuery(api, object).then(
-            json => dispatch(connectionSuccess(json.status)),
+            json => dispatch(connectionSuccess(json.status, json.percentsProgress)),
             error => dispatch(connectionFailure(error))
         )
     };
