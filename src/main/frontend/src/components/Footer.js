@@ -9,6 +9,7 @@ import {connect} from "react-redux";
 import * as connectionActions from "../actions/connectionActions";
 import {mapToArray} from "./../util/misc";
 import {WebsocketClient} from "./../util/websocket";
+import AlertDialog from "./AlertDialog";
 
 const recentsIcon = <FontIcon className="fa fa-undo"/>;
 const favoritesIcon = <FontIcon className="fa fa-heart"/>;
@@ -33,8 +34,13 @@ class Footer extends Component {
 
         this.state = {
             selectedIndex: 0,
+            dialogOpen: false,
         };
     }
+
+    handleClose = () => {
+        this.setState({dialogOpen: false});
+    };
 
     componentDidMount = () => {
         this.websocketClient = new WebsocketClient();
@@ -63,10 +69,20 @@ class Footer extends Component {
 
         if (buttonName === "start") {
             const myObj = mapToArray(formReducer.getIn(['forms']));
-            this.websocketClient.send();
-            executePostQuery("api/invoke", myObj);
+            // extract 'isOn' properties from left side slider elements
+            // transform array into string
+            // join by whitespaces and check whether contains "false true"
+            // this combination stands for prohibited application state,
+            // when components aren't toggled one by one
+            const newVals = myObj.map( object => object.isOn).join(' ').includes("false true");
+            if (newVals === true)
+                this.setState({dialogOpen: true});
+
+            console.log(newVals);
+            // this.websocketClient.send();
+            // executePostQuery("api/invoke", myObj);
         } else if (buttonName === "cancel") {
-            executeGetQuery("api/cancel");
+            // executeGetQuery("api/cancel");
         }
     };
 
@@ -92,7 +108,7 @@ class Footer extends Component {
                     <RaisedButton className={"button"} label="Start" secondary={true}
                                   style={style.buttons} onClick={ () => this.handleClick("start") }
                                   disabled={disableStart}/>
-                    <RaisedButton className={"button"} label="Pause" secondary={true}
+                    <RaisedButton className={"button"} label="Cancel" secondary={true}
                                   style={style.buttons} onClick={() => this.handleClick("cancel")}
                                   disabled={disableCancel}/>
                 </div>
@@ -115,6 +131,9 @@ class Footer extends Component {
                         />
                     </BottomNavigation>
                 </Paper>
+                <AlertDialog title="Warning!" type="alert" handleClose={this.handleClose} isOpen={this.state.dialogOpen}>
+                    Incorrect modules configuration! They should go one-by-one!
+                </AlertDialog>
             </div>
         )
     }
