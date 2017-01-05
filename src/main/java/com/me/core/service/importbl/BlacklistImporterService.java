@@ -3,32 +3,26 @@ package com.me.core.service.importbl;
 import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
-import com.me.core.domain.dto.ConfigEntry;
+import com.me.core.domain.dto.BlacklistProperty;
 import com.me.core.domain.entities.Blacklist;
-import com.me.core.service.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 @PropertySource("classpath:settings.properties")
 public class BlacklistImporterService extends StoppableObservable implements MyExecutable {
 
-    @Getter
-    @Setter
-    @Value("${app.working.dir}//blacklists.json")
-    private String jsonConfigPath;
-
-    @Getter
-    @Setter
-    @Value("${app.working.dir}//blacklists2//uncompressed//")
+    @Getter @Setter
     private String blacklistsPath;
+
+    private List<BlacklistProperty> blacklistProperties;
 
     @Getter
     private final AddBehaviour addBehaviour;
@@ -41,18 +35,22 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
     }
 
     public void importAll() throws Exception {
-        List<ConfigEntry> blacklistsConfig = Utils.parseJson(jsonConfigPath);
-        for (ConfigEntry configEntry : blacklistsConfig) {
-            String filePath = blacklistsPath + "/" + configEntry.getFolderName();
-            Blacklist blacklist = configEntry.getBlacklist();
+        for (BlacklistProperty blacklistProperty : blacklistProperties) {
+            Blacklist blacklist = blacklistProperty.getBlacklist();
 
             super.updateMetaCheck("doing task for: " + blacklist.getBlacklistName());
-            addBehaviour.importBlacklist(blacklist, filePath);
+            addBehaviour.importBlacklist(blacklist, blacklistProperty.getPathName());
         }
     }
 
     @Override
-    public void execute(Object... args) throws Exception {
+    public void execute() throws Exception {
         importAll();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void initialize(Map<String, Object> param) {
+        this.blacklistProperties = (List<BlacklistProperty>) param.get("blacklists");
     }
 }

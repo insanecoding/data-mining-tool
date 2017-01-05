@@ -2,11 +2,11 @@ import React, {Component, PropTypes} from "react";
 import TextField from "material-ui/TextField";
 import FontIcon from "material-ui/FontIcon";
 
-const style = {
-    inputField: {
-        width: "80%"
-    },
-};
+// const style = {
+//     inputField: {
+        // width: "80%"
+    // },
+// };
 class AdvancedTextField extends Component {
 
     constructor(props) {
@@ -58,7 +58,7 @@ class AdvancedTextField extends Component {
     };
 
     render() {
-        const { placeHolder, pattern, label, type, fieldName, value, onChangeEvent } = this.props;
+        const { placeHolder, pattern, label, type, fieldName, value, onChangeEvent, style } = this.props;
         return (
             <div>
                 <TextField
@@ -70,7 +70,7 @@ class AdvancedTextField extends Component {
                     value={value}
                     type={type}
                     onChange={onChangeEvent}
-                    style={style.inputField}
+                    style={style || {width: "80%"}}
                 />
 
                 { this.showValidationResult(this.state.isValid)}
@@ -88,7 +88,7 @@ AdvancedTextField.propTypes = {
     type: PropTypes.string,
     value: PropTypes.any.isRequired,
     onChangeEvent: PropTypes.func.isRequired,
+    style: PropTypes.object
 };
 
 export default AdvancedTextField;
-

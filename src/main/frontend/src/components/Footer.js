@@ -11,9 +11,9 @@ import {mapToArray} from "./../util/misc";
 import {WebsocketClient} from "./../util/websocket";
 import AlertDialog from "./AlertDialog";
 
-const recentsIcon = <FontIcon className="fa fa-undo"/>;
-const favoritesIcon = <FontIcon className="fa fa-heart"/>;
-const nearbyIcon = <FontIcon className="fa fa-location-arrow"/>;
+const recentsIcon = <FontIcon className="fa fa-home"/>;
+const favoritesIcon = <FontIcon className="fa fa-flask"/>;
+const nearbyIcon = <FontIcon className="fa fa-bar-chart"/>;
 
 const style = {
     buttons: {
@@ -63,26 +63,30 @@ class Footer extends Component {
 
     select = (index) => this.setState({selectedIndex: index});
 
+    validateExecutionOrder = (myObj) => {
+        // transform array into string
+        const asArray = mapToArray(myObj).map( object => object.isOn);
+        // join by whitespaces
+        const toStr  = asArray.join(' ');
+        console.log(toStr);
+        // check whether contains some combinations of toggles that are prohibited
+        return(toStr.includes("true false true") || toStr.includes("false false false"));
+    };
+
     handleClick = (buttonName) => {
         const { executePostQuery, executeGetQuery } = this.props.connectionActions;
         const { formReducer } = this.props;
 
         if (buttonName === "start") {
-            const myObj = mapToArray(formReducer.getIn(['forms']));
-            // extract 'isOn' properties from left side slider elements
-            // transform array into string
-            // join by whitespaces and check whether contains "false true"
-            // this combination stands for prohibited application state,
-            // when components aren't toggled one by one
-            const newVals = myObj.map( object => object.isOn).join(' ').includes("false true");
-            if (newVals === true)
+            const myObj = formReducer.getIn(['forms']);
+            if (this.validateExecutionOrder(myObj)) {
                 this.setState({dialogOpen: true});
-
-            console.log(newVals);
-            // this.websocketClient.send();
-            // executePostQuery("api/invoke", myObj);
+            } else {
+                this.websocketClient.send();
+                executePostQuery("api/invoke", myObj);
+            }
         } else if (buttonName === "cancel") {
-            // executeGetQuery("api/cancel");
+            executeGetQuery("api/cancel");
         }
     };
 
@@ -115,7 +119,7 @@ class Footer extends Component {
                 <Paper zDepth={0}>
                     <BottomNavigation selectedIndex={this.state.selectedIndex}>
                         <BottomNavigationItem
-                            label="Check website"
+                            label="Main page"
                             icon={recentsIcon}
                             onTouchTap={() => this.select(0)}
                         />
@@ -131,8 +135,8 @@ class Footer extends Component {
                         />
                     </BottomNavigation>
                 </Paper>
-                <AlertDialog title="Warning!" type="alert" handleClose={this.handleClose} isOpen={this.state.dialogOpen}>
-                    Incorrect modules configuration! They should go one-by-one!
+                <AlertDialog title="Warning!" type="alert" handleCloseOk={this.handleClose} isOpen={this.state.dialogOpen}>
+                    Incorrect modules configuration! At least one should be selected or they don't go one-by-one!
                 </AlertDialog>
             </div>
         )

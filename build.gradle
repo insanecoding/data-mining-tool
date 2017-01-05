@@ -57,11 +57,11 @@ dependencies {
     // misc
     compile('org.springframework.boot:spring-boot-starter-aop')
     optional('org.springframework.boot:spring-boot-devtools')
-    compileOnly('org.projectlombok:lombok')
+    compileOnly('org.projectlombok:lombok:1.16.12')
     compile('com.google.guava:guava:20.0')
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
-
+    compile 'org.rauschig:jarchivelib:0.7.1'
     // test
     testCompile('org.springframework.boot:spring-boot-starter-test')
     //    logging
@@ -79,8 +79,8 @@ configurations {
 /**
  * make sure that node, npm, yarn and everything from package.json is installed
  */
-task installFrontendDeps(type: YarnTask) {
-    // 'yarn install' command
+task installFrontendDeps(type: NpmTask) {
+    // 'npm install' command
     args = ['install']
     execOverrides {
         it.workingDir = "${project.projectDir}/src/main/frontend"
@@ -90,9 +90,9 @@ task installFrontendDeps(type: YarnTask) {
 /**
  * transpile all JS into ES5, concatenate JS and CSS into production-ready files
  */
-task buildProduction(type: YarnTask) {
-    // 'yarn build' command
-    args = ['build']
+task buildProduction(type: NpmTask) {
+    // 'npm run build' command
+    args = ['run', 'build']
     execOverrides {
         it.workingDir = "${project.projectDir}/src/main/frontend"
     }
@@ -132,7 +132,7 @@ keepOrder(allTasks)
 
 // only frontend assets
 def reloadFrontend = ['buildProduction',  'deleteAssets',
-                      'copyTask'];
+                      'copyTask']
 task updateFrontend(dependsOn: reloadFrontend)
 keepOrder(reloadFrontend)
 
@@ -142,9 +142,6 @@ node {
 
     // Version of npm to use.
     npmVersion = '3.10.10'
-
-    // Version of Yarn to use.
-    yarnVersion = '0.17.10'
 
     // Base URL for fetching node distributions (change if you have a mirror).
     distBaseUrl = 'https://nodejs.org/dist'
@@ -158,9 +155,6 @@ node {
 
     // Set the work directory for NPM
     npmWorkDir = file("${project.buildDir}/npm")
-
-    // Set the work directory for Yarn
-    yarnWorkDir = file("${project.buildDir}/yarn")
 
     // Set the work directory where node_modules should be located
     nodeModulesDir = file("${project.projectDir}")

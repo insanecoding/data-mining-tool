@@ -5,7 +5,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 
 @Component
-
 public class WebSocketMessageSender {
 
     private SimpMessageSendingOperations simpMessageSendingOperations;

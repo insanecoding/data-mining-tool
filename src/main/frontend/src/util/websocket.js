@@ -18,7 +18,7 @@ export class WebsocketClient {
     };
 
     disconnect = () => {
-        if (this.stompClient != null) {
+        if (this.stompClient !== null) {
             this.stompClient.disconnect();
         }
         console.log("Disconnected");

@@ -43,7 +43,8 @@ public class FileSystemAddBehaviour extends StoppableObservable implements AddBe
     }
 
     @Override
-    public void importBlacklist(Blacklist blacklist, String path) throws Exception {
+    public void importBlacklist(Blacklist blacklist1, String path) throws Exception {
+        Blacklist blacklist = dao.trySaveBlacklist(blacklist1);
         try (Stream<Path> domainFilesStream = getAllDomainFiles(path)) {
             // transform stream into list
             List<Path> domainFiles = domainFilesStream.collect(Collectors.toList());

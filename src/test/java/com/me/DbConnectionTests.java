@@ -3,7 +3,9 @@ package com.me;
 import com.me.core.domain.entities.Blacklist;
 import com.me.core.domain.entities.Category;
 import com.me.core.domain.entities.Website;
+import com.me.core.service.dao.DbCreationUtility;
 import com.me.core.service.dao.MyDao;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("dev")
-public class DataMiningToolApplicationTests {
+public class DbConnectionTests {
 
     @Autowired
     private MyDao myDao;
@@ -31,10 +35,10 @@ public class DataMiningToolApplicationTests {
     private Long countWebsites() {
         String sql = "SELECT count(*) FROM websites";
         return jdbcTemplate.queryForObject(
-                sql, new Object[] {}, Long.class);
+                sql, new Object[]{}, Long.class);
     }
 
-    @Test
+    @Test @Ignore
     public void testSaveToDb() throws InterruptedException {
 
 
@@ -51,5 +55,20 @@ public class DataMiningToolApplicationTests {
         }
         assertThat(myDao.countDuplicates()).isEqualTo(0);
         assertThat(countWebsites()).isEqualTo(100_000);
+    }
+
+    @Test
+    public void testConnection() {
+        assertTrue(DbCreationUtility.dbExists("jdbc:postgresql://localhost:5432/Website_Classification",
+                "postgres", "postgresql"));
+        assertFalse(DbCreationUtility.dbExists("jdbc:postgresql://localhost:5433/Website_Classification",
+                "postgres", "postgresql"));
+        assertFalse(DbCreationUtility.dbExists("jdbc:postgresql://dggdgd:34355/dgdggd",
+                "zfxcxc", "postgrsffssfsfesql"));
+    }
+
+    @Test
+    public void testCreateDb() {
+
     }
 }

@@ -35,7 +35,8 @@ class Body extends Component {
     render() {
 
         const { formReducer } = this.props;
-        const { activeFormChanged, componentToggled, onInputChange } = this.props.formActions;
+        const { activeFormChanged, componentToggled,
+            onInputChange, blacklists, addBlacklist, onBlacklistDelete } = this.props.formActions;
 
         const pathChooserParam = {
             formName: "pathChooser",
@@ -51,12 +52,14 @@ class Body extends Component {
 
         const rightFormParam = {
             number: formReducer.getIn(['formActive']),
-            archives: formReducer.getIn(['forms', 'uncompress', 'archives']),
             userName: formReducer.getIn(['forms', 'import', 'userName']),
             password: formReducer.getIn(['forms', 'import', 'password']),
             dbName:  formReducer.getIn(['forms', 'import', 'dbName']),
             port:  formReducer.getIn(['forms', 'import', 'port']),
             onInputChange: onInputChange,
+            blacklists: formReducer.getIn(['forms', 'import', 'blacklists']).toArray(),
+            addBlacklist: addBlacklist,
+            onBlacklistDelete: onBlacklistDelete
         };
 
         return (

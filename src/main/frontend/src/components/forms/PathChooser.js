@@ -1,6 +1,11 @@
 import React, {PropTypes} from "react";
 import AdvancedTextField from "./../AdvancedTextField";
 
+const style = {
+    inputField: {
+        width: "90%"
+    },
+};
 
 const PathChooser = ({formName, cwd, onInputChange}) => {
 
@@ -11,6 +16,7 @@ const PathChooser = ({formName, cwd, onInputChange}) => {
     return (
         <div>
             <AdvancedTextField placeHolder="C:\path\to\my\dir\"
+                               style={style.inputField}
                                pattern={"path"}
                                label={"Please, specify working directory"}
                                fieldName={"cwd"}

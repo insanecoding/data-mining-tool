@@ -18,5 +18,3 @@ public interface Executable {
      */
     void execute(Object... args) throws Exception;
 }
-
-// todo: create cancel with support for multiple rerun

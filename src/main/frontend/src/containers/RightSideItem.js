@@ -1,7 +1,7 @@
 import React, {PropTypes} from "react";
-import {FormWelcome, FormUncompress, FormImport, FormFeatures, FormExperiment} from "./../components/forms/index";
+import {FormWelcome, FormImport, FormFeatures, FormExperiment} from "./../components/forms/index";
 
-const RightSideItem = ({number, archives, userName, password, dbName, port, onInputChange}) => {
+const RightSideItem = ({number, userName, password, dbName, port, blacklists, addBlacklist, onInputChange, onBlacklistDelete}) => {
 
     const formChooser = (index) => {
 
@@ -9,15 +9,13 @@ const RightSideItem = ({number, archives, userName, password, dbName, port, onIn
             case 0:
                 return <FormWelcome title={"Click components to see settings"}/>;
             case 1:
-                return <FormUncompress title="Uncompress settings" formName="uncompress"
-                                       onInputChange={onInputChange} archives={archives}/>;
-            case 2:
                 return <FormImport title="Import blacklist" formName="import"
-                                   userName={userName} password={password}
-                                   dbName={dbName} port={port} onInputChange={onInputChange}/>;
-            case 3:
+                                   userName={userName} password={password} dbName={dbName}
+                                   port={port} onInputChange={onInputChange}
+                                   addBlacklist={addBlacklist} blacklists={blacklists} onBlacklistDelete={onBlacklistDelete}/>;
+            case 2:
                 return <FormFeatures/>;
-            case 4:
+            case 3:
                 return <FormExperiment/>;
             default:
                 return null;
@@ -33,12 +31,14 @@ const RightSideItem = ({number, archives, userName, password, dbName, port, onIn
 
 RightSideItem.propTypes = {
     number: PropTypes.number.isRequired,
-    archives: PropTypes.string.isRequired,
     userName: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     dbName: PropTypes.string.isRequired,
     port: PropTypes.number.isRequired,
     onInputChange: PropTypes.func.isRequired,
+    addBlacklist: PropTypes.func.isRequired,
+    blacklists: PropTypes.array.isRequired,
+    onBlacklistDelete: PropTypes.func.isRequired
 };
 
 export default RightSideItem;

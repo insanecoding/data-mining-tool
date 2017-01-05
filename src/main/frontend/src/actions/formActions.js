@@ -1,4 +1,10 @@
-import {ACTIVE_FORM_CHANGED, COMPONENT_TOGGLED, FIELD_CHANGED} from "../constants/constants";
+import {
+    ACTIVE_FORM_CHANGED,
+    COMPONENT_TOGGLED,
+    FIELD_CHANGED,
+    DIALOG_SUBMIT,
+    ON_BLACKLIST_DELETE
+} from "../constants/constants";
 import Immutable from "immutable";
 
 export function activeFormChanged(formNumber) {
@@ -24,5 +30,23 @@ export function onInputChange(value, fieldName, formName, rootObject = {}) {
             value: value,
             rootObject: rootObject,
         })
+    }
+}
+
+export function addBlacklist (subDir, blacklistName, blacklistUrl) {
+    return {
+        type: DIALOG_SUBMIT,
+        payload: Immutable.Map({
+            listName: blacklistName,
+            folderName: subDir,
+            website: blacklistUrl
+        })
+    }
+}
+
+export function onBlacklistDelete (key) {
+    return {
+        type: ON_BLACKLIST_DELETE,
+        payload: key
     }
 }

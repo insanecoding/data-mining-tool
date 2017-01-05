@@ -1,5 +1,6 @@
 package com.me.core.service.dao;
 
+import com.me.core.domain.entities.Blacklist;
 import com.me.core.domain.entities.Category;
 import com.me.core.domain.entities.Website;
 
@@ -14,6 +15,8 @@ public interface MyDao {
     void batchSaveWebsites(List<Website> websites) throws InterruptedException;
 
     Category trySaveCategory(Category category);
+
+    Blacklist trySaveBlacklist(Blacklist blacklist);
 
     Category findCategory(Category category);
 

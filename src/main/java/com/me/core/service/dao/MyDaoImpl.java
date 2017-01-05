@@ -1,8 +1,10 @@
 package com.me.core.service.dao;
 
 import com.me.common.StoppableObservable;
+import com.me.core.domain.entities.Blacklist;
 import com.me.core.domain.entities.Category;
 import com.me.core.domain.entities.Website;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
 
 @Repository("myDaoImpl")
 @Transactional
+@Slf4j
 public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @Value("${spring.jpa.properties.hibernate.jdbc.batch_size}")
@@ -28,15 +31,18 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     private final CategoryRepo categoryRepo;
     private final WebsiteRepo websiteRepo;
     private final JdbcTemplate jdbcTemplate;
+    private final BlacklistRepo blacklistRepo;
 
     @Autowired
     public MyDaoImpl(SessionFactory sessionFactory,
                      @Qualifier("categoryRepo") CategoryRepo categoryRepo,
-                     @Qualifier("websiteRepo") WebsiteRepo websiteRepo, JdbcTemplate jdbcTemplate) {
+                     @Qualifier("websiteRepo") WebsiteRepo websiteRepo,
+                     JdbcTemplate jdbcTemplate, BlacklistRepo blacklistRepo) {
         this.sessionFactory = sessionFactory;
         this.categoryRepo = categoryRepo;
         this.websiteRepo = websiteRepo;
         this.jdbcTemplate = jdbcTemplate;
+        this.blacklistRepo = blacklistRepo;
     }
 
     @Override
@@ -79,6 +85,21 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         if (result == null) {
             // save and return
             return saveEntity(category);
+        } else {
+            // result is not null - entity already exists
+            // simply return
+            return result;
+        }
+    }
+
+    @Override
+    public Blacklist trySaveBlacklist(Blacklist blacklist) {
+        // check whether entity exists
+        Blacklist result = blacklistRepo.findByBlacklistName(blacklist.getBlacklistName());
+        // if entity hasn't existed yet
+        if (result == null) {
+            // save and return
+            return saveEntity(blacklist);
         } else {
             // result is not null - entity already exists
             // simply return
