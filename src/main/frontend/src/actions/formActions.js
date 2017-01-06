@@ -3,6 +3,7 @@ import {
     COMPONENT_TOGGLED,
     FIELD_CHANGED,
     DIALOG_SUBMIT,
+    DIALOG_EDIT,
     ON_BLACKLIST_DELETE
 } from "../constants/constants";
 import Immutable from "immutable";
@@ -37,6 +38,18 @@ export function addBlacklist (subDir, blacklistName, blacklistUrl) {
     return {
         type: DIALOG_SUBMIT,
         payload: Immutable.Map({
+            listName: blacklistName,
+            folderName: subDir,
+            website: blacklistUrl
+        })
+    }
+}
+
+export function editBlacklist (key, subDir, blacklistName, blacklistUrl) {
+    return {
+        type: DIALOG_EDIT,
+        payload: Immutable.Map({
+            key: key,
             listName: blacklistName,
             folderName: subDir,
             website: blacklistUrl

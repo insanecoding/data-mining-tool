@@ -4,7 +4,8 @@ import {
     COMPONENT_TOGGLED,
     FIELD_CHANGED,
     DIALOG_SUBMIT,
-    ON_BLACKLIST_DELETE
+    ON_BLACKLIST_DELETE,
+    DIALOG_EDIT
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
 
@@ -31,7 +32,7 @@ export default function processForm(state = initialState, action) {
             else
                 return state.setIn([rootObject, formName, fieldName], value);
 
-        case DIALOG_SUBMIT:
+        case DIALOG_SUBMIT: {
             const payload = action.payload;
             // create absolute path from current dir + relative dir
             const cwd = state.getIn(['pathChooser', 'cwd']);
@@ -44,11 +45,31 @@ export default function processForm(state = initialState, action) {
             // add absolute blacklist folder and generated key
             const blacklistData =
                 payload.setIn(['folderName'], absolutePath)
-                .set('key', ++lastKey);
+                    .set('key', ++lastKey);
             // update list
             const newList = currBlacklistsArray.push(blacklistData);
             // merge changes
             return state.setIn(['forms', 'import', 'blacklists'], newList);
+        }
+
+        case DIALOG_EDIT: {
+            const payload = action.payload;
+            const keyOfModified = payload.getIn(['key']);
+            let blacklists = state.getIn(['forms', 'import', 'blacklists']);
+            // find blacklist that was edited and its index in the array
+            const oldValue = blacklists.filter( elem => elem.getIn(['key']) === keyOfModified).first();
+            const index = blacklists.indexOf(oldValue);
+            // assign all updated values
+            const newVal = oldValue.setIn(['listName'], payload.getIn(['listName']))
+                .setIn(['folderName'], payload.getIn(['folderName']))
+                .setIn(['website'], payload.getIn(['website']));
+            // change old value at index into new value
+            blacklists = blacklists.update(index, item => item.merge(newVal));
+            console.log("after merge: ", blacklists);
+            return state.setIn(['forms', 'import', 'blacklists'], blacklists);
+            //// setIn(['forms', 'import', 'blacklists', keyOfModified], newVal);
+            // return state;
+        }
 
         case ON_BLACKLIST_DELETE:
             const key = action.payload;

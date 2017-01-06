@@ -1,7 +1,8 @@
 import React, {PropTypes} from "react";
 import {FormWelcome, FormImport, FormFeatures, FormExperiment} from "./../components/forms/index";
 
-const RightSideItem = ({number, userName, password, dbName, port, blacklists, addBlacklist, onInputChange, onBlacklistDelete}) => {
+const RightSideItem = ({number, userName, password, dbName, port,
+blacklists, addBlacklist, editBlacklist, onInputChange, onBlacklistDelete, formStore}) => {
 
     const formChooser = (index) => {
 
@@ -12,7 +13,8 @@ const RightSideItem = ({number, userName, password, dbName, port, blacklists, ad
                 return <FormImport title="Import blacklist" formName="import"
                                    userName={userName} password={password} dbName={dbName}
                                    port={port} onInputChange={onInputChange}
-                                   addBlacklist={addBlacklist} blacklists={blacklists} onBlacklistDelete={onBlacklistDelete}/>;
+                                   addBlacklist={addBlacklist} blacklists={blacklists}
+                                   onBlacklistDelete={onBlacklistDelete} formStore={formStore} editBlacklist={editBlacklist}/>;
             case 2:
                 return <FormFeatures/>;
             case 3:
@@ -37,8 +39,10 @@ RightSideItem.propTypes = {
     port: PropTypes.number.isRequired,
     onInputChange: PropTypes.func.isRequired,
     addBlacklist: PropTypes.func.isRequired,
+    editBlacklist: PropTypes.func.isRequired,
     blacklists: PropTypes.array.isRequired,
-    onBlacklistDelete: PropTypes.func.isRequired
+    onBlacklistDelete: PropTypes.func.isRequired,
+    formStore: PropTypes.object.isRequired,
 };
 
 export default RightSideItem;

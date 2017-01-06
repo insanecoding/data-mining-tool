@@ -27,27 +27,13 @@ class RightSideForm_ImportList extends Component {
     static init() {
         return {
             isOpen: false,
-            subDir: "\\blacklists\\name\\",
-            blacklistName: "blacklist name",
-            blacklistUrl: "http://blacklist.com"
+            folderName: "\\blacklists\\name\\",
+            listName: "blacklist name",
+            website: "http://blacklist.com",
+            editMode: false,
+            modifiedId: -1
         };
     }
-
-    // listGenerator = (elements) => {
-    //     return (
-    //         elements.map(elem =>
-    //             <p key={elements.indexOf(elem)}>
-    //                 {elem.getIn(['key'])}
-    //                 <br/>
-    //                 {elem.getIn(['folderName'])}
-    //                 <br/>
-    //                 {elem.getIn(['listName'])}
-    //                 <br/>
-    //                 {elem.getIn(['website'])}
-    //             </p>)
-    //     );
-    // };
-
 
     onChange = (e) => {
         this.setState({
@@ -56,13 +42,23 @@ class RightSideForm_ImportList extends Component {
     };
 
     addBlacklist = () => {
+        // open dialog
         this.setState({isOpen: true});
     };
 
     handleCloseOk = () => {
+        // close dialog window
         this.setState({isOpen: false});
-        this.props.addBlacklist(this.state.subDir, this.state.blacklistName,
-            this.state.blacklistUrl);
+        // call action with state's parameters
+        if (!this.state.editMode) {
+            this.props.addBlacklist(this.state.folderName, this.state.listName,
+                this.state.website);
+        } else {
+            this.props.editBlacklist(this.state.modifiedId, this.state.folderName, this.state.listName,
+                this.state.website)
+        }
+
+        // reset dialog form data to initial values
         this.setState(RightSideForm_ImportList.init);
     };
 
@@ -79,8 +75,21 @@ class RightSideForm_ImportList extends Component {
         this.props.onBlacklistDelete(blacklistId);
     };
 
-    onEditAction = (e) => {
-        console.log("editing", e);
+    onEditAction = (blacklistId) => {
+        let foo = this.props.formStore.getIn(['forms', 'import', 'blacklists'])
+            .filter( elem => elem.getIn(['key']) === blacklistId).first();
+        const cwd = this.props.formStore.getIn(['pathChooser', 'cwd']);
+        // get relative path from full path and replace unnecessary double backslashes with single ones
+        let relativePath = foo.getIn(['folderName']).replace(cwd, "").replace(/\\\\/g, '\\');
+        
+        this.setState({
+            folderName: relativePath,
+            listName: foo.getIn(['listName']),
+            website: foo.getIn(['website']),
+            isOpen: true,
+            editMode: true,
+            modifiedId: foo.getIn(['key'])
+        });
     };
 
     render() {
@@ -95,8 +104,8 @@ class RightSideForm_ImportList extends Component {
                             <AdvancedTextField placeHolder="\list\sub\dir\"
                                                pattern={"path"}
                                                label={"blacklist subdirectory"}
-                                               fieldName={"subDir"}
-                                               value={this.state.subDir}
+                                               fieldName={"folderName"}
+                                               value={this.state.folderName}
                                                onChangeEvent={this.onChange}
                                                style={{width: "90%"}}
                             />
@@ -107,8 +116,8 @@ class RightSideForm_ImportList extends Component {
                             <AdvancedTextField placeHolder="blacklist name"
                                                pattern={"not_empty"}
                                                label={"Blacklist name"}
-                                               fieldName={"blacklistName"}
-                                               value={this.state.blacklistName}
+                                               fieldName={"listName"}
+                                               value={this.state.listName}
                                                onChangeEvent={this.onChange}
                             />
                         </Col>
@@ -116,8 +125,8 @@ class RightSideForm_ImportList extends Component {
                             <AdvancedTextField placeHolder="http://blacklist.url"
                                                pattern={"not_empty"}
                                                label={"blacklist url"}
-                                               fieldName={"blacklistUrl"}
-                                               value={this.state.blacklistUrl}
+                                               fieldName={"website"}
+                                               value={this.state.website}
                                                onChangeEvent={this.onChange}
                             />
                         </Col>
@@ -197,8 +206,10 @@ RightSideForm_ImportList.propTypes = {
     port: PropTypes.number.isRequired,
     onInputChange: PropTypes.func.isRequired,
     addBlacklist: PropTypes.func.isRequired,
+    editBlacklist: PropTypes.func.isRequired,
     blacklists: PropTypes.array.isRequired,
-    onBlacklistDelete: PropTypes.func.isRequired
+    onBlacklistDelete: PropTypes.func.isRequired,
+    formStore: PropTypes.object.isRequired,
 };
 
 export default RightSideForm_ImportList;
