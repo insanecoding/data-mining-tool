@@ -59,6 +59,7 @@ public class UncompressService extends StoppableObservable implements MyExecutab
             updateWorkingCheck("uncompressed: " + pathToCompressed,
                     compressed.indexOf(pathToCompressed) + 1, compressed.size());
         }
+        compressed.clear();
     }
 
     @Override
