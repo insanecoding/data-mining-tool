@@ -59,12 +59,17 @@ public class UncompressService extends StoppableObservable implements MyExecutab
             updateWorkingCheck("uncompressed: " + pathToCompressed,
                     compressed.indexOf(pathToCompressed) + 1, compressed.size());
         }
-        compressed.clear();
+//        compressed.clear();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
         this.compressed.addAll((List<String>) param.get("compressed"));
+    }
+
+    @Override
+    public void cleanUp(){
+        compressed.clear();
     }
 }

@@ -6,4 +6,6 @@ public interface MyExecutable {
     void execute() throws Exception;
 
     void initialize(Map<String, Object> param);
+
+    default void cleanUp() {}
 }

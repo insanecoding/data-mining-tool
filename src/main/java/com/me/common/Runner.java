@@ -26,9 +26,14 @@ public class Runner implements Runnable {
         try {
             logger.info("starting async execution of {}", service.getClass().getName());
             service.execute();
+            service.cleanUp();
             logger.info("async execution finished");
         } catch (Exception e) {
             MyExceptionHandler.handleExceptions(e);
         }
+    }
+
+    public void cleanUp(){
+        service.cleanUp();
     }
 }

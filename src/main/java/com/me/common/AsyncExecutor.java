@@ -30,6 +30,7 @@ public class AsyncExecutor {
     }
 
     public void stop() {
+        this.runner.cleanUp();
         this.thread.interrupt();
         this.thread = null;
         this.watcher.reset();
