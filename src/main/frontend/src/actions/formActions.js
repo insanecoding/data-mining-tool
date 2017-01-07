@@ -1,5 +1,4 @@
 import {
-    ACTIVE_FORM_CHANGED,
     COMPONENT_TOGGLED,
     FIELD_CHANGED,
     DIALOG_SUBMIT,
@@ -7,13 +6,6 @@ import {
     ON_BLACKLIST_DELETE
 } from "../constants/constants";
 import Immutable from "immutable";
-
-export function activeFormChanged(formNumber) {
-    return {
-        type: ACTIVE_FORM_CHANGED,
-        payload: formNumber
-    }
-}
 
 export function componentToggled(componentName) {
     return {

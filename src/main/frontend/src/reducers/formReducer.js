@@ -1,6 +1,5 @@
 import {initialState} from "./../store/initial";
 import {
-    ACTIVE_FORM_CHANGED,
     COMPONENT_TOGGLED,
     FIELD_CHANGED,
     DIALOG_SUBMIT,
@@ -9,17 +8,13 @@ import {
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
 
-
 export default function processForm(state = initialState, action) {
     switch (action.type) {
 
-        case ACTIVE_FORM_CHANGED:
-            return state.setIn(['formActive'], action.payload);
-
         case COMPONENT_TOGGLED:
             const componentName = action.payload;
-            const prevState = state.getIn(['forms', componentName, 'isOn']);
-            return state.setIn(['forms', componentName, 'isOn'], !prevState);
+            const prevState = state.getIn([componentName, 'isOn']);
+            return state.setIn([componentName, 'isOn'], !prevState);
 
         case FIELD_CHANGED:
             const formName = action.payload.getIn(['formName']);
@@ -37,7 +32,7 @@ export default function processForm(state = initialState, action) {
             // create absolute path from current dir + relative dir
             const blacklistSubDir = payload.getIn(['folderName']);
             // retrieve current array with blacklists
-            const currBlacklistsArray = state.getIn(['forms', 'import', 'blacklists']);
+            const currBlacklistsArray = state.getIn(['import', 'blacklists']);
             let lastKey = (currBlacklistsArray.size !== 0) ? currBlacklistsArray.last().getIn(['key']) : 0;
 
             // prepare new list entry, which should be added
@@ -47,13 +42,13 @@ export default function processForm(state = initialState, action) {
             // update list
             const newList = currBlacklistsArray.push(blacklistData);
             // merge changes
-            return state.setIn(['forms', 'import', 'blacklists'], newList);
+            return state.setIn(['import', 'blacklists'], newList);
         }
 
         case DIALOG_EDIT: {
             const payload = action.payload;
             const keyOfModified = payload.getIn(['key']);
-            let blacklists = state.getIn(['forms', 'import', 'blacklists']);
+            let blacklists = state.getIn(['import', 'blacklists']);
             // find blacklist that was edited and its index in the array
             const oldValue = blacklists.filter( elem => elem.getIn(['key']) === keyOfModified).first();
             const index = blacklists.indexOf(oldValue);
@@ -63,14 +58,14 @@ export default function processForm(state = initialState, action) {
                 .setIn(['website'], payload.getIn(['website']));
             // change old value at index into new value
             blacklists = blacklists.update(index, item => item.merge(newVal));
-            return state.setIn(['forms', 'import', 'blacklists'], blacklists);
+            return state.setIn(['import', 'blacklists'], blacklists);
         }
 
         case ON_BLACKLIST_DELETE:
             const key = action.payload;
-            const currentArray = state.getIn(['forms', 'import', 'blacklists']);
+            const currentArray = state.getIn(['import', 'blacklists']);
             const newArray = currentArray.filterNot( x => x.getIn(['key']) === key);
-            return state.setIn(['forms', 'import', 'blacklists'], newArray);
+            return state.setIn(['import', 'blacklists'], newArray);
 
         default:
             return state;

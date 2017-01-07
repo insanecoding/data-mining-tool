@@ -66,7 +66,7 @@ class RightSideForm_ImportList extends Component {
     };
 
     changeEvent = (e) => {
-        this.props.onInputChange(e.target.value, e.target.name, this.props.formName, "forms");
+        this.props.onInputChange(e.target.value, e.target.name, this.props.formName);
     };
 
     onDeleteAction = (blacklistId) => {
@@ -75,7 +75,7 @@ class RightSideForm_ImportList extends Component {
     };
 
     onEditAction = (blacklistId) => {
-        let editedBlacklist = this.props.formStore.getIn(['forms', 'import', 'blacklists'])
+        let editedBlacklist = this.props.formStore.getIn(['import', 'blacklists'])
             .filter( elem => elem.getIn(['key']) === blacklistId).first();
         // let relativePath = editedBlacklist.getIn(['folderName']).replace(cwd, "").replace(/\\\\/g, '\\');
         

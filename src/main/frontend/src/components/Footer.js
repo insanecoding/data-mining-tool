@@ -37,7 +37,6 @@ const Footer = ({activeTab, tabChanged}) => {
     return (
 
         <div>
-            {console.log("active tab is: ", activeTab)};
             <Paper zDepth={0}>
                 <BottomNavigation selectedIndex={activeTab}>
                     <BottomNavigationItem

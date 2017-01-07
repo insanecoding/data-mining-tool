@@ -2,7 +2,7 @@
  * transforms array of maps <string, Map> into array of simple objects,
  * notice new attribute "name" !
  * e.g:
- *  [
+ *  {
  *    uncompress: {
  *        archives: "\some\sub\folder\",
  *        displayName: "Uncompress blacklist",
@@ -14,7 +14,7 @@
  *         ...
  *       },
  *     ...
- *  ]
+ *  }
  *     into:
  *  [
  *      {
@@ -37,11 +37,12 @@
  */
 export const mapToArray = (deeplyNestedObject) => {
     let plainArray = [];
-    deeplyNestedObject.map( (key, value) => key.toObject() )
-        .map( (k,v) => {
-            k.name = v;
-            return k;
-        }).map( k => plainArray.push(k));
+    // surprisingly, value is simple string and key is a map, not otherwise
+    deeplyNestedObject.map( (value, key) => value.setIn(['name'], key))
+         // each element is map now, but we wanna simple object
+        .map( map => map.toObject())
+        // save object to array
+        .map( k => plainArray.push(k));
 
     return plainArray;
 };

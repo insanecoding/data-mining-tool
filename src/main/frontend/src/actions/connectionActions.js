@@ -1,4 +1,5 @@
 import {
+    ACTIVE_FORM_CHANGED,
     TAB_SWITCHED,
     CONNECTION_FAILED,
     CONNECTION_SUCCESS,
@@ -7,6 +8,13 @@ import {
 } from "../constants/constants";
 import {postQuery, getQuery} from "./../util/rest";
 import Immutable from "immutable";
+
+export function activeFormChanged(formNumber) {
+    return {
+        type: ACTIVE_FORM_CHANGED,
+        payload: formNumber
+    }
+}
 
 export function tabChanged (newTabNumber) {
     return {

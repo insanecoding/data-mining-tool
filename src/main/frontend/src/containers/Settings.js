@@ -37,30 +37,30 @@ class Settings extends Component {
     render() {
 
         const { formReducer, connectionReducer } = this.props;
-        const { activeFormChanged, componentToggled,
+        const { componentToggled,
             onInputChange, addBlacklist, editBlacklist, onBlacklistDelete } = this.props.formActions;
-        const { onWebsocketMessage, executePostQuery, executeGetQuery } = this.props.connectionActions;
+        const { activeFormChanged, onWebsocketMessage, executePostQuery, executeGetQuery } = this.props.connectionActions;
 
         const pathChooserParam = {
             formName: "pathChooser",
-            cwd: formReducer.getIn(['forms', 'import', 'cwd']),
+            cwd: formReducer.getIn(['import', 'cwd']),
             onInputChange: onInputChange,
         };
 
         const leftFormParam = {
-            components: mapToArray(formReducer.getIn(['forms'])),
+            components: mapToArray(formReducer),
             activeFormChanged: activeFormChanged,
             componentToggled: componentToggled,
         };
 
         const rightFormParam = {
-            number: formReducer.getIn(['formActive']),
-            userName: formReducer.getIn(['forms', 'import', 'userName']),
-            password: formReducer.getIn(['forms', 'import', 'password']),
-            dbName:  formReducer.getIn(['forms', 'import', 'dbName']),
-            port:  formReducer.getIn(['forms', 'import', 'port']),
+            number: connectionReducer.getIn(['formActive']),
+            userName: formReducer.getIn(['import', 'userName']),
+            password: formReducer.getIn(['import', 'password']),
+            dbName:  formReducer.getIn(['import', 'dbName']),
+            port:  formReducer.getIn(['import', 'port']),
             onInputChange: onInputChange,
-            blacklists: formReducer.getIn(['forms', 'import', 'blacklists']).toArray(),
+            blacklists: formReducer.getIn(['import', 'blacklists']).toArray(),
             addBlacklist: addBlacklist,
             editBlacklist: editBlacklist,
             onBlacklistDelete: onBlacklistDelete,
@@ -71,7 +71,7 @@ class Settings extends Component {
             onWebsocketMessage: onWebsocketMessage,
             executePostQuery: executePostQuery,
             executeGetQuery: executeGetQuery,
-            formData: formReducer.getIn(['forms']),
+            formData: formReducer,
             connectionData: connectionReducer
         };
 

@@ -1,5 +1,6 @@
 import {connectionInitialState} from "./../store/initial";
 import {
+    ACTIVE_FORM_CHANGED,
     CONNECTION_FAILED,
     CONNECTION_SUCCESS,
     WEBSOCKET_MESSAGE,
@@ -9,6 +10,9 @@ import {
 
 export default function connection(state = connectionInitialState, action) {
     switch (action.type) {
+
+        case ACTIVE_FORM_CHANGED:
+            return state.setIn(['formActive'], action.payload);
 
         case TAB_SWITCHED:
             return state.setIn(['activeTab'], action.payload);
