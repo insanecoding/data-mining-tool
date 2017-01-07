@@ -1,4 +1,4 @@
-import React, {PropTypes, Component} from "react";
+import React, {Component} from "react";
 import {Col, Row} from "react-grid-system";
 import FontIcon from "material-ui/FontIcon";
 import IconButton from "material-ui/IconButton";
@@ -7,6 +7,10 @@ import GenericForm from "./GenericForm";
 import AlertDialog from "./../AlertDialog";
 import ListRenderer from "./../ListRenderer";
 import {Toolbar, ToolbarGroup} from "material-ui/Toolbar";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import * as connectionActions from "./../../actions/connectionActions";
+import * as formActions from "./../../actions/formActions";
 
 const style = {
     leftToRight: {
@@ -15,12 +19,12 @@ const style = {
     }
 };
 
-class RightSideForm_ImportList extends Component {
+class FormImport extends Component {
 
     constructor(props) {
         super(props);
 
-        this.state = RightSideForm_ImportList.init()
+        this.state = FormImport.init()
     }
 
     static init() {
@@ -46,39 +50,41 @@ class RightSideForm_ImportList extends Component {
     };
 
     handleCloseOk = () => {
+        const {addBlacklist, editBlacklist} = this.props.formActions;
         // close dialog window
         this.setState({isOpen: false});
         // call action with state's parameters
         if (!this.state.editMode) {
-            this.props.addBlacklist(this.state.folderName, this.state.listName,
+            addBlacklist(this.state.folderName, this.state.listName,
                 this.state.website);
         } else {
-            this.props.editBlacklist(this.state.modifiedId, this.state.folderName, this.state.listName,
+            editBlacklist(this.state.modifiedId, this.state.folderName, this.state.listName,
                 this.state.website)
         }
 
         // reset dialog form data to initial values
-        this.setState(RightSideForm_ImportList.init);
+        this.setState(FormImport.init);
     };
 
     handleCloseCancel = () => {
-        this.setState(RightSideForm_ImportList.init);
+        this.setState(FormImport.init);
     };
 
     changeEvent = (e) => {
-        this.props.onInputChange(e.target.value, e.target.name, this.props.formName);
+        this.props.formActions.onInputChange(e.target.value, e.target.name, "import");
     };
 
     onDeleteAction = (blacklistId) => {
         console.log("deleting", blacklistId);
-        this.props.onBlacklistDelete(blacklistId);
+        this.props.formActions.onBlacklistDelete(blacklistId);
     };
 
     onEditAction = (blacklistId) => {
-        let editedBlacklist = this.props.formStore.getIn(['import', 'blacklists'])
-            .filter( elem => elem.getIn(['key']) === blacklistId).first();
+        const {formReducer} = this.props;
+        let editedBlacklist = formReducer.getIn(['import', 'blacklists'])
+            .filter(elem => elem.getIn(['key']) === blacklistId).first();
         // let relativePath = editedBlacklist.getIn(['folderName']).replace(cwd, "").replace(/\\\\/g, '\\');
-        
+
         this.setState({
             folderName: editedBlacklist.getIn(['folderName']),
             listName: editedBlacklist.getIn(['listName']),
@@ -90,10 +96,11 @@ class RightSideForm_ImportList extends Component {
     };
 
     render() {
-        const {title, userName, password, dbName, port, blacklists} = this.props;
+        const {displayName, userName, password, dbName, port, blacklists} =
+            this.props.formReducer.getIn(['import']).toObject();
 
         return (
-            <GenericForm title={title}>
+            <GenericForm title={displayName}>
                 <AlertDialog handleCloseOk={this.handleCloseOk} handleCloseCancel={this.handleCloseCancel}
                              title={"Add blacklist"} isOpen={this.state.isOpen} type={"dialog"}>
                     <Row>
@@ -185,7 +192,7 @@ class RightSideForm_ImportList extends Component {
 
                 <Row>
                     <Col md={12} xs={12}>
-                        <ListRenderer elements={blacklists} onDeleteAction={ this.onDeleteAction}
+                        <ListRenderer elements={blacklists.toArray()} onDeleteAction={ this.onDeleteAction}
                                       onEditAction={this.onEditAction}/>
                     </Col>
                 </Row>
@@ -194,19 +201,19 @@ class RightSideForm_ImportList extends Component {
     }
 }
 
-RightSideForm_ImportList.propTypes = {
-    title: PropTypes.string.isRequired,
-    formName: PropTypes.string.isRequired,
-    userName: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
-    dbName: PropTypes.string.isRequired,
-    port: PropTypes.number.isRequired,
-    onInputChange: PropTypes.func.isRequired,
-    addBlacklist: PropTypes.func.isRequired,
-    editBlacklist: PropTypes.func.isRequired,
-    blacklists: PropTypes.array.isRequired,
-    onBlacklistDelete: PropTypes.func.isRequired,
-    formStore: PropTypes.object.isRequired,
-};
 
-export default RightSideForm_ImportList;
+function mapStateToProps(state) {
+    return {
+        connectionReducer: state.connectionReducer,
+        formReducer: state.formReducer
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        connectionActions: bindActionCreators(connectionActions, dispatch),
+        formActions: bindActionCreators(formActions, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FormImport);

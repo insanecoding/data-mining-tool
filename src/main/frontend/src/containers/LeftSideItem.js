@@ -3,8 +3,8 @@ import React, {PropTypes} from "react";
 
 const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {
 
-    const handleClick = (elementId) => {
-        activeFormChanged(elementId);
+    const handleClick = (elementId, newRoute) => {
+        activeFormChanged(elementId, newRoute);
     };
 
     const onToggle = (elementName) => {
@@ -15,7 +15,7 @@ const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {
     const listGenerator = (elements) => {
         return(
             elements.map( elem => <MyListItem text={elem.displayName} key={elem.key}
-                                          handleClick={ () => handleClick(elem.key)}
+                                          handleClick={ () => handleClick(elem.key, elem.route)}
                                           onToggle={ () => onToggle(elem.name)}
                     />
                 )

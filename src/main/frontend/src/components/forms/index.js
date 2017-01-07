@@ -1,6 +1,6 @@
-import FormWelcome from "./FormWelcome";
+import FormDescription from "./FormDescription";
 import FormImport from "./FormImport";
 import FormFeatures from "./FormFeatures";
 import FormExperiment from "./FormExperiment";
 
-export {FormWelcome, FormImport, FormFeatures, FormExperiment};
+export {FormDescription, FormImport, FormFeatures, FormExperiment};

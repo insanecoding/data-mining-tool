@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import LeftSideItem from "./LeftSideItem";
-import RightSideItem from "./RightSideItem";
 import {Row, Col} from "react-grid-system";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
@@ -37,34 +36,20 @@ class Settings extends Component {
     render() {
 
         const { formReducer, connectionReducer } = this.props;
-        const { componentToggled,
-            onInputChange, addBlacklist, editBlacklist, onBlacklistDelete } = this.props.formActions;
-        const { activeFormChanged, onWebsocketMessage, executePostQuery, executeGetQuery } = this.props.connectionActions;
+        const { componentToggled, onInputChange} = this.props.formActions;
+        const { activeFormAndRouteChanged, onWebsocketMessage,
+            executePostQuery, executeGetQuery } = this.props.connectionActions;
 
         const pathChooserParam = {
-            formName: "pathChooser",
+            formName: "import",
             cwd: formReducer.getIn(['import', 'cwd']),
             onInputChange: onInputChange,
         };
 
         const leftFormParam = {
             components: mapToArray(formReducer),
-            activeFormChanged: activeFormChanged,
+            activeFormChanged: activeFormAndRouteChanged,
             componentToggled: componentToggled,
-        };
-
-        const rightFormParam = {
-            number: connectionReducer.getIn(['formActive']),
-            userName: formReducer.getIn(['import', 'userName']),
-            password: formReducer.getIn(['import', 'password']),
-            dbName:  formReducer.getIn(['import', 'dbName']),
-            port:  formReducer.getIn(['import', 'port']),
-            onInputChange: onInputChange,
-            blacklists: formReducer.getIn(['import', 'blacklists']).toArray(),
-            addBlacklist: addBlacklist,
-            editBlacklist: editBlacklist,
-            onBlacklistDelete: onBlacklistDelete,
-            formStore: formReducer,
         };
 
         const buttonsAndProgressParam = {
@@ -86,7 +71,7 @@ class Settings extends Component {
                         <LeftSideItem {...leftFormParam}/>
                     </Col>
                     <Col xs={12} md={6}>
-                        <RightSideItem {...rightFormParam}/>
+                        { this.props.children }
                     </Col>
                     <Col xs={12} md={12}>
                         <ButtonsAndProgress {...buttonsAndProgressParam}/>

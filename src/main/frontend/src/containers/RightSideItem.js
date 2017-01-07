@@ -1,5 +1,5 @@
 import React, {PropTypes} from "react";
-import {FormWelcome, FormImport, FormFeatures, FormExperiment} from "./../components/forms/index";
+import {FormDescription, FormImport, FormFeatures, FormExperiment} from "./../components/forms/index";
 
 const RightSideItem = ({number, userName, password, dbName, port,
 blacklists, addBlacklist, editBlacklist, onInputChange, onBlacklistDelete, formStore}) => {
@@ -8,7 +8,7 @@ blacklists, addBlacklist, editBlacklist, onInputChange, onBlacklistDelete, formS
 
         switch (index) {
             case 0:
-                return <FormWelcome title={"Click components to see settings"}/>;
+                return <FormDescription title={"Click components to see settings"}/>;
             case 1:
                 return <FormImport title="Import blacklist" formName="import"
                                    userName={userName} password={password} dbName={dbName}

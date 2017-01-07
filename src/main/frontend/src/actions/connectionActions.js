@@ -8,12 +8,20 @@ import {
 } from "../constants/constants";
 import {postQuery, getQuery} from "./../util/rest";
 import Immutable from "immutable";
+import {push} from "react-router-redux";
 
 export function activeFormChanged(formNumber) {
     return {
         type: ACTIVE_FORM_CHANGED,
         payload: formNumber
     }
+}
+
+export function activeFormAndRouteChanged(formNumber, newRoute) {
+    return dispatch => {
+        dispatch(activeFormChanged(formNumber));
+        dispatch(push(newRoute));
+    };
 }
 
 export function tabChanged (newTabNumber) {
