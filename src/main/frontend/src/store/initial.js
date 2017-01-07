@@ -10,7 +10,9 @@ export const initialState = Immutable.fromJS({
             password: "postgresql",
             dbName: "Website_Classification",
             port: 5432,
+            cwd: "C:\\DataMining\\experiment_data\\",
             blacklists: [
+                // element example
                 // {
                     // listName: ...
                     // folderName: ...
@@ -29,9 +31,6 @@ export const initialState = Immutable.fromJS({
             displayName: "Run experiments",
             isOn: false,
         },
-    },
-    pathChooser: {
-        cwd: "C:\\DataMining\\experiment_data\\",
     },
     formActive: 0,
 });

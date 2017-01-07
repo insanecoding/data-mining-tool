@@ -1,8 +1,8 @@
 import React, {PropTypes} from "react";
-import {List, ListItem} from "material-ui/List";
+import {List} from "material-ui/List";
 import FontIcon from "material-ui/FontIcon";
 import IconButton from "material-ui/IconButton";
-import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from "material-ui/Toolbar";
+import {Toolbar, ToolbarGroup} from "material-ui/Toolbar";
 
 const style = {
     leftToRight: {

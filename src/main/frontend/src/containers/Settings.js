@@ -5,8 +5,10 @@ import {Row, Col} from "react-grid-system";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as formActions from "../actions/formActions";
+import * as connectionActions from "./../actions/connectionActions";
 import PathChooser from "./../components/forms/PathChooser";
 import {mapToArray} from "./../util/misc";
+import ButtonsAndProgress from "./../components/ButtonsAndProgress";
 
 const style = {
     title: {
@@ -31,16 +33,17 @@ const style = {
     },
 };
 
-class Body extends Component {
+class Settings extends Component {
     render() {
 
-        const { formReducer } = this.props;
+        const { formReducer, connectionReducer } = this.props;
         const { activeFormChanged, componentToggled,
             onInputChange, blacklists, addBlacklist, editBlacklist, onBlacklistDelete } = this.props.formActions;
+        const { onWebsocketMessage, executePostQuery, executeGetQuery } = this.props.connectionActions;
 
         const pathChooserParam = {
             formName: "pathChooser",
-            cwd: formReducer.getIn(['pathChooser', 'cwd']),
+            cwd: formReducer.getIn(['forms', 'import', 'cwd']),
             onInputChange: onInputChange,
         };
 
@@ -64,9 +67,17 @@ class Body extends Component {
             formStore: formReducer,
         };
 
+        const buttonsAndProgressParam = {
+            onWebsocketMessage: onWebsocketMessage,
+            executePostQuery: executePostQuery,
+            executeGetQuery: executeGetQuery,
+            formData: formReducer.getIn(['forms']),
+            connectionData: connectionReducer
+        };
+
         return (
             <div style={this.props.style}>
-                <h1 style={style.title}>Welcome to website classification utility</h1>
+                <h1 style={style.title}>Settings</h1>
 
                 <PathChooser {...pathChooserParam}/>
 
@@ -77,6 +88,9 @@ class Body extends Component {
                     <Col xs={12} md={6}>
                         <RightSideItem {...rightFormParam}/>
                     </Col>
+                    <Col xs={12} md={12}>
+                        <ButtonsAndProgress {...buttonsAndProgressParam}/>
+                    </Col>
                 </Row>
             </div>
         )
@@ -86,13 +100,15 @@ class Body extends Component {
 function mapStateToProps(state) {
     return {
         formReducer: state.formReducer,
+        connectionReducer: state.connectionReducer,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        formActions: bindActionCreators(formActions, dispatch)
+        formActions: bindActionCreators(formActions, dispatch),
+        connectionActions: bindActionCreators(connectionActions, dispatch)
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Body)
+export default connect(mapStateToProps, mapDispatchToProps)(Settings)

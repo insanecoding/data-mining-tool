@@ -4,7 +4,6 @@ import {deepOrange500} from "material-ui/styles/colors";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import Header from "./../components/Header";
-import Body from "./Body";
 import Footer from "./../components/Footer";
 import {Container} from "react-grid-system";
 import "./../../node_modules/font-awesome/css/font-awesome.min.css";
@@ -58,7 +57,9 @@ export default class App extends Component {
             <MuiThemeProvider muiTheme={muiTheme}>
                 <Container style={styles.container}>
                     <Header />
-                        <Body style={styles.main}/>
+                    <main style={styles.main}>
+                        {this.props.children}
+                    </main>
                     <Footer/>
                 </Container>
             </MuiThemeProvider>

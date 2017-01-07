@@ -75,10 +75,16 @@ public class MyRestController {
     @SuppressWarnings(value = "unchecked")
     private void decisionMaker(Map<String, Map<String, Object>> clientResponse) {
         Map<String, Object> settings =  clientResponse.get("import");
+        final String cwd = (String) settings.get("cwd");
+
         if ((boolean)settings.get("isOn")) {
             List<LinkedHashMap<String, String>> blacklists =
                     (List<LinkedHashMap<String, String>>) settings.get("blacklists");
-            List<String> compressed = blacklists.stream().map( k -> k.get("folderName")).collect(Collectors.toList());
+            List<String> compressed = blacklists.stream()
+                    .map( k -> k.get("folderName"))
+                    // concatenate to make absolute path from relative
+                    .map( relativePath -> cwd + "\\" + relativePath)
+                    .collect(Collectors.toList());
             executable = uncompressService;
             Map<String, Object> initSettings = new LinkedHashMap<>();
             initSettings.put("compressed", compressed);

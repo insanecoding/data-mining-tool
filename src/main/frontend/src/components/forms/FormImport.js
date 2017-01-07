@@ -1,5 +1,4 @@
 import React, {PropTypes, Component} from "react";
-import {List, ListItem} from "material-ui/List";
 import {Col, Row} from "react-grid-system";
 import FontIcon from "material-ui/FontIcon";
 import IconButton from "material-ui/IconButton";
@@ -76,19 +75,17 @@ class RightSideForm_ImportList extends Component {
     };
 
     onEditAction = (blacklistId) => {
-        let foo = this.props.formStore.getIn(['forms', 'import', 'blacklists'])
+        let editedBlacklist = this.props.formStore.getIn(['forms', 'import', 'blacklists'])
             .filter( elem => elem.getIn(['key']) === blacklistId).first();
-        const cwd = this.props.formStore.getIn(['pathChooser', 'cwd']);
-        // get relative path from full path and replace unnecessary double backslashes with single ones
-        let relativePath = foo.getIn(['folderName']).replace(cwd, "").replace(/\\\\/g, '\\');
+        // let relativePath = editedBlacklist.getIn(['folderName']).replace(cwd, "").replace(/\\\\/g, '\\');
         
         this.setState({
-            folderName: relativePath,
-            listName: foo.getIn(['listName']),
-            website: foo.getIn(['website']),
+            folderName: editedBlacklist.getIn(['folderName']),
+            listName: editedBlacklist.getIn(['listName']),
+            website: editedBlacklist.getIn(['website']),
             isOpen: true,
             editMode: true,
-            modifiedId: foo.getIn(['key'])
+            modifiedId: editedBlacklist.getIn(['key'])
         });
     };
 

@@ -35,17 +35,15 @@ export default function processForm(state = initialState, action) {
         case DIALOG_SUBMIT: {
             const payload = action.payload;
             // create absolute path from current dir + relative dir
-            const cwd = state.getIn(['pathChooser', 'cwd']);
             const blacklistSubDir = payload.getIn(['folderName']);
-            const absolutePath = `${cwd}\\${blacklistSubDir}`;
             // retrieve current array with blacklists
             const currBlacklistsArray = state.getIn(['forms', 'import', 'blacklists']);
             let lastKey = (currBlacklistsArray.size !== 0) ? currBlacklistsArray.last().getIn(['key']) : 0;
+
             // prepare new list entry, which should be added
             // add absolute blacklist folder and generated key
-            const blacklistData =
-                payload.setIn(['folderName'], absolutePath)
-                    .set('key', ++lastKey);
+            const blacklistData = payload.setIn(['folderName'], blacklistSubDir)
+                .set('key', ++lastKey);
             // update list
             const newList = currBlacklistsArray.push(blacklistData);
             // merge changes
@@ -65,10 +63,7 @@ export default function processForm(state = initialState, action) {
                 .setIn(['website'], payload.getIn(['website']));
             // change old value at index into new value
             blacklists = blacklists.update(index, item => item.merge(newVal));
-            console.log("after merge: ", blacklists);
             return state.setIn(['forms', 'import', 'blacklists'], blacklists);
-            //// setIn(['forms', 'import', 'blacklists', keyOfModified], newVal);
-            // return state;
         }
 
         case ON_BLACKLIST_DELETE:
