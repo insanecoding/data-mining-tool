@@ -38,7 +38,7 @@ class Settings extends Component {
 
         const { formReducer, connectionReducer } = this.props;
         const { activeFormChanged, componentToggled,
-            onInputChange, blacklists, addBlacklist, editBlacklist, onBlacklistDelete } = this.props.formActions;
+            onInputChange, addBlacklist, editBlacklist, onBlacklistDelete } = this.props.formActions;
         const { onWebsocketMessage, executePostQuery, executeGetQuery } = this.props.connectionActions;
 
         const pathChooserParam = {

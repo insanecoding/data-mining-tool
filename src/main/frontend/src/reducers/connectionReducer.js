@@ -1,8 +1,17 @@
 import {connectionInitialState} from "./../store/initial";
-import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE, IS_APP_STARTED} from "../constants/constants";
+import {
+    CONNECTION_FAILED,
+    CONNECTION_SUCCESS,
+    WEBSOCKET_MESSAGE,
+    IS_APP_STARTED,
+    TAB_SWITCHED
+} from "../constants/constants";
 
 export default function connection(state = connectionInitialState, action) {
     switch (action.type) {
+
+        case TAB_SWITCHED:
+            return state.setIn(['activeTab'], action.payload);
 
         case CONNECTION_SUCCESS:
             return state.setIn(['status'], action.payload.getIn(['status']))

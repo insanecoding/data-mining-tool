@@ -9,6 +9,9 @@ const style = {
         justifyContent: "flex-start",
         backgroundColor: "rgba(0, 0, 0, 0.0)",
     },
+    noPadding: {
+        padding: "0px"
+    }
 };
 
 const ListRenderer = ({elements, onDeleteAction, onEditAction}) => {
@@ -42,7 +45,7 @@ const ListRenderer = ({elements, onDeleteAction, onEditAction}) => {
     };
 
     return (
-        <List style={{padding: "0px"}}>
+        <List style={style.noPadding}>
             {listGenerator(elements)}
         </List>
     );

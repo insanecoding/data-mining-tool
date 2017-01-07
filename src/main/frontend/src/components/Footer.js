@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {PropTypes} from "react";
 import FontIcon from "material-ui/FontIcon";
 import Paper from "material-ui/Paper";
 import {BottomNavigation, BottomNavigationItem} from "material-ui/BottomNavigation";
@@ -8,18 +8,10 @@ const homeIcon = <FontIcon className="fa fa-home"/>;
 const settingsIcon = <FontIcon className="fa fa-cog"/>;
 const resultsIcon = <FontIcon className="fa fa-bar-chart"/>;
 
-export default class Footer extends Component {
+const Footer = ({activeTab, tabChanged}) => {
 
-    constructor(props, context) {
-        super(props, context);
-
-        this.state = {
-            selectedIndex: 0
-        };
-    }
-
-    select = (index) => {
-        this.setState({selectedIndex: index});
+    const select = (index) => {
+        tabChanged(index);
 
         let url;
         switch (index) {
@@ -42,29 +34,36 @@ export default class Footer extends Component {
         browserHistory.push(url);
     };
 
-    render() {
-        return (
-            <div>
-                <Paper zDepth={0}>
-                    <BottomNavigation selectedIndex={this.state.selectedIndex}>
-                        <BottomNavigationItem
-                            label="Home page"
-                            icon={homeIcon}
-                            onTouchTap={() => this.select(0)}
-                        />
-                        <BottomNavigationItem
-                            label="Settings"
-                            icon={settingsIcon}
-                            onTouchTap={() => this.select(1)}
-                        />
-                        <BottomNavigationItem
-                            label="Results"
-                            icon={resultsIcon}
-                            onTouchTap={() => this.select(2)}
-                        />
-                    </BottomNavigation>
-                </Paper>
-            </div>
-        )
-    }
-}
+    return (
+
+        <div>
+            {console.log("active tab is: ", activeTab)};
+            <Paper zDepth={0}>
+                <BottomNavigation selectedIndex={activeTab}>
+                    <BottomNavigationItem
+                        label="Home page"
+                        icon={homeIcon}
+                        onTouchTap={() => select(0)}
+                    />
+                    <BottomNavigationItem
+                        label="Settings"
+                        icon={settingsIcon}
+                        onTouchTap={() => select(1)}
+                    />
+                    <BottomNavigationItem
+                        label="Results"
+                        icon={resultsIcon}
+                        onTouchTap={() => select(2)}
+                    />
+                </BottomNavigation>
+            </Paper>
+        </div>
+    );
+};
+
+Footer.propTypes = {
+    activeTab: PropTypes.number.isRequired,
+    tabChanged: PropTypes.func.isRequired,
+};
+
+export default Footer;

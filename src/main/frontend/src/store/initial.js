@@ -39,6 +39,7 @@ export const connectionInitialState = Immutable.fromJS({
         started: false,
         status: "Ready",
         percentsProgress: 0,
-        error: null
+        error: null,
+        activeTab: 0
     }
 );

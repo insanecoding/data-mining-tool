@@ -1,6 +1,19 @@
-import {CONNECTION_FAILED, CONNECTION_SUCCESS, WEBSOCKET_MESSAGE, IS_APP_STARTED} from "../constants/constants";
+import {
+    TAB_SWITCHED,
+    CONNECTION_FAILED,
+    CONNECTION_SUCCESS,
+    WEBSOCKET_MESSAGE,
+    IS_APP_STARTED
+} from "../constants/constants";
 import {postQuery, getQuery} from "./../util/rest";
 import Immutable from "immutable";
+
+export function tabChanged (newTabNumber) {
+    return {
+        type: TAB_SWITCHED,
+        payload: newTabNumber
+    }
+}
 
 export function connectionFailure(error) {
     return {
