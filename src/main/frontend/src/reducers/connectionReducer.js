@@ -8,6 +8,20 @@ import {
     TAB_SWITCHED
 } from "../constants/constants";
 
+let updateProgressBar = function (action, state) {
+    const status = action.payload.getIn(['status']);
+    const percentsProgress = action.payload.getIn(['percentsProgress']);
+
+    let newState = state;
+    console.log("current progress: ", percentsProgress);
+
+    if (percentsProgress !== -1) {
+        newState = newState.setIn(['percentsProgress'], percentsProgress);
+    }
+    newState = newState.setIn(['status'], status);
+    return newState;
+};
+
 export default function connection(state = connectionInitialState, action) {
     switch (action.type) {
 
@@ -17,17 +31,16 @@ export default function connection(state = connectionInitialState, action) {
         case TAB_SWITCHED:
             return state.setIn(['activeTab'], action.payload);
 
-        case CONNECTION_SUCCESS:
-            return state.setIn(['status'], action.payload.getIn(['status']))
-                .setIn(['percentsProgress'], action.payload.getIn(['percentsProgress']));
+        case CONNECTION_SUCCESS: {
+            return updateProgressBar(action, state);
+        }
 
         case CONNECTION_FAILED:
             return state.setIn(['error'], action.payload);
 
-        case WEBSOCKET_MESSAGE:
-            const status = action.payload.getIn(['status']);
-            const percentsProgress = action.payload.getIn(['percentsProgress']);
-            return state.setIn(['status'], status).setIn(['percentsProgress'], percentsProgress);
+        case WEBSOCKET_MESSAGE: {
+           return updateProgressBar(action, state);
+        }
 
         case IS_APP_STARTED:
             return state.setIn(['started'], action.payload);

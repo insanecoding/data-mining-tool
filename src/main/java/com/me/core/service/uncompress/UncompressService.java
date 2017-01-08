@@ -54,10 +54,8 @@ public class UncompressService extends StoppableObservable implements MyExecutab
             throw new IllegalArgumentException("incorrect size of list with archives path");
 
         for (String pathToCompressed : compressed) {
-//            updateMetaCheck("start processing: " + pathToCompressed);
+            super.updateMessageCheck("processing: " + pathToCompressed);
             uncompress(pathToCompressed, pathToCompressed);
-//            updateWorkingCheck("uncompressed: " + pathToCompressed,
-//                    compressed.indexOf(pathToCompressed) + 1, compressed.size());
         }
     }
 

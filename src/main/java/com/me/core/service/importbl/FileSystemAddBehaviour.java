@@ -59,13 +59,12 @@ public class FileSystemAddBehaviour extends StoppableObservable implements AddBe
                                    Path domainFile) throws Exception {
         // create associated Category object
         Category category = createCategory(domainFile);
-//        super.updateWorkingCheck("processing category: " + category.getCategoryName(),
-//                domainFiles.indexOf(domainFile), domainFiles.size());
+        super.updateMessageCheck("processing category: " + category.getCategoryName() +
+                " for blacklist: " + blacklist.getBlacklistName());
 
         List<Website> websites = extractWebsites(blacklist, domainFile, category);
         dao.batchSaveWebsites(websites);
-//        super.updateWorking("done with category: " + category.getCategoryName(),
-//                domainFiles.indexOf(domainFile) + 1, domainFiles.size());
+        super.checkCancel();
     }
 
     private Stream<Path> getAllDomainFiles(String root) throws IOException {

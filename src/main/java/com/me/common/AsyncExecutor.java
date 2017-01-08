@@ -36,9 +36,9 @@ public class AsyncExecutor extends StoppableObservable {
         executables.forEach(executable -> {
             double currentStep = executables.indexOf(executable);
             double totalSteps = executables.size();
-            super.updateWorking(executable.getName(), currentStep, totalSteps);
+            super.updateMessage(executable.getName(), currentStep, totalSteps);
             invoke(executable, false);
-            super.updateWorking("", ++currentStep, totalSteps);
+            super.updateMessage( ++currentStep, totalSteps);
         });
     }
 

@@ -67,6 +67,7 @@ class ButtonsAndProgress extends Component {
             if (this.validateExecutionOrder(formData)) {
                 this.setState({dialogOpen: true});
             } else {
+                // send empty message to start websocket communication
                 this.websocketClient.send();
                 executePostQuery("api/invoke", formData);
             }
@@ -85,19 +86,12 @@ class ButtonsAndProgress extends Component {
             percentsProgress: connectionData.getIn(['percentsProgress']),
         };
 
-        const progressBarParam2 = {
-            visible: connectionData.getIn(['started']),
-            statusMsg: connectionData.getIn(['innerStatus']),
-            percentsProgress: connectionData.getIn(['innerPercentsProgress']),
-        };
-
         const disableStart = connectionData.getIn(['started']);
         const disableCancel = !disableStart;
 
         return (
             <div>
                 <MyProgressBar {...progressBarParam}/>
-                <MyProgressBar {...progressBarParam2}/>
 
                 <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Start" secondary={true}

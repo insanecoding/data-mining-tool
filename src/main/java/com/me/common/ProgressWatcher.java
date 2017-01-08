@@ -1,7 +1,6 @@
 package com.me.common;
 
 import com.me.core.domain.dto.State;
-import com.me.core.domain.dto.States;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +23,21 @@ public class ProgressWatcher implements Observer {
     }
 
     private State initializeState() {
-        return new State("not started", States.IDLE,0);
+        return new State("not started", 0);
     }
 
     @Override
     public void update(Observable o, Object arg) {
         // update state
         this.state = (State) arg;
-        logger.info("{}", state);
+        String output = "";
+        if (!state.getInfo().equals(""))
+            output += state.getInfo() + " ";
+
+        if (state.getProgress() != -1)
+            output += state.getProgress();
+
+        logger.info("{}", output);
         sender.sendMessage(state);
     }
 

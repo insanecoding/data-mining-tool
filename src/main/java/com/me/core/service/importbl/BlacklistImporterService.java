@@ -39,7 +39,7 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
         for (BlacklistProperty blacklistProperty : blacklistProperties) {
             Blacklist blacklist = blacklistProperty.getBlacklist();
 
-//            super.updateMetaCheck("doing task for: " + blacklist.getBlacklistName());
+            super.checkCancel();
             addBehaviour.importBlacklist(blacklist, blacklistProperty.getPathName());
         }
     }

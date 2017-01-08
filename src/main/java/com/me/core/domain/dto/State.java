@@ -11,7 +11,5 @@ public class State {
 
     private String info;
 
-    private States state;
-
     private double progress;
 }
