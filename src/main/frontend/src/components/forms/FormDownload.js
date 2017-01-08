@@ -11,9 +11,10 @@ class FormFeatures extends Component {
     render() {
 
         const {formHandler} = this.props.formActions;
+        const displayName = this.props.formReducer.getIn(['download', 'displayName']);
 
         return(
-            <GenericForm title={"Features"}>
+            <GenericForm title={displayName}>
                 <TextField
                     hintText="Hint Text"
                     floatingLabelText="Username"
