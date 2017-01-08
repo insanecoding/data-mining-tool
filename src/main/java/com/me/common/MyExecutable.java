@@ -8,4 +8,6 @@ public interface MyExecutable {
     void initialize(Map<String, Object> param);
 
     default void cleanUp() {}
+
+    String getName();
 }

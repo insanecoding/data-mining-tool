@@ -46,7 +46,7 @@ class ButtonsAndProgress extends Component {
         const {onWebsocketMessage} = this.props;
         const response = JSON.parse(resp.body);
         console.log("response is: ", response);
-        const status = response.info + " (" + response.progress + "%)";
+        const status = response.info;
         const percentsProgress = response.progress;
         onWebsocketMessage(status, percentsProgress);
     };
@@ -57,7 +57,7 @@ class ButtonsAndProgress extends Component {
         // join by whitespaces
         const toStr = asArray.join(' ');
         // check whether contains some combinations of toggles that are prohibited
-        return (toStr.includes("true false true") || toStr.includes("false false false"));
+        return (toStr.includes("true false true") || toStr.includes("false false false false") || toStr.includes("true false false true"));
     };
 
     handleClick = (buttonName) => {
@@ -85,12 +85,19 @@ class ButtonsAndProgress extends Component {
             percentsProgress: connectionData.getIn(['percentsProgress']),
         };
 
+        const progressBarParam2 = {
+            visible: connectionData.getIn(['started']),
+            statusMsg: connectionData.getIn(['innerStatus']),
+            percentsProgress: connectionData.getIn(['innerPercentsProgress']),
+        };
+
         const disableStart = connectionData.getIn(['started']);
         const disableCancel = !disableStart;
 
         return (
             <div>
                 <MyProgressBar {...progressBarParam}/>
+                <MyProgressBar {...progressBarParam2}/>
 
                 <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Start" secondary={true}

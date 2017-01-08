@@ -22,6 +22,7 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
     @Getter @Setter
     private String blacklistsPath;
 
+    @Getter @Setter
     private List<BlacklistProperty> blacklistProperties;
 
     @Getter
@@ -34,11 +35,11 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
         this.addBehaviour = addBehaviour;
     }
 
-    public void importAll() throws Exception {
+    private void importAll() throws Exception {
         for (BlacklistProperty blacklistProperty : blacklistProperties) {
             Blacklist blacklist = blacklistProperty.getBlacklist();
 
-            super.updateMetaCheck("doing task for: " + blacklist.getBlacklistName());
+//            super.updateMetaCheck("doing task for: " + blacklist.getBlacklistName());
             addBehaviour.importBlacklist(blacklist, blacklistProperty.getPathName());
         }
     }
@@ -51,6 +52,11 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
-        this.blacklistProperties = (List<BlacklistProperty>) param.get("blacklists");
+        this.blacklistProperties = (List<BlacklistProperty>) param.get("importer");
+    }
+
+    @Override
+    public String getName() {
+        return "import blacklist";
     }
 }

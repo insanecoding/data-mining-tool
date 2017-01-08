@@ -54,22 +54,26 @@ public class UncompressService extends StoppableObservable implements MyExecutab
             throw new IllegalArgumentException("incorrect size of list with archives path");
 
         for (String pathToCompressed : compressed) {
-            updateMetaCheck("start processing: " + pathToCompressed);
+//            updateMetaCheck("start processing: " + pathToCompressed);
             uncompress(pathToCompressed, pathToCompressed);
-            updateWorkingCheck("uncompressed: " + pathToCompressed,
-                    compressed.indexOf(pathToCompressed) + 1, compressed.size());
+//            updateWorkingCheck("uncompressed: " + pathToCompressed,
+//                    compressed.indexOf(pathToCompressed) + 1, compressed.size());
         }
-//        compressed.clear();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
-        this.compressed.addAll((List<String>) param.get("compressed"));
+        this.compressed.addAll((List<String>) param.get("uncompress"));
     }
 
     @Override
     public void cleanUp(){
         compressed.clear();
+    }
+
+    @Override
+    public String getName() {
+        return "uncompress blacklist";
     }
 }
