@@ -13,7 +13,6 @@ let updateProgressBar = function (action, state) {
     const percentsProgress = action.payload.getIn(['percentsProgress']);
 
     let newState = state;
-    console.log("current progress: ", percentsProgress);
 
     if (percentsProgress !== -1) {
         newState = newState.setIn(['percentsProgress'], percentsProgress);
