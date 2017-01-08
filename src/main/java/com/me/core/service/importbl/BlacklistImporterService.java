@@ -20,9 +20,6 @@ import java.util.Map;
 public class BlacklistImporterService extends StoppableObservable implements MyExecutable {
 
     @Getter @Setter
-    private String blacklistsPath;
-
-    @Getter @Setter
     private List<BlacklistProperty> blacklistProperties;
 
     @Getter
@@ -35,7 +32,8 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
         this.addBehaviour = addBehaviour;
     }
 
-    private void importAll() throws Exception {
+    @Override
+    public void execute() throws Exception {
         for (BlacklistProperty blacklistProperty : blacklistProperties) {
             Blacklist blacklist = blacklistProperty.getBlacklist();
 
@@ -45,14 +43,14 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
     }
 
     @Override
-    public void execute() throws Exception {
-        importAll();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
         this.blacklistProperties = (List<BlacklistProperty>) param.get("importer");
+    }
+
+    @Override
+    public void cleanUp(){
+        blacklistProperties.clear();
     }
 
     @Override

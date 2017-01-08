@@ -1,4 +1,4 @@
-package com.me.core.service.download.html;
+package com.me.core.service.download;
 
 import com.me.common.Executable;
 import com.me.common.ProgressWatcher;
@@ -141,9 +141,5 @@ public class DownloaderService extends StoppableObservable implements Executable
     @Override
     public void beforeCancel(){
         executorService.shutdownNow();
-    }
-
-    @Override
-    public void afterCancel() {
     }
 }

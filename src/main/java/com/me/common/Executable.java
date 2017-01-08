@@ -6,15 +6,5 @@ public interface Executable {
      */
     default void beforeCancel() {}
 
-    /**
-     * do some clean-up after stopping
-     */
-    void afterCancel();
-
-    /**
-     *
-     * @param args possible service parameters
-     * @throws Exception
-     */
     void execute(Object... args) throws Exception;
 }

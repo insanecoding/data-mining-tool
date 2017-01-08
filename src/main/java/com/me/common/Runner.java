@@ -3,8 +3,7 @@ package com.me.common;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,9 +11,8 @@ import org.springframework.stereotype.Component;
  * can be interrupted
  */
 @Component
+@Slf4j
 public class Runner implements Runnable {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     /**
      * service to execute
      */
@@ -24,16 +22,19 @@ public class Runner implements Runnable {
     @Override
     public void run() {
         try {
-            logger.info("starting async execution of {}", service.getClass().getName());
+            String serviceName = service.getClass().getName();
+            log.info("starting async execution of {}", serviceName);
             service.execute();
-            service.cleanUp();
-            logger.info("async execution finished");
+            cleanUp();
+            log.info("async execution finished");
         } catch (Exception e) {
             MyExceptionHandler.handleExceptions(e);
         }
     }
 
     public void cleanUp(){
+        String serviceName = service.getClass().getName();
+        log.info("cleaning up for {}", serviceName);
         service.cleanUp();
     }
 }

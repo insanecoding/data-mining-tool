@@ -1,4 +1,4 @@
-package com.me.core.service.download.html;
+package com.me.core.service.download;
 
 import com.me.core.domain.entities.Connect;
 import com.me.core.domain.entities.HTML;

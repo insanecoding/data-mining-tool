@@ -50,16 +50,15 @@ public class FileSystemAddBehaviour extends StoppableObservable implements AddBe
             List<Path> domainFiles = domainFilesStream.collect(Collectors.toList());
             // for each domains file
             for (Path domainFile : domainFiles) {
-                processDomainFile(blacklist, domainFiles, domainFile);
+                processDomainFile(blacklist, domainFile);
             }
         }
     }
 
-    private void processDomainFile(Blacklist blacklist, List<Path> domainFiles,
-                                   Path domainFile) throws Exception {
+    private void processDomainFile(Blacklist blacklist, Path domainFile) throws Exception {
         // create associated Category object
         Category category = createCategory(domainFile);
-        super.updateMessageCheck("processing category: " + category.getCategoryName() +
+        super.updateMessageCheck("importing category: " + category.getCategoryName() +
                 " for blacklist: " + blacklist.getBlacklistName());
 
         List<Website> websites = extractWebsites(blacklist, domainFile, category);
