@@ -1,11 +1,9 @@
 import React, {Component} from "react";
 import {Col, Row} from "react-grid-system";
-import FontIcon from "material-ui/FontIcon";
-import IconButton from "material-ui/IconButton";
 import AdvancedTextField from "./../AdvancedTextField";
 import GenericForm from "./GenericForm";
 import AlertDialog from "./../AlertDialog";
-import ListRenderer from "./../ListRenderer";
+import FieldArray from "./../FieldArray";
 import {Toolbar, ToolbarGroup} from "material-ui/Toolbar";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
@@ -99,6 +97,17 @@ class FormImport extends Component {
         const {displayName, userName, password, dbName, port, blacklists} =
             this.props.formReducer.getIn(['import']).toObject();
 
+        const fieldArrayParam = {
+            title: "Add blacklists for import:",
+            elements: blacklists.toArray(),
+            onEditAction: this.onEditAction,
+            onDeleteAction: this.onDeleteAction,
+            onAddAction: this.addBlacklist,
+            editTooltip: "edit blacklist",
+            removeTooltip: "remove blacklist",
+            addTooltip: "add blacklist"
+        };
+
         return (
             <GenericForm title={displayName}>
                 <AlertDialog handleCloseOk={this.handleCloseOk} handleCloseCancel={this.handleCloseCancel}
@@ -175,27 +184,29 @@ class FormImport extends Component {
                 </Row>
 
 
-                <Toolbar style={style.leftToRight}>
-                    <ToolbarGroup>
-                        <IconButton onClick={this.addBlacklist} tooltip={"Add blacklist"}>
-                            <FontIcon className="fa fa-plus"/>
-                        </IconButton>
-                    </ToolbarGroup>
+                {/*<Toolbar style={style.leftToRight}>*/}
+                    {/*<ToolbarGroup>*/}
+                        {/*<IconButton onClick={this.addBlacklist} tooltip={"Add blacklist"}>*/}
+                            {/*<FontIcon className="fa fa-plus"/>*/}
+                        {/*</IconButton>*/}
+                    {/*</ToolbarGroup>*/}
+                    {/**/}
+                    {/*<ToolbarGroup>*/}
+                        {/*<span style={{textAlign: "center"}}>*/}
+                            {/*{"Add blacklists for import:"}*/}
+                        {/*</span>*/}
+                    {/*</ToolbarGroup>*/}
+                {/**/}
+                {/*</Toolbar>*/}
 
-                    <ToolbarGroup>
-                        <span style={{textAlign: "center"}}>
-                            {"Add blacklists for import:"}
-                        </span>
-                    </ToolbarGroup>
+                {/*<Row>*/}
+                    {/*<Col md={12} xs={12}>*/}
+                        {/*<ListRenderer elements={blacklists.toArray()} onDeleteAction={ this.onDeleteAction}*/}
+                                      {/*onEditAction={this.onEditAction}/>*/}
+                    {/*</Col>*/}
+                {/*</Row>*/}
 
-                </Toolbar>
-
-                <Row>
-                    <Col md={12} xs={12}>
-                        <ListRenderer elements={blacklists.toArray()} onDeleteAction={ this.onDeleteAction}
-                                      onEditAction={this.onEditAction}/>
-                    </Col>
-                </Row>
+                <FieldArray {...fieldArrayParam} />
             </GenericForm>
         );
     }

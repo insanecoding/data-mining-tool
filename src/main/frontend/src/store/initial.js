@@ -12,13 +12,18 @@ export const initialState = Immutable.fromJS({
         port: 5432,
         cwd: "C:\\DataMining\\experiment_data\\",
         blacklists: [
-            // element example
-            // {
-            //     listName: ...
-            //     folderName: ...
-            //     website: ...
-            //     key: ...
-            // }
+            {
+                listName: "Shalla Security Blacklist",
+                folderName: "\\blacklists\\shalla\\",
+                website: "http://www.shallalist.de/",
+                key: 1
+            },
+            {
+                listName: "URLBlacklist",
+                folderName: "\\blacklists\\ubl\\",
+                website: "http://urlblacklist.com/",
+                key: 2
+            }
         ]
     },
     download: {
@@ -27,16 +32,15 @@ export const initialState = Immutable.fromJS({
         displayName: "Download HTML",
         isOn: false,
         categories: [
-            // element example
-            // {
-            //    categoryName: ...
-            //    key: ...
-            // }
+            {
+               categoryName: "adult",
+               key: 1
+            }
         ],
         downloadsPerCategory: 200,
         connectTimeout: 5000,
         readTimeout: 5000,
-        threadNumber: 50
+        threadsNumber: 50
     },
     extract: {
         key: 3,

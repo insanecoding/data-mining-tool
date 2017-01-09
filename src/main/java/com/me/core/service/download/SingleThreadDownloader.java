@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.net.*;
 import java.util.Queue;
 
-public class Downloader implements Runnable  {
+public class SingleThreadDownloader implements Runnable  {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private Queue<Website> input;
@@ -25,8 +25,8 @@ public class Downloader implements Runnable  {
     private int connectTimeOut;
     private int readTimeOut;
 
-    public Downloader(Queue<Website> input, Queue<HTML> htmls, Queue<Connect> connects,
-               int connectTimeOut, int readTimeOut) {
+    SingleThreadDownloader(Queue<Website> input, Queue<HTML> htmls, Queue<Connect> connects,
+                           int connectTimeOut, int readTimeOut) {
         this.input = input;
         this.htmls = htmls;
         this.connects = connects;

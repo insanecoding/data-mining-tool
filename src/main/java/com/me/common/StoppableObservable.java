@@ -31,13 +31,18 @@ public abstract class StoppableObservable extends Observable{
         checkCancel();
     }
 
+    // new message only
+    protected void updateMessage(String message) {
+        updateInfo(message, -1, -1);
+    }
+
     // new message and progress
-    protected void updateMessage(String message, double current, double max) {
+    void updateMessage(String message, double current, double max) {
         updateInfo(message, current, max);
     }
 
     // new progress only
-    protected void updateMessage(double current, double max) {
+    void updateMessage(double current, double max) {
         updateInfo("", current, max);
     }
 

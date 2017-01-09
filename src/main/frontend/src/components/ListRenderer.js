@@ -14,7 +14,7 @@ const style = {
     }
 };
 
-const ListRenderer = ({elements, onDeleteAction, onEditAction}) => {
+const ListRenderer = ({elements, onDeleteAction, onEditAction, removeTooltip, editTooltip}) => {
 
     const listGenerator = (elements) => {
 
@@ -23,14 +23,14 @@ const ListRenderer = ({elements, onDeleteAction, onEditAction}) => {
 
                 <Toolbar key={elem.getIn(['key'])} style={style.leftToRight}>
                     <ToolbarGroup>
-                        <IconButton tooltip={"remove blacklist"}
+                        <IconButton tooltip={removeTooltip}
                                     onClick={ () => onDeleteAction(elem.getIn(['key'])) }>
                             <FontIcon className="fa fa-minus"/>
                         </IconButton>
                     </ToolbarGroup>
 
                     <ToolbarGroup>
-                        <IconButton tooltip={"edit blacklist"}
+                        <IconButton tooltip={editTooltip}
                                     onClick={ () => onEditAction(elem.getIn(['key'])) }>
                             <FontIcon className="fa fa-pencil"/>
                         </IconButton>
@@ -54,7 +54,9 @@ const ListRenderer = ({elements, onDeleteAction, onEditAction}) => {
 ListRenderer.propTypes = {
     elements: PropTypes.array.isRequired,
     onDeleteAction: PropTypes.func.isRequired,
-    onEditAction: PropTypes.func.isRequired
+    onEditAction: PropTypes.func.isRequired,
+    editTooltip: PropTypes.string,
+    removeTooltip: PropTypes.string
 };
 
 export default ListRenderer;
