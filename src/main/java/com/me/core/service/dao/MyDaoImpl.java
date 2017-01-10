@@ -143,13 +143,7 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         // otherwise it already exists so is duplicate, that's why return false
         return count == 0;
     }
-//    private boolean isUnique(Session session, Website website) {
-//         // check whether website is unique
-//        Long count = websiteRepo.countByUrl(website.getUrl());
-//        // if count == 0 (the entry hasn't existed yet) then it is unique so return true
-//        // otherwise it already exists so is duplicate, that's why return false
-//        return count == 0;
-//    }
+
 //
 //    private Long countWebsites(Session session, Website website) {
 //        Query query = session.createQuery(

@@ -41,8 +41,7 @@ public class MyRestController {
     @ResponseBody
     Map<String, Object> invokeService(@RequestBody Map<String, Map<String, Object>> dto) {
         log.info(" >>> [post] client connected");
-        Map<String, Object> params = initializer.initialize(dto);
-        List<MyExecutable> executables = initializer.createExecutables(params);
+        List<MyExecutable> executables = initializer.createExecutables(dto);
 
         if (executables.size() != 0)
             executor.invokeAll(executables);

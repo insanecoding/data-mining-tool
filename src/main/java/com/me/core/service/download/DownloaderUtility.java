@@ -46,7 +46,7 @@ public class DownloaderUtility extends StoppableObservable {
 
     void processSingleCategory(DownloaderParameters parameters,
                                Category category) throws InterruptedException {
-        super.updateMessageCheck("processing category: " + category.getCategoryName());
+        super.updateMessageCheck("downloading HTMLs for category: " + category.getCategoryName());
 
         List<Website> websites = dao.findWebsitesByCategory(category);
         Downloads downloads = downloadHTMLsFor(websites, parameters);

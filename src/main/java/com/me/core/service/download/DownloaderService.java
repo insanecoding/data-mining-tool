@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -41,9 +41,8 @@ public class DownloaderService extends StoppableObservable implements MyExecutab
 
     @Override
     public void execute() throws Exception {
-        Collections.sort(categories);
-
         List<Category> categoryObjects = dao.findCategoriesByNames(categories);
+        categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
         super.checkCancel();
 
         for (Category category : categoryObjects) {

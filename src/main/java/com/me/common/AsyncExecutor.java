@@ -12,6 +12,7 @@ public class AsyncExecutor extends StoppableObservable {
     private Thread thread;
     private final Runner runner;
     private final ProgressWatcher watcher;
+    private boolean wasStopped = false;
 
     @Autowired
     public AsyncExecutor(@Qualifier("runner") Runner runner,
@@ -33,16 +34,20 @@ public class AsyncExecutor extends StoppableObservable {
     }
 
     public void invokeAll(List<MyExecutable> executables) {
+        this.wasStopped = false;
         executables.forEach(executable -> {
-            double currentStep = executables.indexOf(executable);
-            double totalSteps = executables.size();
-            super.updateMessage(executable.getName(), currentStep, totalSteps);
-            invoke(executable, false);
-            super.updateMessage( ++currentStep, totalSteps);
+            if (!this.wasStopped) {
+                double currentStep = executables.indexOf(executable);
+                double totalSteps = executables.size();
+                super.updateMessage(executable.getName(), currentStep, totalSteps);
+                invoke(executable, false);
+                super.updateMessage( ++currentStep, totalSteps);
+            }
         });
     }
 
     public void stop() {
+        this.wasStopped = true;
         this.runner.cleanUp();
         this.thread.interrupt();
         this.thread = null;

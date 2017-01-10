@@ -4,18 +4,10 @@ import AdvancedTextField from "./../AdvancedTextField";
 import GenericForm from "./GenericForm";
 import AlertDialog from "./../AlertDialog";
 import FieldArray from "./../FieldArray";
-import {Toolbar, ToolbarGroup} from "material-ui/Toolbar";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as connectionActions from "./../../actions/connectionActions";
 import * as formActions from "./../../actions/formActions";
-
-const style = {
-    leftToRight: {
-        justifyContent: "flex-start",
-        backgroundColor: "white",
-    }
-};
 
 class FormImport extends Component {
 
@@ -182,29 +174,6 @@ class FormImport extends Component {
                         />
                     </Col>
                 </Row>
-
-
-                {/*<Toolbar style={style.leftToRight}>*/}
-                    {/*<ToolbarGroup>*/}
-                        {/*<IconButton onClick={this.addBlacklist} tooltip={"Add blacklist"}>*/}
-                            {/*<FontIcon className="fa fa-plus"/>*/}
-                        {/*</IconButton>*/}
-                    {/*</ToolbarGroup>*/}
-                    {/**/}
-                    {/*<ToolbarGroup>*/}
-                        {/*<span style={{textAlign: "center"}}>*/}
-                            {/*{"Add blacklists for import:"}*/}
-                        {/*</span>*/}
-                    {/*</ToolbarGroup>*/}
-                {/**/}
-                {/*</Toolbar>*/}
-
-                {/*<Row>*/}
-                    {/*<Col md={12} xs={12}>*/}
-                        {/*<ListRenderer elements={blacklists.toArray()} onDeleteAction={ this.onDeleteAction}*/}
-                                      {/*onEditAction={this.onEditAction}/>*/}
-                    {/*</Col>*/}
-                {/*</Row>*/}
 
                 <FieldArray {...fieldArrayParam} />
             </GenericForm>
