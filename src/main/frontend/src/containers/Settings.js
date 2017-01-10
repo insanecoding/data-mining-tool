@@ -37,8 +37,8 @@ class Settings extends Component {
 
         const { formReducer, connectionReducer } = this.props;
         const { componentToggled, onInputChange} = this.props.formActions;
-        const { activeFormAndRouteChanged, onWebsocketMessage,
-            executePostQuery, executeGetQuery } = this.props.connectionActions;
+        const { activeFormAndRouteChanged, updateStatusAndProgress,
+            isAppStarted } = this.props.connectionActions;
 
         const pathChooserParam = {
             formName: "import",
@@ -53,9 +53,8 @@ class Settings extends Component {
         };
 
         const buttonsAndProgressParam = {
-            onWebsocketMessage: onWebsocketMessage,
-            executePostQuery: executePostQuery,
-            executeGetQuery: executeGetQuery,
+            updateStatusAndProgress: updateStatusAndProgress,
+            isAppStarted: isAppStarted,
             formData: formReducer,
             connectionData: connectionReducer
         };

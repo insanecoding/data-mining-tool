@@ -33,23 +33,71 @@ export const initialState = Immutable.fromJS({
         isOn: false,
         categories: [
             {
-               categoryName: "chat",
+               categoryName: "medical",
                key: 1
             },
             {
-                categoryName: "pets",
+                categoryName: "religion",
                 key: 2
             },
             {
-                categoryName: "news",
+                categoryName: "ecommerce",
                 key: 3
             },
             {
-                categoryName: "medical",
+                categoryName: "alcohol",
                 key: 4
-            }
+            },
+            {
+                categoryName: "adult",
+                key: 5
+            },
+            {
+                categoryName: "shopping",
+                key: 6
+            },
+            {
+                categoryName: "sports",
+                key: 7
+            },
+            {
+                categoryName: "gamesonline",
+                key: 8
+            },
+            {
+                categoryName: "news",
+                key: 9
+            },
+            {
+                categoryName: "hunting",
+                key: 10
+            },
+            {
+                categoryName: "music",
+                key: 11
+            },
+            {
+                categoryName: "chat",
+                key: 12
+            },
+            {
+                categoryName: "magazines",
+                key: 13
+            },
+            {
+                categoryName: "gamble",
+                key: 14
+            },
+            {
+                categoryName: "jobsearch",
+                key: 15
+            },
+            {
+                categoryName: "forum",
+                key: 16
+            },
         ],
-        downloadsPerCategory: 200,
+        downloadsPerCategory: 10000,
         connectTimeout: 5000,
         readTimeout: 5000,
         threadsNumber: 50

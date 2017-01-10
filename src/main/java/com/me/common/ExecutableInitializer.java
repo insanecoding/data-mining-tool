@@ -33,7 +33,7 @@ public class ExecutableInitializer {
         this.downloaderService = downloaderService;
     }
 
-    public List<MyExecutable> createExecutables(Map<String, Map<String, Object>> dto) {
+    public List<MyExecutable> createExecutables(Map<String, Object> dto) {
         Map<String, Object> params = initAll(dto);
         List<MyExecutable> executables = new LinkedList<>();
 
@@ -53,7 +53,7 @@ public class ExecutableInitializer {
         return executables;
     }
 
-    private Map<String, Object> initAll(Map<String, Map<String, Object>> dto) {
+    private Map<String, Object> initAll(Map<String, Object> dto) {
         Map<String, Object> params = new LinkedHashMap<>();
 
         initUncompressImport(dto, params);
@@ -63,9 +63,9 @@ public class ExecutableInitializer {
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void initUncompressImport(Map<String, Map<String, Object>> dto,
+    private void initUncompressImport(Map<String, Object> dto,
                                       Map<String, Object> params) {
-        Map<String, Object> settings = dto.get("import");
+        Map<String, Object> settings = (Map<String, Object>) dto.get("import");
         String cwd = (String) settings.get("cwd");
 
         if ((boolean) settings.get("isOn")) {
@@ -92,9 +92,9 @@ public class ExecutableInitializer {
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void initDownloader(Map<String, Map<String, Object>> dto,
+    private void initDownloader(Map<String, Object> dto,
                                 Map<String, Object> params) {
-        Map<String, Object> settings = dto.get("download");
+        Map<String, Object> settings = (Map<String, Object>) dto.get("download");
         if ((boolean) settings.get("isOn")) {
             Map<String, Object> properties = new LinkedHashMap<>();
 

@@ -28,5 +28,9 @@ export class WebsocketClient {
         // send json object to the application
         this.stompClient.send("/socket/progress", {}, obj);
     };
+
+    cancel = () => {
+        this.stompClient.send("/socket/cancel", {}, {});
+    }
 }
 

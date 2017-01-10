@@ -39,16 +39,19 @@ class ButtonsAndProgress extends Component {
 
     componentWillUnmount = () => {
         this.websocketClient.disconnect();
-        this.websocketClient = null;
     };
 
     outputWebSocket = (resp) => {
-        const {onWebsocketMessage} = this.props;
+        const {updateStatusAndProgress, isAppStarted} = this.props;
         const response = JSON.parse(resp.body);
         console.log("response is: ", response);
-        const status = response.info;
-        const percentsProgress = response.progress;
-        onWebsocketMessage(status, percentsProgress);
+        if (response.info  && response.progress) {
+            const {info, progress} = response;
+            updateStatusAndProgress(info, progress);
+        } else if (response.status === "finished" || response.status === "cancelled") {
+            isAppStarted(false);
+            updateStatusAndProgress(response.status, 0);
+        }
     };
 
     validateExecutionOrder = (myObj) => {
@@ -57,22 +60,24 @@ class ButtonsAndProgress extends Component {
         // join by whitespaces
         const toStr = asArray.join(' ');
         // check whether contains some combinations of toggles that are prohibited
-        return (toStr.includes("true false true") || toStr.includes("false false false false") || toStr.includes("true false false true"));
+        return (
+            toStr.includes("true false true") || toStr.includes("false false false false")
+            || toStr.includes("true false false true")
+        );
     };
 
     handleClick = (buttonName) => {
-        const {executePostQuery, executeGetQuery, formData} = this.props;
+        const {formData, isAppStarted} = this.props;
 
         if (buttonName === "start") {
             if (this.validateExecutionOrder(formData)) {
                 this.setState({dialogOpen: true});
             } else {
-                // send empty message to start websocket communication
-                this.websocketClient.send();
-                executePostQuery("api/invoke", formData);
+                isAppStarted(true);
+                this.websocketClient.send(JSON.stringify(formData.toObject()));
             }
         } else if (buttonName === "cancel") {
-            executeGetQuery("api/cancel");
+            this.websocketClient.cancel();
         }
     };
 
@@ -111,11 +116,10 @@ class ButtonsAndProgress extends Component {
 }
 
 ButtonsAndProgress.propTypes = {
-    onWebsocketMessage: PropTypes.func.isRequired,
-    executePostQuery: PropTypes.func.isRequired,
-    executeGetQuery: PropTypes.func.isRequired,
+    updateStatusAndProgress: PropTypes.func.isRequired,
+    isAppStarted: PropTypes.func.isRequired,
     formData: PropTypes.instanceOf(Immutable.Map).isRequired,
-    connectionData: PropTypes.instanceOf(Immutable.Map).isRequired,
+    connectionData: PropTypes.instanceOf(Immutable.Map).isRequired
 };
 
 export default ButtonsAndProgress;
