@@ -81,14 +81,14 @@ class AdvancedTextField extends Component {
 }
 
 AdvancedTextField.propTypes = {
-    placeHolder: PropTypes.string.isRequired,
     pattern: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     fieldName: PropTypes.string.isRequired,
     type: PropTypes.string,
     value: PropTypes.any.isRequired,
     onChangeEvent: PropTypes.func.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    placeHolder: PropTypes.string
 };
 
 export default AdvancedTextField;

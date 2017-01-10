@@ -167,6 +167,7 @@ class FormImport extends Component {
                         />
                         <AdvancedTextField placeHolder="port number"
                                            pattern={"number"}
+                                           type={"number"}
                                            label={"port number"}
                                            fieldName={"port"}
                                            value={port}
