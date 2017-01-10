@@ -4,9 +4,13 @@ import {
     FIELD_CHANGED,
     DIALOG_SUBMIT,
     ON_BLACKLIST_DELETE,
-    DIALOG_EDIT
+    DIALOG_EDIT,
+    ON_LIST_ELEMENT_ADD,
+    ON_LIST_ELEMENT_DELETE,
+    ON_LIST_ELEMENT_EDIT
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
+import Immutable from "immutable";
 
 export default function processForm(state = initialState, action) {
     switch (action.type) {
@@ -61,11 +65,47 @@ export default function processForm(state = initialState, action) {
             return state.setIn(['import', 'blacklists'], blacklists);
         }
 
-        case ON_BLACKLIST_DELETE:
+        case ON_BLACKLIST_DELETE: {
             const key = action.payload;
             const currentArray = state.getIn(['import', 'blacklists']);
-            const newArray = currentArray.filterNot( x => x.getIn(['key']) === key);
+            const newArray = currentArray.filterNot(x => x.getIn(['key']) === key);
             return state.setIn(['import', 'blacklists'], newArray);
+        }
+
+        case ON_LIST_ELEMENT_ADD: {
+            const whereToSave = action.payload.getIn(['whereToSave']);
+
+            let currentElements = state.getIn(whereToSave);
+            let lastKey = (currentElements.size !== 0) ? currentElements.last().getIn(['key']) : 0;
+            const newElement = Immutable.Map({
+                key: ++lastKey,
+                name: action.payload.getIn(['element'])
+            });
+            currentElements = currentElements.push(newElement);
+            return state.setIn(whereToSave, currentElements);
+        }
+
+        case ON_LIST_ELEMENT_DELETE: {
+            const {whereToSeek, elementId} = action.payload.toObject();
+
+            const currentArray = state.getIn(whereToSeek);
+            const newArray = currentArray.filterNot(x => x.getIn(['key']) === elementId);
+            return state.setIn(whereToSeek, newArray);
+        }
+
+        case ON_LIST_ELEMENT_EDIT: {
+            const {whereToSeek, element, elementId} = action.payload.toObject();
+
+            let currentArray = state.getIn(whereToSeek);
+            const newArray = currentArray = currentArray.map(elem =>
+                elem.getIn(['key']) === elementId ?
+                    elem.setIn(['name'], element) :
+                    elem
+            );
+
+            return state.setIn(whereToSeek, newArray);
+        }
+
 
         default:
             return state;

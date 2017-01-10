@@ -2,11 +2,6 @@ import React, {Component, PropTypes} from "react";
 import TextField from "material-ui/TextField";
 import FontIcon from "material-ui/FontIcon";
 
-// const style = {
-//     inputField: {
-        // width: "80%"
-    // },
-// };
 class AdvancedTextField extends Component {
 
     constructor(props) {

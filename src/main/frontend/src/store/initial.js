@@ -33,19 +33,19 @@ export const initialState = Immutable.fromJS({
         isOn: false,
         categories: [
             {
-               categoryName: "medical",
+               name: "medical",
                key: 1
             },
             {
-                categoryName: "chat",
+                name: "chat",
                 key: 2
             },
             {
-                categoryName: "news",
+                name: "news",
                 key: 3
             },
             {
-                categoryName: "pets",
+                name: "pets",
                 key: 4
             }
         ],

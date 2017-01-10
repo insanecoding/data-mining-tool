@@ -1,26 +1,27 @@
 import React, {PropTypes} from "react";
-import TodoItem from "./ListItem";
+import MyListItem from "./MyListItem";
 import {List} from "material-ui";
-import TodoTextInput from "./InputField";
+import InputField from "./InputField";
 
 const defaultStyle = {
     header: {
-        marginLeft: 20
+        textAlign: "center",
+        marginBottom: "0px"
     },
-    main: {
-        width: "25%",
-        marginLeft: 20
+    flex: {
+        display: "flex",
+        justifyContent: "center"
+    },
+    listElement: {
+        width: "80%"
     }
-
 };
 
-const MainSection = ({title, placeholder, todos, actions}) => {
-
-    const filteredTodos = todos.filter(() => true);
+const MainSection = ({title, placeholder, elements, whereToSave, onAdd, onEdit, onDelete}) => {
 
     const handleSave = (text) => {
         if (text.length !== 0) {
-            actions.addTodo(text);
+            onAdd(text, whereToSave);
         }
     };
 
@@ -28,15 +29,17 @@ const MainSection = ({title, placeholder, todos, actions}) => {
         <section>
             <header className="header">
                 <h1 style={defaultStyle.header}>{title}</h1>
-                <TodoTextInput newTodo
-                               onSave={handleSave}
-                               placeholder={placeholder}/>
+                <div style={defaultStyle.flex}>
+                    <InputField newElement
+                            onSave={handleSave} placeholder={placeholder}/>
+                </div>
             </header>
 
-            <section className="main" style={defaultStyle.main}>
-                <List className="todo-list">
-                    {filteredTodos.map(todo =>
-                        <TodoItem key={todo.id} todo={todo} {...actions} />
+            <section className="main" style={defaultStyle.flex}>
+                <List className="todo-list" style={defaultStyle.listElement}>
+                    {elements.map(element =>
+                        <MyListItem key={element.key} element={element}
+                                    onDelete={onDelete} onEdit={onEdit} whereToSeek={whereToSave}/>
                     )}
                 </List>
             </section>
@@ -46,10 +49,13 @@ const MainSection = ({title, placeholder, todos, actions}) => {
 };
 
 MainSection.propTypes = {
-    todos: PropTypes.array.isRequired,
-    actions: PropTypes.object.isRequired,
+    elements: PropTypes.array.isRequired,
+    whereToSave: PropTypes.array.isRequired,
     title: PropTypes.string.isRequired,
-    placeholder: PropTypes.string.isRequired
+    placeholder: PropTypes.string.isRequired,
+    onAdd: PropTypes.func.isRequired,
+    onEdit: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
 };
 
 export default MainSection;

@@ -4,7 +4,7 @@ import AdvancedTextField from "./../AdvancedTextField";
 const style = {
     inputField: {
         width: "90%"
-    },
+    }
 };
 
 const PathChooser = ({formName, cwd, onInputChange}) => {

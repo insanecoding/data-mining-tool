@@ -1,10 +1,9 @@
 import React, {Component, PropTypes} from "react";
-// import classnames from 'classnames';
 import InputField from "./InputField";
 import {ListItem, IconButton, IconMenu, MenuItem} from "material-ui";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 
-class TodoItem extends Component {
+class MyListItem extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -16,17 +15,21 @@ class TodoItem extends Component {
         this.setState({editing: true});
     };
 
-    handleSave = (id, text) => {
+    handleDelete = (element, whereToSeek) => {
+        this.props.onDelete(element.key, whereToSeek)
+    };
+
+    handleSave = (element, text, whereToSeek) => {
         if (text.length === 0) {
-            this.props.onDelete(id);
+            this.props.onDelete(element.key, whereToSeek);
         } else {
-            this.props.onEdit(id, text);
+            this.props.onEdit(element.key, text, whereToSeek);
         }
         this.setState({editing: false});
     };
 
     render() {
-        const {todo, completeTodo, onDelete} = this.props;
+        const {element, whereToSeek} = this.props;
 
         const rightIconMenu = (
             <IconMenu iconButtonElement={
@@ -36,44 +39,36 @@ class TodoItem extends Component {
             }
             >
                 <MenuItem primaryText="Edit" onTouchTap={this.handleEdit}/>
-                <MenuItem primaryText="Delete" onTouchTap={() => onDelete(todo.id)}/>
+                <MenuItem primaryText="Delete" onTouchTap={ () => this.handleDelete(element, whereToSeek) }/>
             </IconMenu>
         );
 
-        let element;
+        let nodeElement;
         if (this.state.editing) {
-            element = (
-                <InputField text={todo.text}
+            nodeElement = (
+                <InputField text={element.name}
                             editing={this.state.editing}
-                            onSave={(text) => this.handleSave(todo.id, text)}/>
+                            onSave={(text) => this.handleSave(element, text, whereToSeek)}/>
             );
         } else {
-            element = (
-                <ListItem primaryText={todo.text}
-                          onTouchTap={() => completeTodo(todo.id)}
-                          rightIconButton={rightIconMenu}
-                />
+            nodeElement = (
+                <ListItem primaryText={element.name} rightIconButton={rightIconMenu}/>
             );
         }
 
         return (
-            <div
-                {/*className={classnames({*/}
-                {/*completed: todo.completed,*/}
-                {/*editing: this.state.editing*/}
-            {/*})}*/}
-            >
-                {element}
+            <div>
+                {nodeElement}
             </div>
         );
     }
 }
 
-TodoItem.propTypes = {
-    todo: PropTypes.object.isRequired,
+MyListItem.propTypes = {
+    element: PropTypes.object.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    completeTodo: PropTypes.func.isRequired
+    whereToSeek: PropTypes.array.isRequired
 };
 
-export default TodoItem;
+export default MyListItem;
