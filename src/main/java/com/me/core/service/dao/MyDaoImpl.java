@@ -125,6 +125,15 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> alreadyProcessedHtmlIDs(Category category) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select c.website.websiteId " +
+                        " from Connect c where c.website.category in :category")
+                .setParameter("category", category).list();
+    }
+
+    @Override
     public Long countDuplicates() {
         String sql = "SELECT coalesce(sum(dupes.c) - count(dupes.c), 0) " +
                 "FROM (SELECT count(*) AS c " +

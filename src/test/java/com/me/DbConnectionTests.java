@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 public class DbConnectionTests {
 
     @Autowired
-    private MyDao myDao;
+    private MyDao dao;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -51,13 +51,13 @@ public class DbConnectionTests {
                 Website website = new Website("my website" + i + "_" + j, category, blacklist);
                 websites.add(website);
             }
-            myDao.batchSave(websites);
+            dao.batchSave(websites);
         }
-        assertThat(myDao.countDuplicates()).isEqualTo(0);
+        assertThat(dao.countDuplicates()).isEqualTo(0);
         assertThat(countWebsites()).isEqualTo(100_000);
     }
 
-    @Test
+    @Test @Ignore
     public void testConnection() {
         assertTrue(DbCreationUtility.dbExists("jdbc:postgresql://localhost:5432/Website_Classification",
                 "postgres", "postgresql"));

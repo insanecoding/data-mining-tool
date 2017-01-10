@@ -45,7 +45,7 @@ public class ExecutableInitializer {
             importerService.initialize(params);
             executables.add(importerService);
         }
-        if (params.keySet().contains("importer")) {
+        if (params.keySet().contains("downloader")) {
             downloaderService.initialize(params);
             executables.add(downloaderService);
         }

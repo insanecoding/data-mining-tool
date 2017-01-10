@@ -24,5 +24,7 @@ public interface MyDao {
 
     List<Website> findWebsitesByCategory(Category category);
 
+    List<Long> alreadyProcessedHtmlIDs(Category category);
+
     Long countDuplicates();
 }

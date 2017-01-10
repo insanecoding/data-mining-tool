@@ -20,6 +20,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Component
 public class DownloaderUtility extends StoppableObservable {
@@ -49,7 +50,15 @@ public class DownloaderUtility extends StoppableObservable {
         super.updateMessageCheck("downloading HTMLs for category: " + category.getCategoryName());
 
         List<Website> websites = dao.findWebsitesByCategory(category);
-        Downloads downloads = downloadHTMLsFor(websites, parameters);
+        List<Long> processed = dao.alreadyProcessedHtmlIDs(category);
+
+        List<Website> newWebsites = websites.stream()
+                .filter(website -> !processed.contains(website.getWebsiteId()))
+                .collect(Collectors.toList());
+
+        processed.clear();
+        websites.clear();
+        Downloads downloads = downloadHTMLsFor(newWebsites, parameters);
 
         Queue<HTML> HTMLs = downloads.getHtmls();
         dao.batchSave(HTMLs);
