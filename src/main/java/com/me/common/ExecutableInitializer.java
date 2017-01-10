@@ -101,7 +101,7 @@ public class ExecutableInitializer {
             List<Map<String, Object>> categoriesTemp =
                     (List<Map<String, Object>>) settings.get("categories");
             List<String> categories = categoriesTemp.stream()
-                    .map(elem -> (String)elem.get("categoryName")).collect(Collectors.toList());
+                    .map(elem -> (String)elem.get("name")).collect(Collectors.toList());
 
             properties.put("downloadsPerCategory", settings.get("downloadsPerCategory"));
             properties.put("threadsNumber", settings.get("threadsNumber"));

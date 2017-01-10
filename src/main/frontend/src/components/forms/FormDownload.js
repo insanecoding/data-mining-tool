@@ -7,11 +7,12 @@ import GenericForm from "./GenericForm";
 import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import ListOfElements from "./../list-of-elements/ListOfElements";
+import {onValueChange} from "./../../util/misc";
 
 class FormFeatures extends Component {
 
     changeEvent = (e) => {
-        this.props.formActions.onInputChange(e.target.value, e.target.name, "download");
+        onValueChange (e, "download", this.props.formActions.onInputChange);
     };
 
     createCategories = (formReducer) => {

@@ -55,3 +55,11 @@ export const mapToArray = (deeplyNestedObject) => {
 export const isEmptyObject = (object) => {
     return Object.keys(object).length === 0;
 };
+
+export const onValueChange = (e, formName, foo) => {
+    let element = e.target.value;
+    if (e.target.type === "number") {
+        element = parseInt(element);
+    }
+    foo(element, e.target.name, formName);
+};
