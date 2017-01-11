@@ -49,16 +49,8 @@ public class DownloaderUtility extends StoppableObservable {
                                Category category) throws InterruptedException {
         super.updateMessageCheck("downloading HTMLs for category: " + category.getCategoryName());
 
-        List<Website> websites = dao.findWebsitesByCategory(category);
-        List<Long> processed = dao.alreadyProcessedHtmlIDs(category);
-
-        List<Website> newWebsites = websites.stream()
-                .filter(website -> !processed.contains(website.getWebsiteId()))
-                .collect(Collectors.toList());
-
-        processed.clear();
-        websites.clear();
-        Downloads downloads = downloadHTMLsFor(newWebsites, parameters);
+        List<Website> notProcessed = getNotProcessedWebsites(category);
+        Downloads downloads = downloadHTMLsFor(notProcessed, parameters);
 
         Queue<HTML> HTMLs = downloads.getHtmls();
         dao.batchSave(HTMLs);
@@ -69,6 +61,19 @@ public class DownloaderUtility extends StoppableObservable {
                 " ( " + category.getCategoryName() + " )");
 
         super.updateMessageCheck("finished with category: " + category.getCategoryName());
+    }
+
+    private List<Website> getNotProcessedWebsites(Category category) {
+        List<Website> websites = dao.findByCategory("websites", category);
+        List<Long> processed = dao.alreadyProcessedIDsFor("htmls", category);
+
+        List<Website> newWebsites = websites.stream()
+                .filter(website -> !processed.contains(website.getWebsiteId()))
+                .collect(Collectors.toList());
+
+        processed.clear();
+        websites.clear();
+        return newWebsites;
     }
 
     private Downloads downloadHTMLsFor(List<Website> input, DownloaderParameters parameters)

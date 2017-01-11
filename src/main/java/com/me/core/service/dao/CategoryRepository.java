@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CategoryRepo extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByCategoryNameIn(List<String> categoryName);
     Category findByCategoryName(String categoryName);
 }

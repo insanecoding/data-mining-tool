@@ -3,6 +3,7 @@ package com.me.core.service.dao;
 import com.me.common.StoppableObservable;
 import com.me.core.domain.entities.Blacklist;
 import com.me.core.domain.entities.Category;
+import com.me.core.domain.entities.HTML;
 import com.me.core.domain.entities.Website;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -10,6 +11,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,27 +30,36 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     private int batchSize;
 
     private final SessionFactory sessionFactory;
-    private final CategoryRepo categoryRepo;
-    private final WebsiteRepo websiteRepo;
+    @Lazy
     private final JdbcTemplate jdbcTemplate;
-    private final BlacklistRepo blacklistRepo;
+    @Lazy
+    private final CategoryRepository categoryRepository;
+    @Lazy
+    private final WebsiteRepository websiteRepository;
 
     @Autowired
     public MyDaoImpl(SessionFactory sessionFactory,
-                     @Qualifier("categoryRepo") CategoryRepo categoryRepo,
-                     @Qualifier("websiteRepo") WebsiteRepo websiteRepo,
-                     JdbcTemplate jdbcTemplate, BlacklistRepo blacklistRepo) {
+                     @Qualifier("categoryRepository") CategoryRepository categoryRepository,
+                     @Qualifier("websiteRepository") WebsiteRepository websiteRepository,
+                     JdbcTemplate jdbcTemplate) {
         this.sessionFactory = sessionFactory;
-        this.categoryRepo = categoryRepo;
-        this.websiteRepo = websiteRepo;
+        this.categoryRepository = categoryRepository;
+        this.websiteRepository = websiteRepository;
         this.jdbcTemplate = jdbcTemplate;
-        this.blacklistRepo = blacklistRepo;
     }
 
     @Override
-    public <T extends Serializable> T saveEntity(T entity) {
-        sessionFactory.getCurrentSession().save(entity);
-        return entity;
+    public void batchSaveWebsites(List<Website> websites) throws InterruptedException {
+        Stream<Website> websiteStream = websites.stream().filter(this::isUnique);
+        batchSave(websiteStream::iterator);
+    }
+
+    private boolean isUnique(Website website) {
+        // check whether website is unique
+        Long count = websiteRepository.countByUrl(website.getUrl());
+        // if count == 0 (the entry hasn't existed yet) then it is unique so return true
+        // otherwise it already exists so is duplicate, that's why return false
+        return count == 0;
     }
 
     @Override
@@ -70,17 +81,9 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     }
 
     @Override
-    public void batchSaveWebsites(List<Website> websites) throws InterruptedException {
-//        Session session = sessionFactory.getCurrentSession();
-        Stream<Website> websiteStream = websites.stream()
-                .filter(this::isUnique);
-        batchSave(websiteStream::iterator);
-    }
-
-    @Override
     public Category trySaveCategory(Category category) {
         // check whether entity exists
-        Category result = findCategory(category);
+        Category result = findCategory(category.getCategoryName());
         // if entity hasn't existed yet
         if (result == null) {
             // save and return
@@ -92,10 +95,16 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         }
     }
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings(value = "unchecked")
+    private Category findCategory(String categoryName) {
+        return categoryRepository.findByCategoryName(categoryName);
+    }
+
     @Override
     public Blacklist trySaveBlacklist(Blacklist blacklist) {
         // check whether entity exists
-        Blacklist result = blacklistRepo.findByBlacklistName(blacklist.getBlacklistName());
+        Blacklist result = findBlacklist(blacklist.getBlacklistName());
         // if entity hasn't existed yet
         if (result == null) {
             // save and return
@@ -107,26 +116,66 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         }
     }
 
+    private Blacklist findBlacklist(String blacklistName) {
+        return (Blacklist) sessionFactory.getCurrentSession()
+                .createQuery("from Blacklist b where b.blacklistName = :category")
+                .setParameter("category", blacklistName).uniqueResult();
+    }
+
     @Override
-    @Transactional(readOnly = true)
-    @SuppressWarnings(value = "unchecked")
-    public Category findCategory(Category category) {
-        return categoryRepo.findByCategoryName(category.getCategoryName());
+    public <T extends Serializable> T saveEntity(T entity) {
+        sessionFactory.getCurrentSession().save(entity);
+        return entity;
     }
 
     @Override
     public List<Category> findCategoriesByNames(List<String> categoryNames) {
-        return categoryRepo.findByCategoryNameIn(categoryNames);
-    }
-
-    @Override
-    public List<Website> findWebsitesByCategory(Category category) {
-        return websiteRepo.findByCategoryIn(Collections.singletonList(category));
+        return categoryRepository.findByCategoryNameIn(categoryNames);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Long> alreadyProcessedHtmlIDs(Category category) {
+    public <T extends Serializable> List<T> findByCategory(String whatToFind, Category category) {
+        switch (whatToFind) {
+            case "websites":
+                List<Category> categoryList = Collections.singletonList(category);
+                return (List<T>) websiteRepository.findByCategoryIn(categoryList);
+            case "htmls":
+                return (List<T>) findHTMLByCategory(category);
+            default:
+                throw new IllegalArgumentException("Illegal argument 'whatToFind'");
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<HTML> findHTMLByCategory(Category category) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from HTML h where h.website.category = :category")
+                .setParameter("category", category).list();
+    }
+
+    @Override
+    public List<Long> alreadyProcessedIDsFor(String mode, Category category) {
+        switch (mode) {
+            case "htmls":
+                return alreadyProcessedHtmlIDs(category);
+            case "texts_main":
+                return alreadyProcessedTextMainIDs(category);
+            default:
+                throw new IllegalArgumentException("Illegal argument 'mode'");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Long> alreadyProcessedTextMainIDs(Category category) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select tm.website.websiteId " +
+                        " from TextMain tm where tm.website.category in :category")
+                .setParameter("category", category).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Long> alreadyProcessedHtmlIDs(Category category) {
         return sessionFactory.getCurrentSession()
                 .createQuery("select c.website.websiteId " +
                         " from Connect c where c.website.category in :category")
@@ -144,21 +193,4 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         return jdbcTemplate.queryForObject(
                 sql, new Object[] {}, Long.class);
     }
-
-    private boolean isUnique(Website website) {
-        // check whether website is unique
-        Long count = websiteRepo.countByUrl(website.getUrl());
-        // if count == 0 (the entry hasn't existed yet) then it is unique so return true
-        // otherwise it already exists so is duplicate, that's why return false
-        return count == 0;
-    }
-
-//
-//    private Long countWebsites(Session session, Website website) {
-//        Query query = session.createQuery(
-//                "select count(*) from Website websites " +
-//                        "where websites.url = :url"
-//        ).setParameter("url", website.getUrl());
-//        return (Long)query.uniqueResult();
-//    }
 }

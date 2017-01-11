@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface WebsiteRepo extends JpaRepository <Website, Long> {
+public interface WebsiteRepository extends JpaRepository <Website, Long> {
     List<Website> findByCategoryIn(List<Category> category);
     Long countByUrl(String url);
 }

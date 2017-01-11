@@ -18,13 +18,11 @@ public interface MyDao {
 
     Blacklist trySaveBlacklist(Blacklist blacklist);
 
-    Category findCategory(Category category);
-
     List<Category> findCategoriesByNames(List<String> categoryNames);
 
-    List<Website> findWebsitesByCategory(Category category);
+    <T extends Serializable> List<T> findByCategory(String whatToFind, Category category);
 
-    List<Long> alreadyProcessedHtmlIDs(Category category);
+    List<Long> alreadyProcessedIDsFor(String mode, Category category);
 
     Long countDuplicates();
 }

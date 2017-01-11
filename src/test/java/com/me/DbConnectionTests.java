@@ -2,6 +2,7 @@ package com.me;
 
 import com.me.core.domain.entities.Blacklist;
 import com.me.core.domain.entities.Category;
+import com.me.core.domain.entities.HTML;
 import com.me.core.domain.entities.Website;
 import com.me.core.service.dao.DbCreationUtility;
 import com.me.core.service.dao.MyDao;
@@ -14,9 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -24,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("prod")
 public class DbConnectionTests {
 
     @Autowired
@@ -67,8 +66,29 @@ public class DbConnectionTests {
                 "zfxcxc", "postgrsffssfsfesql"));
     }
 
-    @Test
-    public void testCreateDb() {
+    @Test @Ignore
+    public void testFindWebsitesByCategory() {
+        List<Category> categories =
+                dao.findCategoriesByNames(Arrays.asList("news", "vacation", "medical"));
+        categories.forEach(category -> {
+            List<Website> websites = dao.findByCategory("websites", category);
+            assertThat(websites.size()).isNotEqualTo(0);
+        });
+    }
 
+    @Test
+    public void testFindHTMLsByCategory() throws Exception {
+        Category category =
+                dao.findCategoriesByNames(Collections.singletonList("news")).get(0);
+        List<HTML> htmls = dao.findByCategory("htmls", category);
+        assertThat(htmls.size()).isNotEqualTo(0);
+    }
+
+    @Test
+    public void testAlreadyProcessedTextMain() throws Exception {
+        Category category =
+                dao.findCategoriesByNames(Collections.singletonList("news")).get(0);
+        List<Long> ids = dao.alreadyProcessedIDsFor("texts_main", category);
+        assertThat(ids.size()).isEqualTo(0);
     }
 }

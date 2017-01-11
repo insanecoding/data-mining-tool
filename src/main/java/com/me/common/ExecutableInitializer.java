@@ -2,6 +2,7 @@ package com.me.common;
 
 import com.me.core.domain.dto.BlacklistProperty;
 import com.me.core.service.download.DownloaderService;
+import com.me.core.service.features.text.TextMainExtractorService;
 import com.me.core.service.importbl.BlacklistImporterService;
 import com.me.core.service.uncompress.UncompressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,18 @@ public class ExecutableInitializer {
     private final UncompressService uncompressService;
     @Lazy
     private final DownloaderService downloaderService;
+    @Lazy
+    private final TextMainExtractorService textMainExtractorService;
 
     @Autowired
     public ExecutableInitializer(BlacklistImporterService importerService,
                                  UncompressService uncompressService,
-                                 DownloaderService downloaderService) {
+                                 DownloaderService downloaderService,
+                                 TextMainExtractorService textMainExtractorService) {
         this.importerService = importerService;
         this.uncompressService = uncompressService;
         this.downloaderService = downloaderService;
+        this.textMainExtractorService = textMainExtractorService;
     }
 
     public List<MyExecutable> createExecutables(Map<String, Object> dto) {
@@ -49,6 +54,10 @@ public class ExecutableInitializer {
             downloaderService.initialize(params);
             executables.add(downloaderService);
         }
+        if (params.keySet().contains("textMainExtractor")) {
+            textMainExtractorService.initialize(params);
+            executables.add(textMainExtractorService);
+        }
 
         return executables;
     }
@@ -58,6 +67,7 @@ public class ExecutableInitializer {
 
         initUncompressImport(dto, params);
         initDownloader(dto, params);
+        initTextMainExtractor(dto, params);
 
         return params;
     }
@@ -100,8 +110,7 @@ public class ExecutableInitializer {
 
             List<Map<String, Object>> categoriesTemp =
                     (List<Map<String, Object>>) settings.get("categories");
-            List<String> categories = categoriesTemp.stream()
-                    .map(elem -> (String)elem.get("name")).collect(Collectors.toList());
+            List<String> categories = categoriesListFromMap(categoriesTemp);
 
             properties.put("downloadsPerCategory", settings.get("downloadsPerCategory"));
             properties.put("threadsNumber", settings.get("threadsNumber"));
@@ -111,5 +120,21 @@ public class ExecutableInitializer {
 
             params.put("downloader", properties);
         }
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    private void initTextMainExtractor(Map<String, Object> dto, Map<String, Object> params) {
+        Map<String, Object> settings = (Map<String, Object>) dto.get("extract");
+        if ((boolean) settings.get("isOn")) {
+            List<Map<String, Object>> categories =
+                    (List<Map<String, Object>>) settings.get("categories");
+            List<String> stringCategories = categoriesListFromMap(categories);
+            params.put("textMainExtractor", stringCategories);
+        }
+    }
+
+    private List<String> categoriesListFromMap(List<Map<String, Object>> categoriesTemp) {
+        return categoriesTemp.stream()
+                .map(elem -> (String)elem.get("name")).collect(Collectors.toList());
     }
 }

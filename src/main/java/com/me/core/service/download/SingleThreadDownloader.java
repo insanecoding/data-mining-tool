@@ -66,10 +66,11 @@ public class SingleThreadDownloader implements Runnable  {
         HTML html = result.getHtml();
         Connect connect = result.getConnect();
 
-        if (!html.getHtml().equals("")) {
+        if (!html.getHtml().matches("(^$|\\s+)")) {
             htmls.offer(html);
         } else {
-            // if html is equal "", but status is not ERROR
+            // if html is equal "" or " ", "  " etc,
+            // but status is not ERROR
             if (!connect.getResult().equals(DownloadResult.ERROR)) {
                 connect = new Connect(website, 0, DownloadResult.EMPTY);
             }

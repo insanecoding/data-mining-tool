@@ -1,128 +1,93 @@
 //package com.me.core.service.features.text;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.context.support.GenericXmlApplicationContext;
+//import com.me.common.MyExecutable;
+//import com.me.core.domain.entities.*;
+//import com.me.core.service.dao.MyDao;
+//import lombok.Getter;
+//import lombok.Setter;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Component;
 //
-//import java.util.ArrayList;
-//import java.util.LinkedList;
-//import java.util.List;
-//import java.util.Optional;
+//import java.util.*;
+//import java.util.stream.Collectors;
 //
 //// // TODO: 13.09.2016 : remove odd config property: categories to download
-//public class TextExtractionService {
+//@Slf4j
+//@Component
+//public class TextExtractionService implements MyExecutable {
 //
-//    private WebsiteDAO websiteDAO;
-//    private List<String> targetCategories;
-//    private List<String> targetTags;
-//    private TextExtractor textExtractor;
-//    private Logger logger = LoggerFactory.getLogger(this.getClass());
+//    @Getter @Setter
+//    List<Category> categories;
 //
-//    public List<String> getTargetTags() {
-//        return targetTags;
-//    }
+//    @Getter @Setter
+//    private List<Tag> tags;
 //
-//    public void setTargetTags(List<String> targetTags) {
-//        this.targetTags = targetTags;
-//    }
+//    @Getter @Setter
+//    private MyDao dao;
 //
-//    public TextExtractor getTextExtractor() {
-//        return textExtractor;
-//    }
+//    @Getter @Setter
+//    private final TextExtractor textExtractor;
 //
-//    public void setTextExtractor(TextExtractor textExtractor) {
+//    @Autowired
+//    public TextExtractionService(MyDao dao, TextExtractor textExtractor) {
+//        this.dao = dao;
 //        this.textExtractor = textExtractor;
 //    }
 //
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
-//
-//    public List<String> getTargetCategories() {
-//        return targetCategories;
-//    }
-//
-//    public void setTargetCategories(List<String> targetCategories) {
-//        this.targetCategories = targetCategories;
-//    }
-//
 //    public void extractMainText(){
-//        List<Category> categories = websiteDAO.findDesiredCategories(targetCategories);
-//        logger.info(">>> starting for categories {}", categories);
 //
-//        categories.forEach(category -> {
-//            logger.info("processing category {}", category);
-//            List<HTML> HTMLs = websiteDAO.findHTMLsByCategory(category);
-//            List<TextMain> textsMain = new LinkedList<>();
-//
-//            HTMLs.forEach(html -> {
-//                Optional<TextMain> textMain = textExtractor.extractTextMain(html);
-//                if (textMain.isPresent()) {
-//                    textsMain.add(textMain.get());
-//                }
-//            });
-//            websiteDAO.batchSaveTextMain(textsMain);
-//            textsMain.clear();
-//            logger.info("finished with {}", category);
-//        });
-//
-//        logger.info(">>> all categories processed!");
 //    }
 //
 //    public void extractTextFromTag(List<Tag> chosenTags, Category category){
 //
-//        List<HTML> HTMLs = websiteDAO.findHTMLsByCategory(category);
+//        List<HTML> HTMLs = dao.findHTMLsByCategory(category);
 //        chosenTags.forEach(tag -> {
-//            logger.info("processing tag {}", tag);
+//            log.info("processing tag {}", tag);
 //
 //            List<TextFromTag> texts = new LinkedList<>();
 //            HTMLs.forEach(html -> {
 //                Optional<TextFromTag> textFromTag =
 //                        textExtractor.extractTextFromTag(html, tag);
-//                if (textFromTag.isPresent()) {
-//                    texts.add(textFromTag.get());
-//                }
+//                textFromTag.ifPresent(texts::add);
 //            });
-//            websiteDAO.batchSaveTextFromTag(texts);
+//            dao.batchSaveTextFromTag(texts);
 //            texts.clear();
-//            logger.info("finished with {}", tag);
+//            log.info("finished with {}", tag);
 //        });
 //    }
 //
-//    public void extractTextFromTags() {
+//    @Override
+//    public void execute() throws Exception {
 //
-//        List<Tag> chosenTags = new ArrayList<>();
-//        targetTags.forEach(targetTag -> {
-//            Tag tag = new Tag();
-//            tag.setTagName(targetTag);
-//            tag = websiteDAO.createOrReplaceTag(tag);
-//            chosenTags.add(tag);
-//        });
-//
-//        List<Category> categories =
-//                websiteDAO.findDesiredCategories(targetCategories);
 //
 //        categories.forEach(category -> {
-//            logger.info(">> processing category {}", category);
-//            extractTextFromTag(chosenTags, category);
-//            logger.info("finished with category {}", category);
+//            log.info(">> processing category {}", category);
+//            extractTextFromTag(tags, category);
+//            log.info("finished with category {}", category);
 //        });
 //    }
 //
-//    public static void main(String[] args) {
-//        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
-//        ctx.load("META-INF/spring/spring-root.xml");
-//        ctx.refresh();
+//    @Override
+//    public void initialize(Map<String, Object> param) {
 //
-//        TextExtractionService textExtractionService =
-//                (TextExtractionService) ctx.getBean("textMainExtractor");
-////        textExtractionService.extractMainText();
-//        textExtractionService.extractTextFromTags();
+//        List<String> chosenCategories = (List<String>) param.get("categories");
+//        List<String> targetTags = (List<String>) param.get("tags");
+//
+//        this.tags = targetTags.stream().map(Tag::new)
+//                .map(tag -> dao.createOrReplaceTag(tag))
+//                .collect(Collectors.toList());
+//
+//        this.categories = dao.findCategoriesByNames(chosenCategories);
+//    }
+//
+//    @Override
+//    public void cleanUp() {
+//
+//    }
+//
+//    @Override
+//    public String getName() {
+//        return null;
 //    }
 //}
