@@ -11,13 +11,10 @@ const defaultStyle = {
     flex: {
         display: "flex",
         justifyContent: "center"
-    },
-    listElement: {
-        width: "80%"
     }
 };
 
-const MainSection = ({title, placeholder, elements, whereToSave, onAdd, onEdit, onDelete}) => {
+const MainSection = ({title, placeholder, listElementStyle, elements, whereToSave, onAdd, onEdit, onDelete}) => {
 
     const handleSave = (text) => {
         if (text.length !== 0) {
@@ -36,7 +33,7 @@ const MainSection = ({title, placeholder, elements, whereToSave, onAdd, onEdit, 
             </header>
 
             <section className="main" style={defaultStyle.flex}>
-                <List className="todo-list" style={defaultStyle.listElement}>
+                <List className="todo-list" style={listElementStyle}>
                     {elements.map(element =>
                         <MyListItem key={element.key} element={element}
                                     onDelete={onDelete} onEdit={onEdit} whereToSeek={whereToSave}/>
@@ -56,6 +53,7 @@ MainSection.propTypes = {
     onAdd: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
+    listElementStyle: PropTypes.object
 };
 
 export default MainSection;

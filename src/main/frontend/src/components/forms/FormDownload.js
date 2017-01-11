@@ -7,21 +7,18 @@ import GenericForm from "./GenericForm";
 import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import ListOfElements from "./../list-of-elements/ListOfElements";
-import {onValueChange} from "./../../util/misc";
+import {onValueChange, createElements} from "./../../util/misc";
+
+const style = {
+    listElementWidth: {
+        width: "50%"
+    }
+};
 
 class FormFeatures extends Component {
 
     changeEvent = (e) => {
         onValueChange (e, "download", this.props.formActions.onInputChange);
-    };
-
-    createCategories = (formReducer) => {
-        let newArray = [];
-        formReducer.getIn(['download', 'categories'])
-            .toArray()
-            .map(elem => elem.toObject())
-            .map(elem => newArray.push(elem));
-        return newArray;
     };
 
     render() {
@@ -33,13 +30,14 @@ class FormFeatures extends Component {
             formReducer.getIn(['download']).toObject();
 
         const listOfElementsParam = {
-            elements: this.createCategories(formReducer),
+            elements: createElements(formReducer, ['download', 'categories']),
             title: "Categories",
             placeholder: "input and press Enter to submit",
             whereToSave: ['download', 'categories'],
             onAdd: onListElementAdd,
             onEdit: onListElementEdit,
             onDelete: onListElementDelete,
+            listElementStyle: style.listElementWidth
         };
 
         return(

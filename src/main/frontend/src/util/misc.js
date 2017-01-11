@@ -59,7 +59,17 @@ export const isEmptyObject = (object) => {
 export const onValueChange = (e, formName, foo) => {
     let element = e.target.value;
     if (e.target.type === "number") {
-        element = parseInt(element);
+        element = parseInt(element, 10);
     }
     foo(element, e.target.name, formName);
+};
+
+
+export const createElements = (formReducer, whereToSeek) => {
+    let newArray = [];
+    formReducer.getIn(whereToSeek)
+        .toArray()
+        .map(elem => elem.toObject())
+        .map(elem => newArray.push(elem));
+    return newArray;
 };

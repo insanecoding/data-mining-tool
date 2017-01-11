@@ -60,18 +60,40 @@ export const initialState = Immutable.fromJS({
         displayName: "Extract features",
         isOn: false,
         categories: [
-            // element example
-            // {
-            //    categoryName: ...
-            //    key: ...
-            // }
+            {
+                name: "medical",
+                key: 1
+            },
+            {
+                name: "chat",
+                key: 2
+            },
+            {
+                name: "news",
+                key: 3
+            },
+            {
+                name: "pets",
+                key: 4
+            }
         ],
         tagsWithText: [
-            // element example
-            // {
-            //    tagName: ...
-            //    key: ...
-            // }
+            {
+                name: "h1",
+                key: 1
+            },
+            {
+                name: "h2",
+                key: 2
+            },
+            {
+                name: "h3",
+                key: 3
+            },
+            {
+                name: "title",
+                key: 4
+            }
         ],
         maxNGramSize: 6
     },
