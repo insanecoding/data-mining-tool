@@ -26,7 +26,7 @@ class Settings extends Component {
     render() {
 
         const { formReducer, connectionReducer } = this.props;
-        const { componentToggled, onInputChange} = this.props.formActions;
+        const { onCheck, onInputChange} = this.props.formActions;
         const { activeFormAndRouteChanged, updateStatusAndProgress,
             isAppStarted } = this.props.connectionActions;
 
@@ -39,7 +39,7 @@ class Settings extends Component {
         const leftFormParam = {
             components: mapToArray(formReducer),
             activeFormChanged: activeFormAndRouteChanged,
-            componentToggled: componentToggled,
+            componentToggled: onCheck,
         };
 
         const buttonsAndProgressParam = {

@@ -6,7 +6,8 @@ import {
     ON_BLACKLIST_DELETE,
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
-    ON_LIST_ELEMENT_EDIT
+    ON_LIST_ELEMENT_EDIT,
+    CHECKBOX_CHECKED
 } from "../constants/constants";
 import Immutable from "immutable";
 
@@ -89,4 +90,11 @@ export function onListElementEdit(elementId, element, whereToSeek) {
             whereToSeek: whereToSeek
         })
     };
+}
+
+export function onCheck(path) {
+    return {
+        type: CHECKBOX_CHECKED,
+        payload: path
+    }
 }

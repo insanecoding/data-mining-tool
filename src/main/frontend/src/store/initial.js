@@ -59,6 +59,10 @@ export const initialState = Immutable.fromJS({
         route: "/extract",
         displayName: "Extract features",
         isOn: false,
+        isTextMain: true,
+        isTextFromTags: true,
+        isNgrams: false,
+        isTagStat: false,
         categories: [
             {
                 name: "medical",

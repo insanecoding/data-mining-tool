@@ -7,7 +7,8 @@ import {
     DIALOG_EDIT,
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
-    ON_LIST_ELEMENT_EDIT
+    ON_LIST_ELEMENT_EDIT,
+    CHECKBOX_CHECKED
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
 import Immutable from "immutable";
@@ -104,6 +105,11 @@ export default function processForm(state = initialState, action) {
             );
 
             return state.setIn(whereToSeek, newArray);
+        }
+        case CHECKBOX_CHECKED: {
+            const path = action.payload;
+            let oldState = state.getIn(path);
+            return state.setIn(path, !oldState);
         }
 
 

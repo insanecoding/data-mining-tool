@@ -8,6 +8,8 @@ import ListOfElements from "./../list-of-elements/ListOfElements";
 import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import {onValueChange, createElements} from "./../../util/misc";
+import CheckBoxReplacement from "./../CheckBoxReplacement";
+import ToggleReplacement from "./../ToggleReplacement";
 
 const style = {
     listElementWidth: {
@@ -19,6 +21,14 @@ class FormExtract extends Component {
 
     changeEvent = (e) => {
         onValueChange (e, "extract", this.props.formActions.onInputChange);
+    };
+
+    onCheck = (e) => {
+        const {onCheck} = this.props.formActions;
+        let path = ['extract'];
+        path.push(e.target.name);
+        onCheck(path);
+        // console.log("I was checked");
     };
 
     render() {
@@ -48,14 +58,15 @@ class FormExtract extends Component {
             listElementStyle: style.listElementWidth
         };
 
-        const {maxNGramSize} = formReducer.getIn(['extract']).toObject();
+        const {isTextMain, isTextFromTags, isNgrams, isTagStat, maxNGramSize} =
+            formReducer.getIn(['extract']).toObject();
 
         return (
             <GenericForm title={formReducer.getIn(['extract', 'displayName'])}>
 
                 <Row>
                     <Col xs={12} md={12}>
-                        <AdvancedTextField placeHolder={"port number"}
+                        <AdvancedTextField placeHolder={"max nGram size"}
                                            pattern={"number"}
                                            type="number"
                                            label={"maximum NGram size"}
@@ -63,6 +74,22 @@ class FormExtract extends Component {
                                            value={maxNGramSize}
                                            onChangeEvent={this.changeEvent}
                         />
+                    </Col>
+                    <Col xs={6} md={6}>
+                        <CheckBoxReplacement label={"text main"} name={"isTextMain"}
+                                             value={isTextMain} onCheck={this.onCheck}/>
+                    </Col>
+                    <Col xs={6} md={6}>
+                        <ToggleReplacement label={"text from tags"} name={"isTextFromTags"}
+                                             value={isTextFromTags} onToggle={this.onCheck}/>
+                    </Col>
+                    <Col xs={6} md={6}>
+                        <CheckBoxReplacement label={"Ngrams"} name={"isNgrams"}
+                                             value={isNgrams} onCheck={this.onCheck} />
+                    </Col>
+                    <Col xs={6} md={6}>
+                        <CheckBoxReplacement label={"tag statistics"} value={isTagStat}
+                                             name={"isTagStat"} onCheck={this.onCheck} />
                     </Col>
                     <Col xs={12} md={6}>
                         <ListOfElements {...listOfElementsParam}/>
