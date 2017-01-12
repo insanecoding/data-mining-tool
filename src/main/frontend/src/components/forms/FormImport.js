@@ -66,7 +66,8 @@ class FormImport extends Component {
 
     onDeleteAction = (blacklistId) => {
         console.log("deleting", blacklistId);
-        this.props.formActions.onBlacklistDelete(blacklistId);
+        const {onBlacklistDelete} = this.props.formActions;
+        onBlacklistDelete(blacklistId);
     };
 
     onEditAction = (blacklistId) => {

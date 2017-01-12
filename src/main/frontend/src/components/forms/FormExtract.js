@@ -9,7 +9,6 @@ import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import {onValueChange, createElements} from "./../../util/misc";
 import CheckBoxReplacement from "./../CheckBoxReplacement";
-import ToggleReplacement from "./../ToggleReplacement";
 
 const style = {
     listElementWidth: {
@@ -80,8 +79,8 @@ class FormExtract extends Component {
                                              value={isTextMain} onCheck={this.onCheck}/>
                     </Col>
                     <Col xs={6} md={6}>
-                        <ToggleReplacement label={"text from tags"} name={"isTextFromTags"}
-                                             value={isTextFromTags} onToggle={this.onCheck}/>
+                        <CheckBoxReplacement label={"text from tags"} name={"isTextFromTags"}
+                                             value={isTextFromTags} onCheck={this.onCheck}/>
                     </Col>
                     <Col xs={6} md={6}>
                         <CheckBoxReplacement label={"Ngrams"} name={"isNgrams"}

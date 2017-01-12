@@ -2,13 +2,13 @@ import React, {Component} from "react";
 import IconButton from "material-ui/IconButton";
 import FontIcon from "material-ui/FontIcon";
 import {ListItem} from "material-ui/List";
-import Toggle from "material-ui/Toggle";
+import ToggleReplacement from "./ToggleReplacement";
 
-export default class MyListItem extends Component {
+export default class MyLeftListItem extends Component {
     render() {
         return (
             <ListItem leftCheckbox={
-                <Toggle onToggle={this.props.onToggle}/>  }
+                <ToggleReplacement onToggle={this.props.onToggle} value={this.props.value}/>  }
                       primaryText={this.props.text} rightIconButton={
                 <IconButton onClick={this.props.handleClick}>
                     <FontIcon className="fa fa-bars fa-fw"/>

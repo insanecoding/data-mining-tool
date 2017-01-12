@@ -1,4 +1,4 @@
-import MyListItem from "./../components/MyListItem";
+import MyLeftListItem from "./../components/MyListItem";
 import React, {PropTypes} from "react";
 
 const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {
@@ -8,13 +8,15 @@ const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {
     };
 
     const onToggle = (elementName) => {
-        componentToggled(elementName);
+        let params = [elementName];
+        params.push("isOn");
+        componentToggled(params);
     };
 
 
     const listGenerator = (elements) => {
         return(
-            elements.map( elem => <MyListItem text={elem.displayName} key={elem.key}
+            elements.map( elem => <MyLeftListItem text={elem.displayName} key={elem.key} value={elem.isOn}
                                           handleClick={ () => handleClick(elem.key, elem.route)}
                                           onToggle={ () => onToggle(elem.name)}
                     />
