@@ -13,4 +13,5 @@ public interface TextExtractor {
     List<TextMain> extractTextMain(List<HTML> html) throws InterruptedException;
 
     Optional<TextFromTag> extractTextFromTag(HTML htmlContents, Tag tag);
+    List<TextFromTag> extractTextFromTag(List<HTML> htmls, Tag tag) throws InterruptedException;
 }

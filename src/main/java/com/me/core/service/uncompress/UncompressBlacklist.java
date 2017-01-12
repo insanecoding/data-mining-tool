@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 @Slf4j
-public class UncompressBlacklist {
+class UncompressBlacklist {
 
     /**
      * Method for uncompressing .tar.gz or .zip files
@@ -54,8 +54,7 @@ public class UncompressBlacklist {
      * @param fromArchive path to the archive
      * @param toFile path for the uncompressed contents
      */
-    public static void uncompress(String fromArchive, String toFile) {
-        log.info("Decompressing file " + fromArchive + " now");
+    static void uncompress(String fromArchive, String toFile) {
         try {
             if (fromArchive.endsWith(".tar.gz") || fromArchive.endsWith(".zip")) {
                 tarGZorZip(fromArchive, toFile);

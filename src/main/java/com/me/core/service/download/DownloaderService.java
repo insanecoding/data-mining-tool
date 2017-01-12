@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +55,13 @@ public class DownloaderService extends StoppableObservable implements MyExecutab
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
         Map<String, Object> downloaderProperties = (Map<String, Object>) param.get("downloader");
-        this.categories = (List<String>) downloaderProperties.get("categories");
+        List<String> tempCategories = (List<String>) downloaderProperties.get("categories");
         int downloadsPerCategory = (int) downloaderProperties.get("downloadsPerCategory");
         int threadsNumber = (int) downloaderProperties.get("threadsNumber");
         int readTimeOut = (int) downloaderProperties.get("readTimeout");
         int connectTimeOut = (int) downloaderProperties.get("connectTimeout");
+
+        this.categories = new ArrayList<>(tempCategories);
         this.parameters = new DownloaderParameters(downloadsPerCategory, threadsNumber,
                 readTimeOut, connectTimeOut);
     }
@@ -66,7 +69,6 @@ public class DownloaderService extends StoppableObservable implements MyExecutab
     @Override
     public void cleanUp(){
         downloaderUtility.shutDownExecutor();
-        this.categories.clear();
     }
 
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,13 +68,14 @@ public class TextMainExtractorService extends StoppableObservable implements MyE
     @SuppressWarnings(value = "unchecked")
     @Override
     public void initialize(Map<String, Object> param) {
-        this.categories = (List<String>) param.get("textMainExtractor");
+        List<String> temp = (List<String>) param.get("textMainExtractor");
+        categories = new ArrayList<>(temp);
     }
 
-    @Override
-    public void cleanUp() {
-        categories.clear();
-    }
+//    @Override
+//    public void cleanUp() {
+//        categories.clear();
+//    }
 
     @Override
     public String getName() {

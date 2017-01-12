@@ -2,6 +2,7 @@ package com.me.common;
 
 import com.me.core.domain.dto.BlacklistProperty;
 import com.me.core.service.download.DownloaderService;
+import com.me.core.service.features.text.TextFromTagExtractorService;
 import com.me.core.service.features.text.TextMainExtractorService;
 import com.me.core.service.importbl.BlacklistImporterService;
 import com.me.core.service.uncompress.UncompressService;
@@ -26,16 +27,20 @@ public class ExecutableInitializer {
     private final DownloaderService downloaderService;
     @Lazy
     private final TextMainExtractorService textMainExtractorService;
+    @Lazy
+    private final TextFromTagExtractorService textFromTagExtractorService;
 
     @Autowired
     public ExecutableInitializer(BlacklistImporterService importerService,
                                  UncompressService uncompressService,
                                  DownloaderService downloaderService,
-                                 TextMainExtractorService textMainExtractorService) {
+                                 TextMainExtractorService textMainExtractorService,
+                                 TextFromTagExtractorService textFromTagExtractorService) {
         this.importerService = importerService;
         this.uncompressService = uncompressService;
         this.downloaderService = downloaderService;
         this.textMainExtractorService = textMainExtractorService;
+        this.textFromTagExtractorService = textFromTagExtractorService;
     }
 
     public List<MyExecutable> createExecutables(Map<String, Object> dto) {
@@ -58,6 +63,10 @@ public class ExecutableInitializer {
             textMainExtractorService.initialize(params);
             executables.add(textMainExtractorService);
         }
+        if (params.keySet().contains("textFromTagExtractor")) {
+            textFromTagExtractorService.initialize(params);
+            executables.add(textFromTagExtractorService);
+        }
 
         return executables;
     }
@@ -67,7 +76,7 @@ public class ExecutableInitializer {
 
         initUncompressImport(dto, params);
         initDownloader(dto, params);
-        initTextMainExtractor(dto, params);
+        initTextExtractors(dto, params);
 
         return params;
     }
@@ -110,7 +119,7 @@ public class ExecutableInitializer {
 
             List<Map<String, Object>> categoriesTemp =
                     (List<Map<String, Object>>) settings.get("categories");
-            List<String> categories = categoriesListFromMap(categoriesTemp);
+            List<String> categories = createListFromMap(categoriesTemp);
 
             properties.put("downloadsPerCategory", settings.get("downloadsPerCategory"));
             properties.put("threadsNumber", settings.get("threadsNumber"));
@@ -123,17 +132,29 @@ public class ExecutableInitializer {
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void initTextMainExtractor(Map<String, Object> dto, Map<String, Object> params) {
+    private void initTextExtractors(Map<String, Object> dto, Map<String, Object> params) {
         Map<String, Object> settings = (Map<String, Object>) dto.get("extract");
         if ((boolean) settings.get("isOn")) {
             List<Map<String, Object>> categories =
                     (List<Map<String, Object>>) settings.get("categories");
-            List<String> stringCategories = categoriesListFromMap(categories);
+            List<Map<String, Object>> tags =
+                    (List<Map<String, Object>>) settings.get("tagsWithText");
+
+            List<String> stringCategories = createListFromMap(categories);
+            List<String> stringTags = createListFromMap(tags);
+
+
+            Map<String, Object> textFromTagExtractor = new LinkedHashMap<>();
+            textFromTagExtractor.put("categories", stringCategories);
+            textFromTagExtractor.put("tagsWithText", stringTags);
+
             params.put("textMainExtractor", stringCategories);
+            params.put("textFromTagExtractor", textFromTagExtractor);
+            int i = 0;
         }
     }
 
-    private List<String> categoriesListFromMap(List<Map<String, Object>> categoriesTemp) {
+    private List<String> createListFromMap(List<Map<String, Object>> categoriesTemp) {
         return categoriesTemp.stream()
                 .map(elem -> (String)elem.get("name")).collect(Collectors.toList());
     }

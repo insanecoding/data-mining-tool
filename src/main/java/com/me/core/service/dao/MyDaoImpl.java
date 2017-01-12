@@ -1,10 +1,7 @@
 package com.me.core.service.dao;
 
 import com.me.common.StoppableObservable;
-import com.me.core.domain.entities.Blacklist;
-import com.me.core.domain.entities.Category;
-import com.me.core.domain.entities.HTML;
-import com.me.core.domain.entities.Website;
+import com.me.core.domain.entities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -116,6 +113,18 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         }
     }
 
+    @Override
+    public Tag trySaveTag(Tag tag) {
+       Tag newTag = findTag(tag.getTagName());
+       return (newTag == null) ? saveEntity(tag) : newTag;
+    }
+
+    private Tag findTag(String tagName) {
+        return (Tag) sessionFactory.getCurrentSession()
+                .createQuery("from Tag t where t.tagName = :tagName")
+                .setParameter("tagName", tagName).uniqueResult();
+    }
+
     private Blacklist findBlacklist(String blacklistName) {
         return (Blacklist) sessionFactory.getCurrentSession()
                 .createQuery("from Blacklist b where b.blacklistName = :category")
@@ -131,6 +140,14 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     @Override
     public List<Category> findCategoriesByNames(List<String> categoryNames) {
         return categoryRepository.findByCategoryNameIn(categoryNames);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Tag> findTagsByNames(List<String> targetTags) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Tag t where t.tagName in (:targetTags)")
+                .setParameterList("targetTags", targetTags).list();
     }
 
     @Override
@@ -155,15 +172,31 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     }
 
     @Override
-    public List<Long> alreadyProcessedIDsFor(String mode, Category category) {
+    public List<Long> alreadyProcessedIDsFor(String mode, Category category,
+                                             Object... args) {
         switch (mode) {
             case "htmls":
                 return alreadyProcessedHtmlIDs(category);
             case "texts_main":
                 return alreadyProcessedTextMainIDs(category);
+            case "texts_from_tags": {
+                Tag tag = (Tag) args[0];
+                return alreadyProcessedTextFromTagIDs(category, tag);
+            }
             default:
                 throw new IllegalArgumentException("Illegal argument 'mode'");
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Long> alreadyProcessedTextFromTagIDs(Category category, Tag tag) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select tft.website.websiteId " +
+                        " from TextFromTag tft where tft.website.category in :category " +
+                        " and tft.tag in :tag")
+                .setParameter("category", category)
+                .setParameter("tag", tag)
+                .list();
     }
 
     @SuppressWarnings("unchecked")

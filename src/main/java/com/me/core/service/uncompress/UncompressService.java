@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,12 +63,8 @@ public class UncompressService extends StoppableObservable implements MyExecutab
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
-        this.compressed.addAll((List<String>) param.get("uncompress"));
-    }
-
-    @Override
-    public void cleanUp(){
-        compressed.clear();
+        List<String> temp = (List<String>) param.get("uncompress");
+        this.compressed = new ArrayList<>(temp);
     }
 
     @Override

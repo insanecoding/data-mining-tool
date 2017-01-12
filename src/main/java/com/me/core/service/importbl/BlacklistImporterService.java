@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,12 +46,8 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Map<String, Object> param) {
-        this.blacklistProperties = (List<BlacklistProperty>) param.get("importer");
-    }
-
-    @Override
-    public void cleanUp(){
-        blacklistProperties.clear();
+        List<BlacklistProperty> temp = (List<BlacklistProperty>) param.get("importer");
+        this.blacklistProperties = new ArrayList<>(temp);
     }
 
     @Override

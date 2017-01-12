@@ -39,55 +39,32 @@
 //
 //    }
 //
-//    public void extractTextFromTag(List<Tag> chosenTags, Category category){
-//
-//        List<HTML> HTMLs = dao.findHTMLsByCategory(category);
-//        chosenTags.forEach(tag -> {
-//            log.info("processing tag {}", tag);
-//
-//            List<TextFromTag> texts = new LinkedList<>();
-//            HTMLs.forEach(html -> {
-//                Optional<TextFromTag> textFromTag =
-//                        textExtractor.extractTextFromTag(html, tag);
-//                textFromTag.ifPresent(texts::add);
-//            });
-//            dao.batchSaveTextFromTag(texts);
-//            texts.clear();
-//            log.info("finished with {}", tag);
-//        });
-//    }
-//
 //    @Override
 //    public void execute() throws Exception {
 //
 //
-//        categories.forEach(category -> {
-//            log.info(">> processing category {}", category);
-//            extractTextFromTag(tags, category);
-//            log.info("finished with category {}", category);
-//        });
 //    }
 //
-//    @Override
-//    public void initialize(Map<String, Object> param) {
-//
-//        List<String> chosenCategories = (List<String>) param.get("categories");
-//        List<String> targetTags = (List<String>) param.get("tags");
-//
-//        this.tags = targetTags.stream().map(Tag::new)
-//                .map(tag -> dao.createOrReplaceTag(tag))
-//                .collect(Collectors.toList());
-//
-//        this.categories = dao.findCategoriesByNames(chosenCategories);
-//    }
-//
-//    @Override
-//    public void cleanUp() {
-//
-//    }
-//
-//    @Override
-//    public String getName() {
-//        return null;
-//    }
+////    @Override
+////    public void initialize(Map<String, Object> param) {
+////
+////        List<String> chosenCategories = (List<String>) param.get("categories");
+////        List<String> targetTags = (List<String>) param.get("tags");
+////
+////        this.tags = targetTags.stream().map(Tag::new)
+////                .map(tag -> dao.createOrReplaceTag(tag))
+////                .collect(Collectors.toList());
+////
+////        this.categories = dao.findCategoriesByNames(chosenCategories);
+////    }
+////
+////    @Override
+////    public void cleanUp() {
+////
+////    }
+////
+////    @Override
+////    public String getName() {
+////        return null;
+////    }
 //}

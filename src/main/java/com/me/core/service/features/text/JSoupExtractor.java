@@ -37,26 +37,6 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
     }
 
     @Override
-    public Optional<TextMain> extractTextMain(HTML html) {
-
-        String htmlContents = html.getHtml();
-        TextMain textMain = null;
-
-        if (!htmlContents.matches("(^$|\\s+)")) {
-            String text = jSoupGetTextMain(htmlContents);
-            int textLength = text.length();
-            String lang = langDetector.detectLang(text);
-
-            if (!text.equals("")) {
-                textMain = new TextMain(html.getWebsite(), text, lang, textLength);
-            }
-        }
-
-        return Optional.ofNullable(textMain);
-    }
-
-
-    @Override
     public List<TextMain> extractTextMain(List<HTML> htmls) throws InterruptedException {
         langDetector.setShortText(false);
         List<TextMain> textsMain = new LinkedList<>();
@@ -67,6 +47,25 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
         }
 
         return textsMain;
+    }
+
+    @Override
+    public Optional<TextMain> extractTextMain(HTML html) {
+
+        String htmlContents = html.getHtml();
+        TextMain textMain = null;
+
+        if (!htmlContents.matches("(^$|\\s+)")) {
+            String text = jSoupGetTextMain(htmlContents);
+            int textLength = text.length();
+            String lang = langDetector.detectLang(text);
+
+            if (!text.matches("(^$|\\s+)")) {
+                textMain = new TextMain(html.getWebsite(), text, lang, textLength);
+            }
+        }
+
+        return Optional.ofNullable(textMain);
     }
 
     /**
@@ -93,27 +92,31 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
         return text;
     }
 
-    private String cleanString(String textInPage) {
-        // leave only a...z, A...Z, 0...9 letters and whitespaces
-        String text = textInPage.replaceAll("[^A-Za-z0-9 ]", " ").toLowerCase();
-        // remove duplicate whitespaces
-        text = text.replaceAll("\\s+", " ");
-        // some more cleanup for whitespaces
-        text = text.trim();
-        return text;
-    }
+    @Override
+    public List<TextFromTag> extractTextFromTag(List<HTML> htmls, Tag tag) throws InterruptedException {
+        List<TextFromTag> texts = new LinkedList<>();
+        for (HTML html: htmls) {
+            extractTextFromTag(html, tag).ifPresent(texts::add);
+            super.checkCancel();
+        }
 
+        return texts;
+    }
 
     @Override
     public Optional<TextFromTag> extractTextFromTag(HTML htmlContents, Tag tag) {
         String tagName = tag.getTagName();
         String html = htmlContents.getHtml();
-        // extract text from this tag and create textFromTag object
-        String result = extractTextFromTag(html, tagName);
         TextFromTag textFromTag = null;
-        if (!result.equals("")) {
+
+        if (!html.matches("(^$|\\s+)")) {
+            // extract text from this tag and create textFromTag object
+            String result = extractTextFromTag(html, tagName);
             int textLength = result.length();
-            textFromTag = new TextFromTag(htmlContents.getWebsite(), tag, result, textLength);
+
+            if (!result.matches("(^$|\\s+)")) {
+                textFromTag = new TextFromTag(htmlContents.getWebsite(), tag, result, textLength);
+            }
         }
         return Optional.ofNullable(textFromTag);
     }
@@ -125,35 +128,41 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
     }
 
     private String jSoupExtractFromTag(String html, String tagName) {
-        Document doc = Jsoup.parse(html);
         final String[] result = {""};
 
-        switch (tagName) {
-            case "title": {
-                result[0] = doc.title();
-                break;
+        try {
+            Document doc = Jsoup.parse(html);
+
+            switch (tagName) {
+                case "title": {
+                    result[0] = doc.title();
+                    break;
+                }
+                case "meta:description": {
+                    processMetaTags(doc, result, tagName);
+                    break;
+                }
+                case "meta:keywords": {
+                    processMetaTags(doc, result, tagName);
+                    break;
+                }
+                case "h1":
+                case "h2":
+                case "h3":
+                case "b":
+                case "u":
+                    process_h1_h2_h3_b_u(tagName, doc, result);
+                    break;
+                case "a":
+                    processLinks(doc, result, tagName);
+                    break;
+                case "img":
+                    processImages(doc, result, tagName);
+                    break;
             }
-            case "meta:description": {
-                processMetaTags(doc, result, tagName);
-                break;
-            }
-            case "meta:keywords": {
-                processMetaTags(doc, result, tagName);
-                break;
-            }
-            case "h1":
-            case "h2":
-            case "h3":
-            case "b":
-            case "u":
-                process_h1_h2_h3_b_u(tagName, doc, result);
-                break;
-            case "a":
-                processLinks(doc, result, tagName);
-                break;
-            case "img":
-                processImages(doc, result, tagName);
-                break;
+
+        } catch (IllegalArgumentException e) {
+            log.warn("illegal argument: not HTML!");
         }
 
         return result[0];
@@ -202,5 +211,16 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
                 result[0] += " " + value;
             }
         });
+    }
+
+
+    private String cleanString(String textInPage) {
+        // leave only a...z, A...Z, 0...9 letters and whitespaces
+        String text = textInPage.replaceAll("[^A-Za-z0-9 ]", " ").toLowerCase();
+        // remove duplicate whitespaces
+        text = text.replaceAll("\\s+", " ");
+        // some more cleanup for whitespaces
+        text = text.trim();
+        return text;
     }
 }

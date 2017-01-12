@@ -1,11 +1,20 @@
 package com.me;
 
+import com.me.core.domain.entities.Tag;
+import com.me.core.service.dao.MyDao;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -13,7 +22,11 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest
 @ActiveProfiles("dev")
 public class MiscTests {
-    @Test
+
+    @Autowired
+    private MyDao myDao;
+
+    @Test @Ignore
     public void testRegex() throws Exception {
         String s1 = "";
         String s2 = " ";
@@ -29,5 +42,19 @@ public class MiscTests {
         assertTrue(s4.matches(regex));
         assertFalse(s5.matches(regex));
         assertFalse(s6.matches(regex));
+    }
+
+    @Test
+    public void testFindTags() throws Exception {
+        List<Tag> tags =
+                Arrays.asList(new Tag("h1"), new Tag("h2"), new Tag("h3"));
+
+        tags.forEach(tag -> myDao.saveEntity(tag));
+
+        List<String> tagNames = tags.stream().map(Tag::getTagName)
+                .collect(Collectors.toList());
+        List<Tag> result = myDao.findTagsByNames(tagNames);
+        assertThat(result).isNotEmpty();
+
     }
 }
