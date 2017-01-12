@@ -139,18 +139,21 @@ public class ExecutableInitializer {
                     (List<Map<String, Object>>) settings.get("categories");
             List<Map<String, Object>> tags =
                     (List<Map<String, Object>>) settings.get("tagsWithText");
+            boolean isTextMain = (boolean) settings.get("isTextMain");
+            boolean isTextFromTags = (boolean) settings.get("isTextFromTags");
 
             List<String> stringCategories = createListFromMap(categories);
             List<String> stringTags = createListFromMap(tags);
-
 
             Map<String, Object> textFromTagExtractor = new LinkedHashMap<>();
             textFromTagExtractor.put("categories", stringCategories);
             textFromTagExtractor.put("tagsWithText", stringTags);
 
-            params.put("textMainExtractor", stringCategories);
-            params.put("textFromTagExtractor", textFromTagExtractor);
-            int i = 0;
+            if (isTextMain)
+                params.put("textMainExtractor", stringCategories);
+
+            if (isTextFromTags)
+                params.put("textFromTagExtractor", textFromTagExtractor);
         }
     }
 
