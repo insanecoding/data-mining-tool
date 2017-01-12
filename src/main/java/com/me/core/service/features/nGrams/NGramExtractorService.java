@@ -1,12 +1,10 @@
 //package com.me.core.service.features.nGrams;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.Category;
-//import com.me.data.entities.NGrams;
-//import com.me.data.entities.Website;
+//import com.me.core.domain.entities.Category;
+//import com.me.core.domain.entities.NGrams;
+//import com.me.core.domain.entities.Website;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
-//import org.springframework.context.support.GenericXmlApplicationContext;
 //
 //import java.util.LinkedList;
 //import java.util.List;
@@ -59,9 +57,7 @@
 //            websites.forEach(website -> {
 //                Optional<NGrams> res =
 //                        nGramCreator.generateNGrams(website, size);
-//                if (res.isPresent()) {
-//                    nGrams.add(res.get());
-//                }
+//                res.ifPresent(nGrams::add);
 //            });
 //            websiteDAO.batchSaveNGrams(nGrams);
 //            nGrams.clear();
@@ -80,13 +76,4 @@
 //        });
 //    }
 //
-//    public static void main(String[] args) {
-//        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
-//        ctx.load("META-INF/spring/spring-root.xml");
-//        ctx.refresh();
-//
-//        NGramExtractorService nGramExtractorService =
-//                (NGramExtractorService) ctx.getBean("nGramExtractorService");
-//        nGramExtractorService.generateNGrams();
-//    }
 //}

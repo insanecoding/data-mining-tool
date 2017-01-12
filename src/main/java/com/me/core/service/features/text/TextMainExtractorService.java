@@ -72,11 +72,6 @@ public class TextMainExtractorService extends StoppableObservable implements MyE
         categories = new ArrayList<>(temp);
     }
 
-//    @Override
-//    public void cleanUp() {
-//        categories.clear();
-//    }
-
     @Override
     public String getName() {
         return "Main text extractor";

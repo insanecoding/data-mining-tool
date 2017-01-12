@@ -94,12 +94,6 @@ public class TextFromTagExtractorService extends StoppableObservable implements 
         tags = new ArrayList<>(tempTags);
     }
 
-//    @Override
-//    public void cleanUp() {
-//        categories.clear();
-//        tags.clear();
-//    }
-
     @Override
     public String getName() {
         return "Text from tag extractor";

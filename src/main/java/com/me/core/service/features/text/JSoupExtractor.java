@@ -49,8 +49,8 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
         return textsMain;
     }
 
-    @Override
-    public Optional<TextMain> extractTextMain(HTML html) {
+
+    private Optional<TextMain> extractTextMain(HTML html) {
 
         String htmlContents = html.getHtml();
         TextMain textMain = null;
@@ -103,8 +103,7 @@ public class JSoupExtractor extends StoppableObservable implements TextExtractor
         return texts;
     }
 
-    @Override
-    public Optional<TextFromTag> extractTextFromTag(HTML htmlContents, Tag tag) {
+    private Optional<TextFromTag> extractTextFromTag(HTML htmlContents, Tag tag) {
         String tagName = tag.getTagName();
         String html = htmlContents.getHtml();
         TextFromTag textFromTag = null;
