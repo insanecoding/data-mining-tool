@@ -187,15 +187,26 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 int nGramSize = (int) args[0];
                 return alreadyProcessedNGramIDs(category, nGramSize);
             }
-            case "tag_stat":
-                return alreadyProcessedTagStatIDs(category);
+            case "tags_in_page":
+                return alreadyProcessedTagsInPageIDs(category);
+            case "tag_count":
+                return alreadyProcessedTagCountIDs(category);
             default:
                 throw new IllegalArgumentException("Illegal argument 'mode'");
         }
     }
 
     @SuppressWarnings("unchecked")
-    private List<Long> alreadyProcessedTagStatIDs(Category category) {
+    private List<Long> alreadyProcessedTagCountIDs(Category category) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select tc.website.websiteId " +
+                        " from TagCount tc where tc.website.category in :category ")
+                .setParameter("category", category)
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Long> alreadyProcessedTagsInPageIDs(Category category) {
         return sessionFactory.getCurrentSession()
                 .createQuery("select distinct tip.website.websiteId " +
                         " from TagsInPage tip where tip.website.category in :category ")

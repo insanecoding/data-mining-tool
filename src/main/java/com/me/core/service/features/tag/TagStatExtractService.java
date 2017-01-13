@@ -39,18 +39,21 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
     public void execute() throws Exception {
         List<Category> categoryObjects = dao.findCategoriesByNames(this.categories);
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
+//        processTagCounts(categoryObjects);
+        processTagsInPage(categoryObjects);
+    }
 
-        for (Category category : categoryObjects) {
-            super.updateMessageCheck("extracting tag statistics for category: " + category.getCategoryName());
-            List<HTML> notProcessed = getNotProcessed(category);
-
-            List<TagCount> counts = processHTMLsInCategory(notProcessed);
-            dao.batchSave(counts);
-            counts.clear();
+    private void processTagCounts(List<Category> categoryObjects) throws InterruptedException {
+        for (Category category: categoryObjects) {
+            super.updateMessageCheck("counting tags for category: " + category.getCategoryName());
+            List<HTML> notProcessedForTagCount = getNotProcessed(category, false);
+            List<TagCount> tagCounts = createTagCountsList(notProcessedForTagCount);
+            dao.batchSave(tagCounts);
+            tagCounts.clear();
         }
     }
 
-    private List<TagCount> processHTMLsInCategory(List<HTML> htmls) throws InterruptedException {
+    private List<TagCount> createTagCountsList(List<HTML> htmls) throws InterruptedException {
         List<TagCount> counts = new LinkedList<>();
         // foreach html in category
         for (HTML html : htmls) {
@@ -60,12 +63,27 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
             // create respective object
             TagCount websiteTagCount = new TagCount(html.getWebsite(), count);
             counts.add(websiteTagCount);
-            List<TagsInPage> toInsert = processSingleHTML(html);
-            // now save list to Db
-            dao.batchSave(toInsert);
-            toInsert.clear();
         }
         return counts;
+    }
+
+    private void processTagsInPage(List<Category> categoryObjects) throws InterruptedException {
+        for (Category category : categoryObjects) {
+            super.updateMessageCheck("extracting tag statistics for category: " + category.getCategoryName());
+
+            List<HTML> notProcessedForTagsInPage = getNotProcessed(category, true);
+            extractTagsFromPages(notProcessedForTagsInPage);
+        }
+    }
+
+    private void extractTagsFromPages(List<HTML> htmls) throws InterruptedException {
+        // foreach html in category
+        for (HTML html : htmls) {
+            super.checkCancel();
+            // create respective object
+            List<TagsInPage> tagsInOnePage = processSingleHTML(html);
+            dao.batchSave(tagsInOnePage);
+        }
     }
 
     private List<TagsInPage> processSingleHTML(HTML html) throws InterruptedException {
@@ -74,7 +92,7 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
         // now list only unique tags
         List<String> unique = tagUtility.getUniqueTagsInPage(html.getHtml(), tagsToSkip);
 
-        List<TagsInPage> toInsert = new LinkedList<>();
+        List<TagsInPage> result = new LinkedList<>();
         // foreach unique tag in html
         for (String tagName : unique) {
             int occurNumber = tagUtility.countTagOccur(tags, tagName);
@@ -83,16 +101,20 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
             Tag tag = new Tag(tagName);
             tag = dao.trySaveTag(tag);
             TagsInPage tagInPage = new TagsInPage(html.getWebsite(), tag, occurNumber);
-            toInsert.add(tagInPage);
+            result.add(tagInPage);
         }
-        return toInsert;
+        return result;
     }
 
 
-    private List<HTML> getNotProcessed(Category category) {
+    private List<HTML> getNotProcessed(Category category, boolean isForTagsInPage) {
         List<HTML> HTMLs = dao.findByCategory("htmls", category);
-        List<Long> alreadyProcessed =
-                dao.alreadyProcessedIDsFor("tag_stat", category);
+        List<Long> alreadyProcessed;
+        if (isForTagsInPage) {
+            alreadyProcessed = dao.alreadyProcessedIDsFor("tags_in_page", category);
+        } else {
+            alreadyProcessed = dao.alreadyProcessedIDsFor("tag_count", category);
+        }
 
         List<HTML> notProcessed = HTMLs.stream()
                 .filter(html -> !alreadyProcessed.contains(html.getWebsite().getWebsiteId()))

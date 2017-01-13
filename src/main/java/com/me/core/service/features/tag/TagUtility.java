@@ -1,18 +1,17 @@
 package com.me.core.service.features.tag;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
+@Slf4j
 public class TagUtility {
 
     int countAllTags(String html){
@@ -24,11 +23,12 @@ public class TagUtility {
     }
 
     List<String> getUniqueTagsInPage(String html, List<String> tagsToSkip){
-        List<String> uniques =
-                htmlTagsAsStream(html)
-                .distinct()
-                .collect(Collectors.toList());
-        return excludeTagsToSkip(uniques, tagsToSkip);
+        Optional<Stream<String>> optional = htmlTagsAsStream(html);
+        List<String> result = new ArrayList<>();
+        if (optional.isPresent()) {
+            result = optional.get().distinct().collect(Collectors.toList());
+        }
+        return excludeTagsToSkip(result, tagsToSkip);
     }
 
     List<String> getAllTagsInPage(String html, List<String> tagsToSkip) {
@@ -50,7 +50,12 @@ public class TagUtility {
      * list contains tag duplicates and tags that should be skipped
      */
     private List<String> streamToList(String html) {
-        return htmlTagsAsStream(html).collect(Collectors.toList());
+        Optional<Stream<String>> optional = htmlTagsAsStream(html);
+        List<String> result = new ArrayList<>();
+        if (optional.isPresent()) {
+            result = optional.get().collect(Collectors.toList());
+        }
+        return result;
     }
 
     /**
@@ -58,14 +63,22 @@ public class TagUtility {
      * ignores <code>#root</code> element, created by JSoup
      * and puts all other html tags to Stream
      */
-    private Stream<String> htmlTagsAsStream(String html){
-        // use JSoup to parse html
-        Document doc = Jsoup.parse(html);
+    private Optional<Stream<String>> htmlTagsAsStream(String html){
+        Stream<String> result = null;
+        try {
+            if (!html.matches("(^$|\\s+)")) {
+                // use JSoup to parse html
+                Document doc = Jsoup.parse(html);
          /*list of all html tags from page (they have duplicates!)
          and not include <code>#root</code> element, which is used by JSoup and is not an html-tag*/
-        return doc.getAllElements()
-                .stream()
-                .map(e -> e.tagName().toLowerCase())
-                .filter(elem -> !elem.equals("#root"));
+                result = doc.getAllElements()
+                        .stream()
+                        .map(e -> e.tagName().toLowerCase())
+                        .filter(elem -> !elem.equals("#root"));
+            }
+        } catch (IllegalArgumentException iae) {
+            log.warn("illegal argument: not HTML");
+        }
+        return Optional.ofNullable(result);
     }
 }
