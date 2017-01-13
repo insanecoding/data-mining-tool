@@ -3,6 +3,7 @@ package com.me.common;
 import com.me.core.domain.dto.BlacklistProperty;
 import com.me.core.service.download.DownloaderService;
 import com.me.core.service.features.nGrams.NGramExtractorService;
+import com.me.core.service.features.tag.TagStatExtractService;
 import com.me.core.service.features.text.TextFromTagExtractorService;
 import com.me.core.service.features.text.TextMainExtractorService;
 import com.me.core.service.importbl.BlacklistImporterService;
@@ -32,6 +33,8 @@ public class ExecutableInitializer {
     private final TextFromTagExtractorService textFromTagExtractorService;
     @Lazy
     private final NGramExtractorService nGramExtractorService;
+    @Lazy
+    private final TagStatExtractService tagStatExtractService;
 
     @Autowired
     public ExecutableInitializer(BlacklistImporterService importerService,
@@ -39,13 +42,15 @@ public class ExecutableInitializer {
                                  DownloaderService downloaderService,
                                  TextMainExtractorService textMainExtractorService,
                                  TextFromTagExtractorService textFromTagExtractorService,
-                                 NGramExtractorService nGramExtractorService) {
+                                 NGramExtractorService nGramExtractorService,
+                                 TagStatExtractService tagStatExtractService) {
         this.importerService = importerService;
         this.uncompressService = uncompressService;
         this.downloaderService = downloaderService;
         this.textMainExtractorService = textMainExtractorService;
         this.textFromTagExtractorService = textFromTagExtractorService;
         this.nGramExtractorService = nGramExtractorService;
+        this.tagStatExtractService = tagStatExtractService;
     }
 
     public List<MyExecutable> createExecutables(Map<String, Object> dto) {
@@ -75,6 +80,10 @@ public class ExecutableInitializer {
         if (params.keySet().contains("nGramsExtractor")) {
             nGramExtractorService.initialize(params);
             executables.add(nGramExtractorService);
+        }
+        if (params.keySet().contains("tagStatExtractor")) {
+            tagStatExtractService.initialize(params);
+            executables.add(tagStatExtractService);
         }
 
         return executables;
@@ -151,7 +160,22 @@ public class ExecutableInitializer {
             initTextMain(params, settings, stringCategories);
             initTextFromTags(params, settings, stringCategories);
             initNGrams(params, settings, stringCategories);
+            initTagStatExtractor(params, settings, stringCategories);
         }
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    private void initTagStatExtractor(Map<String, Object> params,
+                                      Map<String, Object> settings,
+                                      List<String> stringCategories) {
+        boolean isTagStat = (boolean) settings.get("isTagStat");
+        List<Map<String, Object>> tagsToSkip = (List<Map<String, Object>>) settings.get("tagsToSkip");
+        List<String> tagsToSkipStr = createListFromMap(tagsToSkip);
+        Map<String, Object> init = new LinkedHashMap<>();
+        init.put("categories", stringCategories);
+        init.put("tagsToSkip", tagsToSkipStr);
+        if (isTagStat)
+            params.put("tagStatExtractor", init);
     }
 
     private void initTextMain(Map<String, Object> params,

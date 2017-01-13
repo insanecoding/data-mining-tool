@@ -138,8 +138,6 @@ class FormImport extends Component {
                         </Col>
                     </Row>
                 </AlertDialog>
-
-
                 <Row>
                     <Col xs={12} md={6}>
                         <AdvancedTextField placeHolder="user name"

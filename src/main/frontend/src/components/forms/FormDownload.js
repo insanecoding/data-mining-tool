@@ -11,7 +11,7 @@ import {onValueChange, createElements} from "./../../util/misc";
 
 const style = {
     listElementWidth: {
-        width: "50%"
+        width: "80%"
     }
 };
 
@@ -29,7 +29,7 @@ class FormFeatures extends Component {
         const {downloadsPerCategory, connectTimeout, readTimeout, threadsNumber} =
             formReducer.getIn(['download']).toObject();
 
-        const listOfElementsParam = {
+        const categories = {
             elements: createElements(formReducer, ['download', 'categories']),
             title: "Categories",
             placeholder: "input and press Enter to submit",
@@ -43,6 +43,9 @@ class FormFeatures extends Component {
         return(
             <GenericForm title={displayName}>
                 <Row>
+                    <Col xs={12} md={6}>
+                        <ListOfElements {...categories}/>
+                    </Col>
                     <Col xs={12} md={6}>
                         <AdvancedTextField placeHolder="downloads per category"
                                            pattern={"number"}
@@ -60,8 +63,6 @@ class FormFeatures extends Component {
                                            value={connectTimeout}
                                            onChangeEvent={this.changeEvent}
                         />
-                    </Col>
-                    <Col xs={12} md={6}>
                         <AdvancedTextField placeHolder="read timeout"
                                            pattern={"number"}
                                            type={"number"}
@@ -78,9 +79,6 @@ class FormFeatures extends Component {
                                            value={threadsNumber}
                                            onChangeEvent={this.changeEvent}
                         />
-                    </Col>
-                    <Col xs={12} md={12}>
-                        <ListOfElements {...listOfElementsParam}/>
                     </Col>
                 </Row>
             </GenericForm>

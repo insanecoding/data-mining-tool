@@ -99,7 +99,25 @@ export const initialState = Immutable.fromJS({
                 key: 4
             }
         ],
-        maxNGramSize: 6
+        maxNGramSize: 6,
+        tagsToSkip: [
+            {
+                name: "html",
+                key: 1
+            },
+            {
+                name: "head",
+                key: 2
+            },
+            {
+                name: "title",
+                key: 3
+            },
+            {
+                name: "body",
+                key: 4
+            },
+        ]
     },
     run: {
         key: 4,

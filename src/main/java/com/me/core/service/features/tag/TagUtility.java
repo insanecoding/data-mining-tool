@@ -3,6 +3,7 @@ package com.me.core.service.features.tag;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,45 +12,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Component
 public class TagUtility {
 
-    private List<String> tagsToSkip;
-
-    public List<String> getTagsToSkip() {
-        return tagsToSkip;
-    }
-
-    public void setTagsToSkip(List<String> tagsToSkip) {
-        this.tagsToSkip = tagsToSkip;
-    }
-
-    public int countAllTags(String html){
+    int countAllTags(String html){
         return streamToList(html).size();
     }
 
-    public int countTagOccur(List<String> tagList, String tag){
+    int countTagOccur(List<String> tagList, String tag){
         return Collections.frequency(tagList, tag);
     }
 
-    public List<String> getUniqueTagsInPage(String html){
+    List<String> getUniqueTagsInPage(String html, List<String> tagsToSkip){
         List<String> uniques =
                 htmlTagsAsStream(html)
                 .distinct()
                 .collect(Collectors.toList());
-        return excludeTagsToSkip(uniques);
+        return excludeTagsToSkip(uniques, tagsToSkip);
     }
 
-    public List<String> getAllTagsInPage(String html) {
+    List<String> getAllTagsInPage(String html, List<String> tagsToSkip) {
         List <String> allTags = streamToList(html);
-        return excludeTagsToSkip(allTags);
+        return excludeTagsToSkip(allTags, tagsToSkip);
     }
 
     /**
      * Transforms list to exclude <code>tagsToSkip</code> from it
      */
-    private List<String> excludeTagsToSkip(List <String> tags){
+    private List<String> excludeTagsToSkip(List<String> allTags, List<String> tagsToSkip){
         Collection<String> col =
-                CollectionUtils.subtract(tags, tagsToSkip);
+                CollectionUtils.subtract(allTags, tagsToSkip);
         return new ArrayList<>(col);
     }
 
