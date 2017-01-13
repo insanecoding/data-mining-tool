@@ -1,79 +1,94 @@
-//package com.me.core.service.features.nGrams;
-//
-//import com.me.core.domain.entities.Category;
-//import com.me.core.domain.entities.NGrams;
-//import com.me.core.domain.entities.Website;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//
-//import java.util.LinkedList;
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.stream.IntStream;
-//
-//public class NGramExtractorService {
-//    private NGramCreator nGramCreator;
-//    private Logger logger = LoggerFactory.getLogger(this.getClass());
-//    private WebsiteDAO websiteDAO;
-//    private Integer maxNGramSize;
-//    private List<String> targetCategories;
-//
-//    public List<String> getTargetCategories() {
-//        return targetCategories;
-//    }
-//
-//    public void setTargetCategories(List<String> targetCategories) {
-//        this.targetCategories = targetCategories;
-//    }
-//
-//    public Integer getMaxNGramSize() {
-//        return maxNGramSize;
-//    }
-//
-//    public void setMaxNGramSize(Integer maxNGramSize) {
-//        this.maxNGramSize = maxNGramSize;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
-//
-//    public NGramCreator getnGramCreator() {
-//        return nGramCreator;
-//    }
-//
-//    public void setnGramCreator(NGramCreator nGramCreator) {
-//        this.nGramCreator = nGramCreator;
-//    }
-//
-//    private void extractNGramsInCategory(Category category, List<Website> websites) {
-//        IntStream.range(2, maxNGramSize + 1).forEach(size -> {
-//            List<NGrams> nGrams = new LinkedList<>();
-//            logger.info("creating NGrams with N={} for category {}", size, category );
-//            websites.forEach(website -> {
-//                Optional<NGrams> res =
-//                        nGramCreator.generateNGrams(website, size);
-//                res.ifPresent(nGrams::add);
-//            });
-//            websiteDAO.batchSaveNGrams(nGrams);
-//            nGrams.clear();
-//            logger.info("finished with N={} for category {}", size, category );
-//        });
-//    }
-//
-//    public void generateNGrams(){
-//        List<Category> categories =
-//                websiteDAO.findDesiredCategories(targetCategories);
-//        categories.forEach(category -> {
-//            logger.info(">> processing category {}", category);
-//            List<Website> urls = websiteDAO.findURLsByCategory(category);
-//            extractNGramsInCategory(category, urls);
-//            logger.info("finished with category {}", category);
-//        });
-//    }
-//
-//}
+package com.me.core.service.features.nGrams;
+
+import com.me.common.MyExecutable;
+import com.me.common.ProgressWatcher;
+import com.me.common.StoppableObservable;
+import com.me.core.domain.entities.Category;
+import com.me.core.domain.entities.NGrams;
+import com.me.core.domain.entities.Website;
+import com.me.core.service.dao.MyDao;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Component
+@Slf4j
+public class NGramExtractorService extends StoppableObservable implements MyExecutable {
+
+    @Getter @Setter
+    private int maxNGramSize;
+    @Getter @Setter
+    private List<String> categories;
+    @Getter @Setter
+    private MyDao dao;
+    @Getter @Setter
+    private NGramCreator nGramCreator;
+
+    @Autowired
+    public NGramExtractorService(MyDao dao, NGramCreator nGramCreator,
+                                 @Qualifier("progressWatcher") ProgressWatcher watcher) {
+        super.addSubscriber(watcher);
+        this.dao = dao;
+        this.nGramCreator = nGramCreator;
+    }
+
+    @Override
+    public void execute() throws Exception {
+        List<Category> categoryObjects = dao.findCategoriesByNames(categories);
+        categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
+
+        for (Category category : categoryObjects) {
+            for (int nGramSize = 2; nGramSize <= maxNGramSize; nGramSize++) {
+                List<Website> notProcessed = getNotProcessed(category, nGramSize);
+                super.updateMessageCheck("creating NGrams with N=" + nGramSize +
+                        " for category: "+ category.getCategoryName());
+
+                extractNGrams(nGramSize, notProcessed);
+            }
+        }
+    }
+
+    private void extractNGrams(int nGramSize, List<Website> websites) throws InterruptedException {
+        List<NGrams> nGrams = new LinkedList<>();
+        for (Website website : websites) {
+            nGramCreator.generateNGrams(website, nGramSize).ifPresent(nGrams::add);
+            super.checkCancel();
+        }
+
+        dao.batchSave(nGrams);
+        nGrams.clear();
+    }
+
+    private List<Website> getNotProcessed(Category category, int nGramSize) {
+        List<Website> websites = dao.findByCategory("websites", category);
+        List<Long> alreadyProcessed = dao.alreadyProcessedIDsFor("ngrams", category, nGramSize);
+
+        List<Website> notProcessed = websites.stream()
+                .filter(website -> !alreadyProcessed.contains(website.getWebsiteId()))
+                .collect(Collectors.toList());
+        alreadyProcessed.clear();
+        websites.clear();
+        return notProcessed;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void initialize(Map<String, Object> param) {
+        Map<String, Object> props = (Map<String, Object>) param.get("nGramsExtractor");
+        List<String> tempCategories = (List<String>) props.get("categories");
+
+        this.maxNGramSize = (int) props.get("maxNGramSize");
+        this.categories = new ArrayList<>(tempCategories);
+    }
+
+    @Override
+    public String getName() {
+        return "NGram extractor";
+    }
+}

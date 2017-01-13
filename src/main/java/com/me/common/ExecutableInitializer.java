@@ -2,6 +2,7 @@ package com.me.common;
 
 import com.me.core.domain.dto.BlacklistProperty;
 import com.me.core.service.download.DownloaderService;
+import com.me.core.service.features.nGrams.NGramExtractorService;
 import com.me.core.service.features.text.TextFromTagExtractorService;
 import com.me.core.service.features.text.TextMainExtractorService;
 import com.me.core.service.importbl.BlacklistImporterService;
@@ -29,18 +30,22 @@ public class ExecutableInitializer {
     private final TextMainExtractorService textMainExtractorService;
     @Lazy
     private final TextFromTagExtractorService textFromTagExtractorService;
+    @Lazy
+    private final NGramExtractorService nGramExtractorService;
 
     @Autowired
     public ExecutableInitializer(BlacklistImporterService importerService,
                                  UncompressService uncompressService,
                                  DownloaderService downloaderService,
                                  TextMainExtractorService textMainExtractorService,
-                                 TextFromTagExtractorService textFromTagExtractorService) {
+                                 TextFromTagExtractorService textFromTagExtractorService,
+                                 NGramExtractorService nGramExtractorService) {
         this.importerService = importerService;
         this.uncompressService = uncompressService;
         this.downloaderService = downloaderService;
         this.textMainExtractorService = textMainExtractorService;
         this.textFromTagExtractorService = textFromTagExtractorService;
+        this.nGramExtractorService = nGramExtractorService;
     }
 
     public List<MyExecutable> createExecutables(Map<String, Object> dto) {
@@ -67,6 +72,10 @@ public class ExecutableInitializer {
             textFromTagExtractorService.initialize(params);
             executables.add(textFromTagExtractorService);
         }
+        if (params.keySet().contains("nGramsExtractor")) {
+            nGramExtractorService.initialize(params);
+            executables.add(nGramExtractorService);
+        }
 
         return executables;
     }
@@ -76,7 +85,7 @@ public class ExecutableInitializer {
 
         initUncompressImport(dto, params);
         initDownloader(dto, params);
-        initTextExtractors(dto, params);
+        initExtractors(dto, params);
 
         return params;
     }
@@ -132,29 +141,48 @@ public class ExecutableInitializer {
     }
 
     @SuppressWarnings(value = "unchecked")
-    private void initTextExtractors(Map<String, Object> dto, Map<String, Object> params) {
+    private void initExtractors(Map<String, Object> dto, Map<String, Object> params) {
         Map<String, Object> settings = (Map<String, Object>) dto.get("extract");
         if ((boolean) settings.get("isOn")) {
             List<Map<String, Object>> categories =
                     (List<Map<String, Object>>) settings.get("categories");
-            List<Map<String, Object>> tags =
-                    (List<Map<String, Object>>) settings.get("tagsWithText");
-            boolean isTextMain = (boolean) settings.get("isTextMain");
-            boolean isTextFromTags = (boolean) settings.get("isTextFromTags");
-
             List<String> stringCategories = createListFromMap(categories);
-            List<String> stringTags = createListFromMap(tags);
 
-            Map<String, Object> textFromTagExtractor = new LinkedHashMap<>();
-            textFromTagExtractor.put("categories", stringCategories);
-            textFromTagExtractor.put("tagsWithText", stringTags);
-
-            if (isTextMain)
-                params.put("textMainExtractor", stringCategories);
-
-            if (isTextFromTags)
-                params.put("textFromTagExtractor", textFromTagExtractor);
+            initTextMain(params, settings, stringCategories);
+            initTextFromTags(params, settings, stringCategories);
+            initNGrams(params, settings, stringCategories);
         }
+    }
+
+    private void initTextMain(Map<String, Object> params,
+                              Map<String, Object> settings, List<String> stringCategories) {
+        boolean isTextMain = (boolean) settings.get("isTextMain");
+        if (isTextMain)
+            params.put("textMainExtractor", stringCategories);
+    }
+
+    private void initNGrams(Map<String, Object> params,
+                            Map<String, Object> settings, List<String> stringCategories) {
+        boolean isNGrams = (boolean) settings.get("isNgrams");
+        int maxNGramSize = (int) settings.get("maxNGramSize");
+        Map<String, Object> nGramExtractor = new LinkedHashMap<>();
+        nGramExtractor.put("categories", stringCategories);
+        nGramExtractor.put("maxNGramSize", maxNGramSize);
+        if (isNGrams)
+            params.put("nGramsExtractor", nGramExtractor);
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    private void initTextFromTags(Map<String, Object> params,
+                                  Map<String, Object> settings, List<String> stringCategories) {
+        boolean isTextFromTags = (boolean) settings.get("isTextFromTags");
+        List<Map<String, Object>> tags = (List<Map<String, Object>>) settings.get("tagsWithText");
+        List<String> stringTags = createListFromMap(tags);
+        Map<String, Object> textFromTagExtractor = new LinkedHashMap<>();
+        textFromTagExtractor.put("categories", stringCategories);
+        textFromTagExtractor.put("tagsWithText", stringTags);
+        if (isTextFromTags)
+            params.put("textFromTagExtractor", textFromTagExtractor);
     }
 
     private List<String> createListFromMap(List<Map<String, Object>> categoriesTemp) {

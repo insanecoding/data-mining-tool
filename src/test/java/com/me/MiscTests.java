@@ -49,7 +49,7 @@ public class MiscTests {
         List<Tag> tags =
                 Arrays.asList(new Tag("h1"), new Tag("h2"), new Tag("h3"));
 
-        tags.forEach(tag -> myDao.saveEntity(tag));
+        tags.forEach(myDao::saveEntity);
 
         List<String> tagNames = tags.stream().map(Tag::getTagName)
                 .collect(Collectors.toList());

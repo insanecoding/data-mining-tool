@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +45,9 @@ public class TextFromTagExtractorService extends StoppableObservable implements 
     @Override
     public void execute() throws Exception {
         List<Category> categoryObjects = dao.findCategoriesByNames(categories);
+        categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
         List<Tag> tagObjects = createTagObjects();
+        tagObjects.sort(Comparator.comparing(Tag::getTagName));
 
         for (Category category: categoryObjects) {
             for(Tag tag: tagObjects) {

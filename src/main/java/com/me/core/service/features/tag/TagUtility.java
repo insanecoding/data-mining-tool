@@ -45,7 +45,7 @@ public class TagUtility {
     }
 
     /**
-     * Transforms list to exclude <code>tagsToSlip</code> from it
+     * Transforms list to exclude <code>tagsToSkip</code> from it
      */
     private List<String> excludeTagsToSkip(List <String> tags){
         Collection<String> col =

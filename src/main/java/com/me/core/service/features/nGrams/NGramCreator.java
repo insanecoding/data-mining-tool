@@ -5,9 +5,11 @@ import com.me.core.domain.entities.Website;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class NGramCreator {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -32,7 +34,7 @@ public class NGramCreator {
         return cleanResult;
     }
 
-    public Optional<NGrams> generateNGrams (Website inputURL, int nGramSize) {
+    Optional<NGrams> generateNGrams(Website inputURL, int nGramSize) {
         String url = inputURL.getUrl();
         String res =  generateNGram(url, nGramSize);
         NGrams nGrams = null;

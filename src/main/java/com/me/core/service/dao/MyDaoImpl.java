@@ -183,9 +183,24 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 Tag tag = (Tag) args[0];
                 return alreadyProcessedTextFromTagIDs(category, tag);
             }
+            case "ngrams": {
+                int nGramSize = (int) args[0];
+                return alreadyProcessedNGramIDs(category, nGramSize);
+            }
             default:
                 throw new IllegalArgumentException("Illegal argument 'mode'");
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Long> alreadyProcessedNGramIDs(Category category, int nGramSize) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select ng.website.websiteId " +
+                        " from NGrams ng where ng.website.category in :category " +
+                        " and ng.nGramSize in :nGramSize")
+                .setParameter("category", category)
+                .setParameter("nGramSize", nGramSize)
+                .list();
     }
 
     @SuppressWarnings("unchecked")
