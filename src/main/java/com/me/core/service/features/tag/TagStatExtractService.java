@@ -39,7 +39,7 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
     public void execute() throws Exception {
         List<Category> categoryObjects = dao.findCategoriesByNames(this.categories);
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
-//        processTagCounts(categoryObjects);
+        processTagCounts(categoryObjects);
         processTagsInPage(categoryObjects);
     }
 
