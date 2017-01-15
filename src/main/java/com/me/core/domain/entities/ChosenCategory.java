@@ -8,29 +8,26 @@ import java.io.Serializable;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name = "chosen_websites")
+@Table(name = "chosen_categories")
 
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@EqualsAndHashCode(exclude = "id")
-public class ChosenWebsite implements Serializable {
+@EqualsAndHashCode(exclude = "entry_id")
+public class ChosenCategory implements Serializable {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "entry_id")
-    private Long id;
+    private Long entry_id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="dataset_id")
+    @JoinColumn(name = "dataset_id")
     @NonNull
     private DataSet dataSet;
 
     @OneToOne
-    @JoinColumn(name="website_id")
+    @JoinColumn(name = "category_id")
     @NonNull
-    private Website website;
-
-    @Column(name = "is_for_learning")
-    @NonNull
-    private boolean isForLearning;
+    private Category category;
 }

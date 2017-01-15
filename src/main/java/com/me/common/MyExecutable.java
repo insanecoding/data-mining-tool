@@ -14,4 +14,8 @@ public interface MyExecutable {
 
     // get user-friendly service name (for output in progressbar)
     String getName();
+
+    default void beforeCancel() {}
+
+    default void afterFinish() {}
 }

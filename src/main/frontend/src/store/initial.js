@@ -119,8 +119,62 @@ export const initialState = Immutable.fromJS({
             },
         ]
     },
-    run: {
+    dataSplit: {
         key: 4,
+        route: "/split",
+        displayName: "Split data set",
+        isOn: false,
+        param: [
+            {
+                dataSetName: "set_1",
+                description: "small data set",
+                categories: [
+                    {
+                        name: "medical",
+                        key: 1
+                    },
+                    {
+                        name: "chat",
+                        key: 2
+                    }
+                ],
+                partitionLearn: 0.7,
+                lang: "en",
+                minTextLength: 500,
+                maxTextLength: 5000,
+                websitesPerCategory: 1000,
+            },
+            {
+                dataSetName: "set_2",
+                description: "large data set",
+                categories: [
+                    {
+                        name: "medical",
+                        key: 1
+                    },
+                    {
+                        name: "chat",
+                        key: 2
+                    },
+                    {
+                        name: "news",
+                        key: 3
+                    },
+                    {
+                        name: "pets",
+                        key: 4
+                    }
+                ],
+                partitionLearn: 0.8,
+                lang: "en",
+                minTextLength: 500,
+                maxTextLength: 5000,
+                websitesPerCategory: 5000
+            }
+        ]
+    },
+    run: {
+        key: 5,
         route: "/run",
         displayName: "Run experiments",
         isOn: false,

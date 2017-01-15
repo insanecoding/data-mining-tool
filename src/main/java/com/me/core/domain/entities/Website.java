@@ -9,12 +9,12 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "websites")
+//@Inheritance(strategy = InheritanceType.JOINED)
 
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(exclude = "websiteId")
-//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Website implements Serializable{
 
     @Id
@@ -35,5 +35,4 @@ public class Website implements Serializable{
     @JoinColumn(name = "blacklist_id")
     @NonNull
     private Blacklist blacklist;
-
 }

@@ -4,6 +4,7 @@ import com.me.core.domain.entities.Blacklist;
 import com.me.core.domain.entities.Category;
 import com.me.core.domain.entities.Tag;
 import com.me.core.domain.entities.Website;
+import com.me.core.service.splitter.MainDataSplitParams;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface MyDao {
  */
     <T extends Serializable> T saveEntity(T entity);
 
-    <T extends Serializable> void batchSave(Iterable<T> entities) throws InterruptedException;
+    <T extends Serializable> void batchSave(Iterable<T> entities, Object... param) throws InterruptedException;
 
     void batchSaveWebsites(List<Website> websites) throws InterruptedException;
 
@@ -36,4 +37,6 @@ public interface MyDao {
     List<Long> alreadyProcessedIDsFor(String mode, Category category, Object... args);
 
     Long countDuplicates();
+
+    List<Website> findWebsitesWithCondition(Category category, MainDataSplitParams mdp);
 }

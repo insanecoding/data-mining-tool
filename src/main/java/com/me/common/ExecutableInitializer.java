@@ -1,12 +1,16 @@
 package com.me.common;
 
 import com.me.core.domain.dto.BlacklistProperty;
+import com.me.core.domain.entities.DataSet;
 import com.me.core.service.download.DownloaderService;
 import com.me.core.service.features.nGrams.NGramExtractorService;
 import com.me.core.service.features.tag.TagStatExtractService;
 import com.me.core.service.features.text.TextFromTagExtractorService;
 import com.me.core.service.features.text.TextMainExtractorService;
 import com.me.core.service.importbl.BlacklistImporterService;
+import com.me.core.service.splitter.DataSplitterParam;
+import com.me.core.service.splitter.DataSplitterService;
+import com.me.core.service.splitter.MainDataSplitParams;
 import com.me.core.service.uncompress.UncompressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -35,6 +39,9 @@ public class ExecutableInitializer {
     private final NGramExtractorService nGramExtractorService;
     @Lazy
     private final TagStatExtractService tagStatExtractService;
+    @Lazy
+    private final DataSplitterService splitterService;
+
 
     @Autowired
     public ExecutableInitializer(BlacklistImporterService importerService,
@@ -43,7 +50,7 @@ public class ExecutableInitializer {
                                  TextMainExtractorService textMainExtractorService,
                                  TextFromTagExtractorService textFromTagExtractorService,
                                  NGramExtractorService nGramExtractorService,
-                                 TagStatExtractService tagStatExtractService) {
+                                 TagStatExtractService tagStatExtractService, DataSplitterService splitterService) {
         this.importerService = importerService;
         this.uncompressService = uncompressService;
         this.downloaderService = downloaderService;
@@ -51,6 +58,7 @@ public class ExecutableInitializer {
         this.textFromTagExtractorService = textFromTagExtractorService;
         this.nGramExtractorService = nGramExtractorService;
         this.tagStatExtractService = tagStatExtractService;
+        this.splitterService = splitterService;
     }
 
     public List<MyExecutable> createExecutables(Map<String, Object> dto) {
@@ -85,6 +93,10 @@ public class ExecutableInitializer {
             tagStatExtractService.initialize(params);
             executables.add(tagStatExtractService);
         }
+        if (params.keySet().contains("splitter")) {
+            splitterService.initialize(params);
+            executables.add(splitterService);
+        }
 
         return executables;
     }
@@ -95,6 +107,7 @@ public class ExecutableInitializer {
         initUncompressImport(dto, params);
         initDownloader(dto, params);
         initExtractors(dto, params);
+        initSplitter(dto, params);
 
         return params;
     }
@@ -207,6 +220,36 @@ public class ExecutableInitializer {
         textFromTagExtractor.put("tagsWithText", stringTags);
         if (isTextFromTags)
             params.put("textFromTagExtractor", textFromTagExtractor);
+    }
+
+
+    @SuppressWarnings(value = "unchecked")
+    private void initSplitter(Map<String, Object> dto, Map<String, Object> params) {
+        Map<String, Object> settings = (Map<String, Object>) dto.get("dataSplit");
+        if ((boolean) settings.get("isOn")) {
+            List<Map<String, Object>> param =
+                    (List<Map<String, Object>>) settings.get("param");
+            List<DataSplitterParam> dsp = param.stream().map( elem -> {
+                String dataSetName = (String) elem.get("dataSetName");
+                String description = (String) elem.get("description");
+                List<Map<String, Object>> temp = (List<Map<String, Object>>) elem.get("categories");
+                List<String> categories = createListFromMap(temp);
+                double learn = (double) elem.get("partitionLearn");
+                String lang = (String) elem.get("lang");
+                int minLength = (int) elem.get("minTextLength");
+                int maxLength = (int) elem.get("maxTextLength");
+                int websitesPerCategory = (int) elem.get("websitesPerCategory");
+                MainDataSplitParams mdp =
+                        new MainDataSplitParams(lang, minLength, maxLength, websitesPerCategory);
+                DataSet dataSet = new DataSet();
+                dataSet.setName(dataSetName);
+                dataSet.setDescription(description);
+                dataSet.setPartitionLearn(learn);
+                return new DataSplitterParam(mdp, dataSet, categories);
+            }).collect(Collectors.toList());
+
+            params.put("splitter", dsp);
+        }
     }
 
     private List<String> createListFromMap(List<Map<String, Object>> categoriesTemp) {

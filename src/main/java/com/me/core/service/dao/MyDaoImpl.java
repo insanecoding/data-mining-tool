@@ -2,6 +2,7 @@ package com.me.core.service.dao;
 
 import com.me.common.StoppableObservable;
 import com.me.core.domain.entities.*;
+import com.me.core.service.splitter.MainDataSplitParams;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -60,15 +61,21 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     }
 
     @Override
-    public <T extends Serializable> void batchSave(Iterable<T> entities)
+    public <T extends Serializable> void batchSave(Iterable<T> entities, Object... param)
             throws InterruptedException {
+        boolean allowInterrupt = true;
+        if (param.length > 0)
+            allowInterrupt = (boolean) param[0];
+
         Session session = sessionFactory.getCurrentSession();
         int successAddCounter = 0;
 
         for (T entity : entities) {
             session.save(entity);
             successAddCounter++;
-            super.checkCancel();
+
+            if (allowInterrupt)
+                super.checkCancel();
 
             if (successAddCounter % batchSize == 0) {
                 session.flush();
@@ -262,5 +269,20 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 "     ) AS dupes";
         return jdbcTemplate.queryForObject(
                 sql, new Object[] {}, Long.class);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Website> findWebsitesWithCondition(Category category, MainDataSplitParams mdp) {
+            return sessionFactory.getCurrentSession()
+                    .createQuery("select tm.website " +
+                            " from TextMain as tm where tm.website.category = :category " +
+                            " and tm.lang = :lang and tm.length between :minTextLength and :maxTextLength")
+                    .setParameter("category", category)
+                    .setParameter("lang", mdp.getLang())
+                    .setParameter("minTextLength", mdp.getMinTextLength())
+                    .setParameter("maxTextLength", mdp.getMaxTextLength())
+                    .setMaxResults(mdp.getWebsitesPerCategory())
+                    .list();
     }
 }
