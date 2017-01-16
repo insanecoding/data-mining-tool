@@ -61,8 +61,8 @@ class ButtonsAndProgress extends Component {
         const toStr = asArray.join(' ');
         // check whether contains some combinations of toggles that are prohibited
         return (
-            toStr.includes("true false true") || toStr.includes("false false false false")
-            || toStr.includes("true false false true")
+            toStr.includes("true false true") || toStr.includes("false false false false false")
+            || toStr.includes("true false false false true")
         );
     };
 

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class CreateTextDictionaryService extends StoppableObservable implements MyExecutable {
+public class TextDictionaryService extends StoppableObservable implements MyExecutable {
 
     @Getter @Setter
     private List<DictionaryParam> dictionaryParams;
@@ -32,9 +32,9 @@ public class CreateTextDictionaryService extends StoppableObservable implements 
     private CreateDictionaryUtility utility;
 
     @Autowired
-    public CreateTextDictionaryService(MyDao dao,
-                                       CreateDictionaryUtility utility,
-                                       ProgressWatcher watcher) {
+    public TextDictionaryService(MyDao dao,
+                                 CreateDictionaryUtility utility,
+                                 ProgressWatcher watcher) {
         super.addSubscriber(watcher);
         this.dao = dao;
         this.utility = utility;
@@ -61,6 +61,7 @@ public class CreateTextDictionaryService extends StoppableObservable implements 
 
             createOtherMetrics(experiment, isIDFCorrect, threshold, chosenCategories);
             utility.saveDictionary(experiment);
+            utility.clear();
         }
     }
 
@@ -81,9 +82,10 @@ public class CreateTextDictionaryService extends StoppableObservable implements 
             );
             chosenIDs.clear();
 
-            super.updateMessage("creating local tf for category: " +
+            super.updateMessage(experiment.getExpName() + ": creating local tf for category: " +
                     chosenCategory.getCategory().getCategoryName());
-            utility.createLocalTFs(textsInCategory, chosenCategory.getCategory(), isTFCorrect, experiment);
+            utility.createLocalTFs(textsInCategory, chosenCategory.getCategory(),
+                    isTFCorrect, experiment, stopWordsPath);
         }
     }
 
@@ -97,11 +99,12 @@ public class CreateTextDictionaryService extends StoppableObservable implements 
 
     private void createOtherMetrics(Experiment experiment, boolean isIDFCorrect, double threshold,
                                     List<ChosenCategory> chosenCategories) throws Exception {
-        super.updateMessage("Creating idf list");
+        super.updateMessage(experiment.getExpName() + ": creating idf list");
         utility.createIDFList(isIDFCorrect, threshold, experiment, chosenCategories.size());
 
         for (ChosenCategory cat : chosenCategories) {
-            super.updateMessage("Creating tfidf list for " + cat.getCategory().getCategoryName());
+            super.updateMessage(experiment.getExpName() + ": creating tfidf list for "
+                    + cat.getCategory().getCategoryName());
             utility.createTFIDFList(cat.getCategory(),
                     chosenCategories.indexOf(cat) + 1, experiment);
         }

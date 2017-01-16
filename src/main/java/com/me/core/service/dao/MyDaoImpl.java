@@ -134,6 +134,12 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         return (existing == null) ? saveEntity(experiment) : existing;
     }
 
+    @Override
+    public DataSet trySaveDataSet(DataSet dataSet) {
+        DataSet old = findDataSetByName(dataSet.getName());
+        return (old == null) ? saveEntity(dataSet) : old;
+    }
+
     private Experiment findExperiment(String expName) {
         return (Experiment) sessionFactory.getCurrentSession()
                 .createQuery("from Experiment exp where exp.expName = :expName")
@@ -348,8 +354,9 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     @SuppressWarnings("unchecked")
     private List<TextMain> findMainTexts (List<Long> ids) {
         return sessionFactory.getCurrentSession().createQuery("from TextMain tm " +
-                "where tm.website.websiteID in :ids")
-                .setParameter("ids", ids).list();
+                "where tm.website.websiteId in :ids")
+                .setParameterList("ids", ids)
+                .list();
     }
 
     @Override

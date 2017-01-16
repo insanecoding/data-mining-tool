@@ -4,6 +4,7 @@ import com.me.core.domain.entities.*;
 import com.me.core.service.dao.MyDao;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +12,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CreateDictionaryUtility {
 
-    @Setter @Getter
-    private String stopWordsPath;
     @Getter @Setter
     private MyDao dao;
 
@@ -88,15 +89,16 @@ public class CreateDictionaryUtility {
     /**
      * apply stemmer to texts in one category
      */
-    void createLocalTFs(List <? extends AbstractText> textsInCategory, Category category,
-                        boolean isTFCorrect, Experiment experiment) throws IOException, InterruptedException {
+    void createLocalTFs(List<? extends AbstractText> textsInCategory, Category category,
+                        boolean isTFCorrect, Experiment experiment, String stopWordsPath)
+            throws IOException, InterruptedException {
         // leave in category name letters only
         String categoryName = category.getCategoryName().replaceAll("[^A-Za-z0-9]", "");
         Map<String, Integer> termCount = new LinkedHashMap<>();
         Map<String, Float> tflocalMap = new LinkedHashMap<>();
         Integer wordsCount = 0;
 
-        wordsCount = calculateWordCount(textsInCategory, isTFCorrect, termCount, wordsCount);
+        wordsCount = calculateWordCount(textsInCategory, isTFCorrect, termCount, wordsCount, stopWordsPath);
 
         Map<Float, Vector<String>> tmpToSortMap = new HashMap<>();
 
@@ -114,15 +116,11 @@ public class CreateDictionaryUtility {
 
         List<Local_tf> local_tfs = new LinkedList<>();
         for (String term : tflocalMap.keySet()) {
-            Local_tf local_tf = new Local_tf();
-            local_tf.setExperiment(experiment);
-            local_tf.setCategory(category);
-            local_tf.setTerm(term.replace(".", ","));
-            local_tf.setValue(tflocalMap.get(term).toString().replace(".", ","));
+            Local_tf local_tf = new Local_tf(category, term.replace(".", ","),
+                    tflocalMap.get(term).toString().replace(".", ","), experiment);
             local_tfs.add(local_tf);
         }
         dao.batchSave(local_tfs);
-        System.out.println("Done with: " + categoryName);
     }
 
     private void processTerm(Map<Float, Vector<String>> tmpToSortMap, String term, Float value) {
@@ -153,7 +151,7 @@ public class CreateDictionaryUtility {
     private Integer calculateWordCount(List<? extends AbstractText> textsInCategory,
                                        boolean isTFCorrect,
                                        Map<String, Integer> termCount,
-                                       Integer wordsCount) throws IOException {
+                                       Integer wordsCount, String stopWordsPath) throws IOException {
         Vector<String> stopWords = CreateDictionaryHelper.getStopWords(stopWordsPath);
         for (AbstractText at : textsInCategory) {
             String text = at.getText();
@@ -217,10 +215,8 @@ public class CreateDictionaryUtility {
 
         LinkedList <IDF> idfs = new LinkedList<>();
         for (String term : idfMap.keySet()) {
-            IDF idf = new IDF();
-            idf.setExperiment(experiment);
-            idf.setTerm(term.replace(".", ","));
-            idf.setValue(idfMap.get(term).toString().replace(".", ","));
+            IDF idf = new IDF(experiment, term.replace(".", ","),
+                    idfMap.get(term).toString().replace(".", ","));
             idfs.add(idf);
         }
         dao.batchSave(idfs);
@@ -253,24 +249,25 @@ public class CreateDictionaryUtility {
                 dictionary.add(leadingZero + categoryNum + " - " + categoryName + "_" + count + "_" + term);
             }
 
-            Local_tfidf local_tfidf = new Local_tfidf();
-            local_tfidf.setExperiment(experiment);
-            local_tfidf.setTerm(term.replace(".", ","));
-            local_tfidf.setValue(tfidfMap.get(term).toString().replace(".", ","));
-            local_tfidf.setCategory(category);
+            Local_tfidf local_tfidf = new Local_tfidf(category, term.replace(".", ","),
+                    tfidfMap.get(term).toString().replace(".", ","), experiment);
             local_tfidfs.add(local_tfidf);
         }
         dao.batchSave(local_tfidfs);
     }
 
     void saveDictionary(Experiment experiment) throws Exception {
-        List <DictionaryWords> words = new LinkedList<>();
-        for (String term : dictionary) {
-            DictionaryWords dw = new DictionaryWords();
-            dw.setExperiment(experiment);
-            dw.setWord(term);
-            words.add(dw);
-        }
+        List <DictionaryWords> words =
+                dictionary.stream()
+                        .map(term -> new DictionaryWords(experiment, term))
+                        .collect(Collectors.toList());
         dao.batchSave(words);
+    }
+
+    public void clear(){
+        tfMap.clear();
+        dcountMap.clear();
+        idfMap.clear();
+        dictionary.clear();
     }
 }

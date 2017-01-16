@@ -26,6 +26,8 @@ public interface MyDao {
     Tag trySaveTag(Tag tag);
 
     Experiment trySaveExperiment(Experiment experiment);
+
+    DataSet trySaveDataSet(DataSet dataSet);
 /*
  * finders
  */

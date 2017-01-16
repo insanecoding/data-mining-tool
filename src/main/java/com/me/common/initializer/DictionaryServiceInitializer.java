@@ -5,8 +5,8 @@ import com.me.core.domain.entities.Experiment;
 import com.me.core.service.experiment.ExperimentCreator;
 import com.me.core.service.experiment.Modes;
 import com.me.core.service.experiment.Types;
-import com.me.core.service.experiment.text.dictionary.CreateTextDictionaryService;
 import com.me.core.service.experiment.text.dictionary.DictionaryParam;
+import com.me.core.service.experiment.text.dictionary.TextDictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 @Component
 public class DictionaryServiceInitializer implements Initializer {
 
-    private final CreateTextDictionaryService dictionaryService;
+    private final TextDictionaryService dictionaryService;
     private final ExperimentCreator experimentCreator;
 
     @Autowired
-    public DictionaryServiceInitializer(CreateTextDictionaryService dictionaryService,
+    public DictionaryServiceInitializer(TextDictionaryService dictionaryService,
                                         ExperimentCreator experimentCreator) {
         this.dictionaryService = dictionaryService;
         this.experimentCreator = experimentCreator;
@@ -45,7 +45,7 @@ public class DictionaryServiceInitializer implements Initializer {
             dictionaryService.setDictionaryParams(new ArrayList<>(dictionaryParams));
             setFullPath(dto, settings);
             executables.add(experimentCreator);
-//            executables.add(dictionaryService);
+            executables.add(dictionaryService);
         }
     }
 

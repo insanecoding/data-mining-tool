@@ -38,11 +38,11 @@ public class DataSplitterService extends StoppableObservable implements MyExecut
         for (DataSplitterParam param : params) {
             DataSet dataSet = param.getDataSet();
             super.updateMessageCheck("creating dataset: " + dataSet.getName());
-            dao.saveEntity(dataSet);
+            DataSet finalDataSet = dao.trySaveDataSet(dataSet);
 
             List<ChosenCategory> categories =
                     dao.findCategoriesByNames(param.getCategories())
-                            .stream().map(category -> new ChosenCategory(dataSet, category))
+                            .stream().map(category -> new ChosenCategory(finalDataSet, category))
                             .collect(Collectors.toList());
             dao.batchSave(categories, false);
 
