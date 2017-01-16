@@ -9,7 +9,7 @@ import com.me.core.service.experiment.Modes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -72,21 +73,7 @@ public class TextDictionaryService extends StoppableObservable implements MyExec
                           List<ChosenCategory> chosenCategories) throws IOException, InterruptedException {
         for (ChosenCategory chosenCategory : chosenCategories) {
 
-            List<ChosenWebsite> chosenWebsites = dao.findChosenWebsites(
-                    experiment.getDataSet(), chosenCategory.getCategory()
-            );
-            List<Long> chosenIDs = extractChosenWebsiteIDs(chosenWebsites);
-            // getting texts in this category
-            List<? extends AbstractText> textsInCategory = dao.findTextsForIDs(
-                    chosenIDs, chosenCategory.getCategory(), experiment.getMode(), param
-            );
-
-            if (experiment.getMode().equals(Modes.TEXT_FROM_TAGS)) {
-                textsInCategory = textFromTagsProcessing(param, chosenWebsites, chosenIDs, textsInCategory);
-            } else if (experiment.getMode().equals(Modes.NGRAMS)) {
-                textsInCategory = textFromNGramsProcessing(param, chosenWebsites, chosenIDs, textsInCategory);
-            }
-            chosenIDs.clear();
+            List<? extends AbstractText> textsInCategory = prepareTextData(experiment, param, chosenCategory);
 
             super.updateMessage(experiment.getExpName() + ": creating local tf for category: " +
                     chosenCategory.getCategory().getCategoryName());
@@ -95,58 +82,66 @@ public class TextDictionaryService extends StoppableObservable implements MyExec
         }
     }
 
-    private List<? extends AbstractText> textFromNGramsProcessing(DictionaryParam param,
-                                                                  List<ChosenWebsite> chosenWebsites,
-                                                                  List<Long> chosenIDs,
-                                                                  List<? extends AbstractText> textsInCategory) {
-        int nGramSize = param.getNGramSize();
+    private List<? extends AbstractText> prepareTextData(Experiment experiment,
+                                                         DictionaryParam param,
+                                                         ChosenCategory chosenCategory) {
+        List<ChosenWebsite> chosenWebsites = dao.findChosenWebsites(
+                experiment.getDataSet(), chosenCategory.getCategory()
+        );
         Map<Long, Website> IDsAndWebsites = createChosenIDsMap(chosenWebsites);
-        List<NGrams> unknownTexts = findAndPopulateNgramUnknowns(chosenIDs, nGramSize,
-                IDsAndWebsites, textsInCategory);
-        textsInCategory = addUnknownsToNGrams(textsInCategory, IDsAndWebsites, unknownTexts);
+        List<Long> chosenIDs = new ArrayList<>(IDsAndWebsites.keySet());
+        Modes mode = experiment.getMode();
+        // getting texts in this category
+        List<? extends AbstractText> textsInCategory = dao.findTextsForIDs(
+                chosenIDs, chosenCategory.getCategory(), mode, param
+        );
+
+        if (mode.equals(Modes.TEXT_FROM_TAGS) || mode.equals(Modes.NGRAMS)) {
+            textsInCategory = addUnknowns(param, IDsAndWebsites, chosenIDs,
+                    textsInCategory, mode);
+        }
+        chosenIDs.clear();
         return textsInCategory;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<? extends AbstractText> addUnknownsToNGrams(List<? extends AbstractText> textsInCategory,
-                                                             Map<Long, Website> IDsAndWebsites,
-                                                             List<NGrams> unknownTexts) {
-        List<? extends AbstractText> temp = new ArrayList<>(textsInCategory);
-        List<NGrams> tft = (List<NGrams>) temp;
-        tft.addAll(unknownTexts);
-        textsInCategory = tft;
-        IDsAndWebsites.clear();
-        return textsInCategory;
-    }
-
-    private List<NGrams> findAndPopulateNgramUnknowns(List<Long> chosenIDs, int nGramSize,
-                                                      Map<Long, Website> IDsAndWebsites,
-                                                      List<? extends AbstractText> textsInCategory) {
+    private List<? extends AbstractText> addUnknowns(DictionaryParam param,
+                                                     Map<Long, Website> IDsAndWebsites,
+                                                     List<Long> chosenIDs,
+                                                     List<? extends AbstractText> textsInCategory,
+                                                     Modes mode) {
         List<Long> idsWithFeatures = extractAbstractTextIDs(textsInCategory);
         // now this ones are in ChosenWebsites and have text main features,
         // but not text from tags
-        List<Long> unknowns = (List<Long>)
-                CollectionUtils.subtract(chosenIDs, idsWithFeatures);
-
+        List<Long> unknowns = ListUtils.subtract(chosenIDs, idsWithFeatures);
         // create dummy data for unknowns
-        return unknowns.stream().map(unknown -> {
-            Website ws = IDsAndWebsites.get(unknown);
-            return new NGrams(ws, nGramSize, "");
-        }).collect(Collectors.toList());
+        Stream<Long> unknownIDsStream = unknowns.stream();
+        List<? extends AbstractText> unknownTexts = createListByMode(param, IDsAndWebsites,
+                mode, unknownIDsStream);
+
+        IDsAndWebsites.clear();
+        return ListUtils.union(textsInCategory, unknownTexts);
     }
 
-    private List<? extends AbstractText> textFromTagsProcessing(DictionaryParam param,
-                                                                List<ChosenWebsite> chosenWebsites,
-                                                                List<Long> chosenIDs,
-                                                                List<? extends AbstractText> textsInCategory) {
-        String tagName = param.getTagName();
-        Map<Long, Website> IDsAndWebsites = createChosenIDsMap(chosenWebsites);
+    private List<? extends AbstractText> createListByMode(DictionaryParam param,
+                                                          Map<Long, Website> IDsAndWebsites,
+                                                          Modes mode, Stream<Long> unknownIDsStream) {
+        List<? extends AbstractText> list;
 
-        List<TextFromTag> unknownTexts = findAndPopulateTextFromTagUnknowns(chosenIDs, tagName,
-                IDsAndWebsites, textsInCategory);
-
-        textsInCategory = addUnknownsToTextsFromTags(textsInCategory, IDsAndWebsites, unknownTexts);
-        return textsInCategory;
+        if (mode.equals(Modes.NGRAMS)) {
+            list = unknownIDsStream.map(unknown -> {
+                Website ws = IDsAndWebsites.get(unknown);
+                return new NGrams(ws, param.getNGramSize(), "");
+            }).collect(Collectors.toList());
+        } else if (mode.equals(Modes.TEXT_FROM_TAGS)) {
+            list = unknownIDsStream.map(unknown -> {
+                Website ws = IDsAndWebsites.get(unknown);
+                return new TextFromTag(ws, new Tag(param.getTagName()), "", 0);
+            })
+                    .collect(Collectors.toList());
+        } else {
+            list = null;
+        }
+        return list;
     }
 
     /**
@@ -156,40 +151,6 @@ public class TextDictionaryService extends StoppableObservable implements MyExec
         return chosenWebsites.stream()
                 .map(ChosenWebsite::getWebsite)
                 .collect(Collectors.toMap(Website::getWebsiteId, Function.identity()));
-    }
-
-    private List<TextFromTag> findAndPopulateTextFromTagUnknowns(List<Long> chosenIDs,
-                                                                 String tagName,
-                                                                 Map<Long, Website> IDsAndWebsites,
-                                                                 List<? extends AbstractText> textsInCategory) {
-        List<Long> idsWithFeatures = extractAbstractTextIDs(textsInCategory);
-        // now this ones are in ChosenWebsites and have text main features,
-        // but not text from tags
-        List<Long> unknowns = (List<Long>)
-                CollectionUtils.subtract(chosenIDs, idsWithFeatures);
-
-        // create object for current tag (wil be required for dummy unknowns)
-        Tag tag = new Tag(tagName);
-
-        // create dummy data for unknowns
-        return unknowns.stream()
-                .map(unknown -> {
-                    Website ws = IDsAndWebsites.get(unknown);
-                    return new TextFromTag(ws, tag, "", 0);
-                })
-                .collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<? extends AbstractText> addUnknownsToTextsFromTags(List<? extends AbstractText> textsInCategory,
-                                                                    Map<Long, Website> IDsAndWebsites,
-                                                                    List<TextFromTag> unknownTexts) {
-        List<? extends AbstractText> temp = new ArrayList<>(textsInCategory);
-        List<TextFromTag> tft = (List<TextFromTag>) temp;
-        tft.addAll(unknownTexts);
-        textsInCategory = tft;
-        IDsAndWebsites.clear();
-        return textsInCategory;
     }
 
     private void createOtherMetrics(Experiment experiment, boolean isIDFCorrect, double threshold,
@@ -215,12 +176,6 @@ public class TextDictionaryService extends StoppableObservable implements MyExec
      */
     private List<Long> extractAbstractTextIDs(List<? extends AbstractText> result) {
         return result.stream()
-                .map(elem -> elem.getWebsite().getWebsiteId())
-                .collect(Collectors.toList());
-    }
-
-    private List<Long> extractChosenWebsiteIDs(List<ChosenWebsite> websites) {
-        return websites.stream()
                 .map(elem -> elem.getWebsite().getWebsiteId())
                 .collect(Collectors.toList());
     }

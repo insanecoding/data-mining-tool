@@ -38,8 +38,8 @@ public class DictionaryServiceInitializer implements Initializer {
                     (List<Map<String, Object>>) settings.get("experiments");
 
             List<DictionaryParam> dictionaryParams = experiments.stream()
-                            .map(this::createDictionaryParams)
-                            .collect(Collectors.toList());
+                    .map(this::createDictionaryParams)
+                    .collect(Collectors.toList());
 
             experimentCreator.setDictionaryParams(new ArrayList<>(dictionaryParams));
             dictionaryService.setDictionaryParams(new ArrayList<>(dictionaryParams));
@@ -49,7 +49,6 @@ public class DictionaryServiceInitializer implements Initializer {
         }
     }
 
-
     private DictionaryParam createDictionaryParams(Map<String, Object> experiment) {
         String dataSetName = (String) experiment.get("dataSetName");
         Experiment experimentObj = createExperiment(experiment);
@@ -58,57 +57,50 @@ public class DictionaryServiceInitializer implements Initializer {
         dictionaryParam.setExperiment(experimentObj);
         dictionaryParam.setDataSetName(dataSetName);
 
-        initializeTextMainMode(experiment, experimentObj, dictionaryParam);
-        initializeTextFromTagMode(experiment, experimentObj, dictionaryParam);
-        initializeNGramMode(experiment, experimentObj, dictionaryParam);
+        initializeByMode(experiment, experimentObj, dictionaryParam);
         return dictionaryParam;
     }
 
-    private void initializeNGramMode(Map<String, Object> experiment,
-                                     Experiment experimentObj,
-                                     DictionaryParam dictionaryParam) {
-        if (experimentObj.getMode().equals(Modes.NGRAMS)) {
-            double IDF_Treshold = (double) experiment.get("IDF_Treshold");
-            dictionaryParam.setIDF_Treshold(IDF_Treshold);
-            String IDF_Type = (String) experiment.get("IDF_Type");
-            dictionaryParam.setIDF_Type(IDF_Type);
-            String TF_Type = (String) experiment.get("TF_Type");
-            dictionaryParam.setTF_Type(TF_Type);
-            int featuresByCategory = (int) experiment.get("featuresByCategory");
-            dictionaryParam.setFeaturesByCategory(featuresByCategory);
-            int nGramSize = (int) experiment.get("nGramSize");
-            dictionaryParam.setNGramSize(nGramSize);
-        }
-    }
-
-    private void initializeTextFromTagMode(Map<String, Object> experiment, Experiment experimentObj,
-                                           DictionaryParam dictionaryParam) {
-        if (experimentObj.getMode().equals(Modes.TEXT_FROM_TAGS)) {
-            double IDF_Treshold = (double) experiment.get("IDF_Treshold");
-            dictionaryParam.setIDF_Treshold(IDF_Treshold);
-            String IDF_Type = (String) experiment.get("IDF_Type");
-            dictionaryParam.setIDF_Type(IDF_Type);
-            String TF_Type = (String) experiment.get("TF_Type");
-            dictionaryParam.setTF_Type(TF_Type);
-            int featuresByCategory = (int) experiment.get("featuresByCategory");
-            dictionaryParam.setFeaturesByCategory(featuresByCategory);
-            String tagName = (String) experiment.get("tagName");
-            dictionaryParam.setTagName(tagName);
+    private void initializeByMode(Map<String, Object> experiment, Experiment experimentObj,
+                                  DictionaryParam dictionaryParam) {
+        if (experimentObj.getMode().equals(Modes.TEXT_MAIN)) {
+            initializeTextMainMode(experiment, dictionaryParam);
+        } else if (experimentObj.getMode().equals(Modes.TEXT_FROM_TAGS)) {
+            initializeTextFromTagMode(experiment, dictionaryParam);
+        } else if (experimentObj.getMode().equals(Modes.NGRAMS)) {
+            initializeNGramMode(experiment, dictionaryParam);
         }
     }
 
     private void initializeTextMainMode(Map<String, Object> experiment,
-                                        Experiment experimentObj, DictionaryParam dictionaryParam) {
-        if (experimentObj.getMode().equals(Modes.TEXT_MAIN)) {
-            double IDF_Treshold = (double) experiment.get("IDF_Treshold");
-            dictionaryParam.setIDF_Treshold(IDF_Treshold);
-            String IDF_Type = (String) experiment.get("IDF_Type");
-            dictionaryParam.setIDF_Type(IDF_Type);
-            String TF_Type = (String) experiment.get("TF_Type");
-            dictionaryParam.setTF_Type(TF_Type);
-            int featuresByCategory = (int) experiment.get("featuresByCategory");
-            dictionaryParam.setFeaturesByCategory(featuresByCategory);
-        }
+                                        DictionaryParam dictionaryParam) {
+        initializeCommonParameters(experiment, dictionaryParam);
+    }
+
+    private void initializeTextFromTagMode(Map<String, Object> experiment,
+                                           DictionaryParam dictionaryParam) {
+        initializeCommonParameters(experiment, dictionaryParam);
+        String tagName = (String) experiment.get("tagName");
+        dictionaryParam.setTagName(tagName);
+    }
+
+    private void initializeNGramMode(Map<String, Object> experiment,
+                                     DictionaryParam dictionaryParam) {
+        initializeCommonParameters(experiment, dictionaryParam);
+        int nGramSize = (int) experiment.get("nGramSize");
+        dictionaryParam.setNGramSize(nGramSize);
+    }
+
+    private void initializeCommonParameters(Map<String, Object> experiment, DictionaryParam dictionaryParam) {
+        double IDF_Treshold = (double) experiment.get("IDF_Treshold");
+        String IDF_Type = (String) experiment.get("IDF_Type");
+        String TF_Type = (String) experiment.get("TF_Type");
+        int featuresByCategory = (int) experiment.get("featuresByCategory");
+
+        dictionaryParam.setIDF_Treshold(IDF_Treshold);
+        dictionaryParam.setIDF_Type(IDF_Type);
+        dictionaryParam.setTF_Type(TF_Type);
+        dictionaryParam.setFeaturesByCategory(featuresByCategory);
     }
 
     @SuppressWarnings("unchecked")
@@ -129,6 +121,10 @@ public class DictionaryServiceInitializer implements Initializer {
         Modes mode = Modes.valueOf(strMode.toUpperCase());
         Types type = Types.valueOf(strType.toUpperCase());
 
+        return createExperimentObject(name, description, mode, type);
+    }
+
+    private Experiment createExperimentObject(String name, String description, Modes mode, Types type) {
         Experiment experimentObj = new Experiment();
         experimentObj.setDescription(description);
         experimentObj.setExpName(name);
