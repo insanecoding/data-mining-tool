@@ -7,7 +7,7 @@ import GenericForm from "./GenericForm";
 import ListOfElements from "./../list-of-elements/ListOfElements";
 import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
-import {onValueChange, createElements} from "./../../util/misc";
+import {onValueChange} from "./../../util/misc";
 import CheckBoxReplacement from "./../CheckBoxReplacement";
 
 const style = {
@@ -30,7 +30,6 @@ class FormExtract extends Component {
         let path = ['extract'];
         path.push(e.target.name);
         onCheck(path);
-        // console.log("I was checked");
     };
 
     render() {
@@ -39,7 +38,7 @@ class FormExtract extends Component {
         const {formReducer} = this.props;
 
         const tagsWithText = {
-            elements: createElements(formReducer, ['extract', 'tagsWithText']),
+            elements: formReducer.getIn(['extract', 'tagsWithText']).toArray(),
             title: "Tags",
             placeholder: "input and press Enter to submit",
             whereToSave: ['extract', 'tagsWithText'],
@@ -50,7 +49,7 @@ class FormExtract extends Component {
         };
 
         const categories = {
-            elements: createElements(formReducer, ['extract', 'categories']),
+            elements: formReducer.getIn(['extract', 'categories']).toArray(),
             title: "Categories",
             placeholder: "input and press Enter to submit",
             whereToSave: ['extract', 'categories'],
@@ -61,7 +60,7 @@ class FormExtract extends Component {
         };
 
         const tagsToSkip = {
-            elements: createElements(formReducer, ['extract', 'tagsToSkip']),
+            elements: formReducer.getIn(['extract', 'tagsToSkip']).toArray(),
             title: "Tags to skip",
             placeholder: "input and press Enter to submit",
             whereToSave: ['extract', 'tagsToSkip'],

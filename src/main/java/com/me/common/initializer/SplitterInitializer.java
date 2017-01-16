@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.me.common.initializer.ExecutableCreator.createListFromMap;
-
 @Component
 public class SplitterInitializer implements Initializer {
 
@@ -48,9 +46,7 @@ public class SplitterInitializer implements Initializer {
     @SuppressWarnings("unchecked")
     private DataSplitterParam createDataSplitterParam(Map<String, Object> settings) {
 
-        List<Map<String, Object>> temp = (List<Map<String, Object>>) settings.get("categories");
-        List<String> categories = createListFromMap(temp);
-
+        List<String> categories = (List<String>) settings.get("categories");
         MainDataSplitParams mdp = createMainParams(settings);
         DataSet dataSet = createDataSet(settings);
         return new DataSplitterParam(mdp, dataSet, categories);

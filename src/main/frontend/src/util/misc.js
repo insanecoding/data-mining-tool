@@ -63,13 +63,3 @@ export const onValueChange = (e, formName, foo) => {
     }
     foo(element, e.target.name, formName);
 };
-
-
-export const createElements = (formReducer, whereToSeek) => {
-    let newArray = [];
-    formReducer.getIn(whereToSeek)
-        .toArray()
-        .map(elem => elem.toObject())
-        .map(elem => newArray.push(elem));
-    return newArray;
-};

@@ -33,7 +33,7 @@ class TodoTextInput extends Component {
         return (
             <div>
                 <TextField onKeyDown={this.handleEnter.bind(this)}
-                           id='new-todo-input'
+                           id='new-input-element'
                            style={this.props.style}
                            type="text"
                            hintText={this.props.placeholder}

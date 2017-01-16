@@ -7,7 +7,7 @@ import GenericForm from "./GenericForm";
 import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import ListOfElements from "./../list-of-elements/ListOfElements";
-import {onValueChange, createElements} from "./../../util/misc";
+import {onValueChange} from "./../../util/misc";
 
 const style = {
     listElementWidth: {
@@ -30,7 +30,7 @@ class FormFeatures extends Component {
             formReducer.getIn(['download']).toObject();
 
         const categories = {
-            elements: createElements(formReducer, ['download', 'categories']),
+            elements: formReducer.getIn(['download', 'categories']).toArray(),
             title: "Categories",
             placeholder: "input and press Enter to submit",
             whereToSave: ['download', 'categories'],

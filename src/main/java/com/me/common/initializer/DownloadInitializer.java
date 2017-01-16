@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.me.common.initializer.ExecutableCreator.createListFromMap;
-
 @Component
 public class DownloadInitializer implements Initializer {
 
@@ -31,10 +29,7 @@ public class DownloadInitializer implements Initializer {
 
         if ((boolean) settings.get("isOn")) {
 
-            List<Map<String, Object>> categoriesTemp =
-                    (List<Map<String, Object>>) settings.get("categories");
-
-            List<String> categories = createListFromMap(categoriesTemp);
+            List<String> categories = (List<String>) settings.get("categories");
             int downloadsPerCategory = (int) settings.get("downloadsPerCategory");
             int threadsNumber = (int) settings.get("threadsNumber");
             int readTimeout = (int) settings.get("readTimeout");

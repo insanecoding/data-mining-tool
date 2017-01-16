@@ -71,22 +71,22 @@ export function onListElementAdd(element, whereToSave) {
     }
 }
 
-export function onListElementDelete(elementId, whereToSeek) {
+export function onListElementDelete(element, whereToSeek) {
     return {
         type: ON_LIST_ELEMENT_DELETE,
         payload: Immutable.Map({
-            elementId: elementId,
+            element: element,
             whereToSeek: whereToSeek
         })
     }
 }
 
-export function onListElementEdit(elementId, element, whereToSeek) {
+export function onListElementEdit(oldElem, newElem, whereToSeek) {
     return {
         type: ON_LIST_ELEMENT_EDIT,
         payload: Immutable.Map({
-            elementId: elementId,
-            element: element,
+            oldElem: oldElem,
+            newElem: newElem,
             whereToSeek: whereToSeek
         })
     };

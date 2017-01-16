@@ -16,7 +16,7 @@ const LeftSideItem = ({components, activeFormChanged, componentToggled}) => {
 
     const listGenerator = (elements) => {
         return(
-            elements.map( elem => <MyLeftListItem text={elem.displayName} key={elem.key} value={elem.isOn}
+            elements.map( elem => <MyLeftListItem text={elem.displayName} key={elem.route} value={elem.isOn}
                                           handleClick={ () => handleClick(elem.key, elem.route)}
                                           onToggle={ () => onToggle(elem.name)}
                     />

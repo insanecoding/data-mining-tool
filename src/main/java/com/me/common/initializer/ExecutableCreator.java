@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class ExecutableCreator {
@@ -23,10 +22,5 @@ public class ExecutableCreator {
         List<MyExecutable> executables = new ArrayList<>();
         first.initialize(dto, executables);
         return executables;
-    }
-
-    static List<String> createListFromMap(List<Map<String, Object>> categoriesTemp) {
-        return categoriesTemp.stream()
-                .map(elem -> (String)elem.get("name")).collect(Collectors.toList());
     }
 }

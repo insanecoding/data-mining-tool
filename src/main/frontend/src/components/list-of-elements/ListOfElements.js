@@ -24,7 +24,7 @@ const MainSection = ({title, placeholder, listElementStyle, elements, whereToSav
 
     return (
         <section>
-            <header className="header">
+            <header>
                 <h1 style={defaultStyle.header}>{title}</h1>
                 <div style={defaultStyle.flex}>
                     <InputField newElement
@@ -32,10 +32,10 @@ const MainSection = ({title, placeholder, listElementStyle, elements, whereToSav
                 </div>
             </header>
 
-            <section className="main" style={defaultStyle.flex}>
-                <List className="todo-list" style={listElementStyle}>
+            <section style={defaultStyle.flex}>
+                <List style={listElementStyle}>
                     {elements.map(element =>
-                        <MyListItem key={element.key} element={element}
+                        <MyListItem key={element} element={element}
                                     onDelete={onDelete} onEdit={onEdit} whereToSeek={whereToSave}/>
                     )}
                 </List>

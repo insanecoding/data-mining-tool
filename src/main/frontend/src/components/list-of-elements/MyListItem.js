@@ -16,14 +16,14 @@ class MyListItem extends Component {
     };
 
     handleDelete = (element, whereToSeek) => {
-        this.props.onDelete(element.key, whereToSeek)
+        this.props.onDelete(element, whereToSeek)
     };
 
     handleSave = (element, text, whereToSeek) => {
         if (text.length === 0) {
-            this.props.onDelete(element.key, whereToSeek);
+            this.props.onDelete(element, whereToSeek);
         } else {
-            this.props.onEdit(element.key, text, whereToSeek);
+            this.props.onEdit(element, text, whereToSeek);
         }
         this.setState({editing: false});
     };
@@ -46,13 +46,13 @@ class MyListItem extends Component {
         let nodeElement;
         if (this.state.editing) {
             nodeElement = (
-                <InputField text={element.name}
+                <InputField text={element}
                             editing={this.state.editing}
                             onSave={(text) => this.handleSave(element, text, whereToSeek)}/>
             );
         } else {
             nodeElement = (
-                <ListItem primaryText={element.name} rightIconButton={rightIconMenu}/>
+                <ListItem primaryText={element} rightIconButton={rightIconMenu}/>
             );
         }
 
@@ -65,7 +65,7 @@ class MyListItem extends Component {
 }
 
 MyListItem.propTypes = {
-    element: PropTypes.object.isRequired,
+    element: PropTypes.string.isRequired,
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     whereToSeek: PropTypes.array.isRequired

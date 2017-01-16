@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.me.common.initializer.ExecutableCreator.createListFromMap;
-
 @Component
 public class ExtractorsInitializer implements Initializer {
 
@@ -42,10 +40,7 @@ public class ExtractorsInitializer implements Initializer {
     public void initialize(Map<String, Object> dto, List<MyExecutable> executables) {
         Map<String, Object> settings = (Map<String, Object>) dto.get("extract");
         if ((boolean) settings.get("isOn")) {
-            List<Map<String, Object>> categories =
-                    (List<Map<String, Object>>) settings.get("categories");
-            List<String> stringCategories = createListFromMap(categories);
-
+            List<String> stringCategories = (List<String>) settings.get("categories");
             initTextMain(settings, stringCategories, executables);
             initTextFromTags(settings, stringCategories, executables);
             initNGrams(settings, stringCategories, executables);
@@ -70,8 +65,7 @@ public class ExtractorsInitializer implements Initializer {
 
         boolean isTextFromTags = (boolean) settings.get("isTextFromTags");
         if (isTextFromTags) {
-            List<Map<String, Object>> tags = (List<Map<String, Object>>) settings.get("tagsWithText");
-            List<String> stringTags = createListFromMap(tags);
+            List<String> stringTags = (List<String>) settings.get("tagsWithText");
             textFromTagExtractorService.setCategories(new ArrayList<>(stringCategories));
             textFromTagExtractorService.setTags(new ArrayList<>(stringTags));
             executables.add(textFromTagExtractorService);
@@ -97,8 +91,7 @@ public class ExtractorsInitializer implements Initializer {
                                       List<String> stringCategories, List<MyExecutable> executables) {
         boolean isTagStat = (boolean) settings.get("isTagStat");
         if (isTagStat) {
-            List<Map<String, Object>> tagsToSkip = (List<Map<String, Object>>) settings.get("tagsToSkip");
-            List<String> tagsToSkipStr = createListFromMap(tagsToSkip);
+            List<String> tagsToSkipStr = (List<String>) settings.get("tagsToSkip");
             tagStatExtractService.setCategories(new ArrayList<>(stringCategories));
             tagStatExtractService.setTagsToSkip(new ArrayList<>(tagsToSkipStr));
             executables.add(tagStatExtractService);

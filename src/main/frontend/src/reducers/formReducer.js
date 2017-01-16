@@ -11,7 +11,6 @@ import {
     CHECKBOX_CHECKED
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
-import Immutable from "immutable";
 
 export default function processForm(state = initialState, action) {
     switch (action.type) {
@@ -75,33 +74,25 @@ export default function processForm(state = initialState, action) {
 
         case ON_LIST_ELEMENT_ADD: {
             const whereToSave = action.payload.getIn(['whereToSave']);
-
             let currentElements = state.getIn(whereToSave);
-            let lastKey = (currentElements.size !== 0) ? currentElements.last().getIn(['key']) : 0;
-            const newElement = Immutable.Map({
-                key: ++lastKey,
-                name: action.payload.getIn(['element'])
-            });
-            currentElements = currentElements.push(newElement);
+            currentElements = currentElements.push(action.payload.getIn(['element']));
             return state.setIn(whereToSave, currentElements);
         }
 
         case ON_LIST_ELEMENT_DELETE: {
-            const {whereToSeek, elementId} = action.payload.toObject();
+            const {whereToSeek, element} = action.payload.toObject();
 
             const currentArray = state.getIn(whereToSeek);
-            const newArray = currentArray.filterNot(x => x.getIn(['key']) === elementId);
+            const newArray = currentArray.filterNot(x => x === element);
             return state.setIn(whereToSeek, newArray);
         }
 
         case ON_LIST_ELEMENT_EDIT: {
-            const {whereToSeek, element, elementId} = action.payload.toObject();
+            const {whereToSeek, oldElem, newElem} = action.payload.toObject();
 
             let currentArray = state.getIn(whereToSeek);
             const newArray = currentArray = currentArray.map(elem =>
-                elem.getIn(['key']) === elementId ?
-                    elem.setIn(['name'], element) :
-                    elem
+                (elem === oldElem) ? newElem : elem
             );
 
             return state.setIn(whereToSeek, newArray);
