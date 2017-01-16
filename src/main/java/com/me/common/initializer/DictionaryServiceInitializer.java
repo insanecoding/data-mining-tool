@@ -59,7 +59,42 @@ public class DictionaryServiceInitializer implements Initializer {
         dictionaryParam.setDataSetName(dataSetName);
 
         initializeTextMainMode(experiment, experimentObj, dictionaryParam);
+        initializeTextFromTagMode(experiment, experimentObj, dictionaryParam);
+        initializeNGramMode(experiment, experimentObj, dictionaryParam);
         return dictionaryParam;
+    }
+
+    private void initializeNGramMode(Map<String, Object> experiment,
+                                     Experiment experimentObj,
+                                     DictionaryParam dictionaryParam) {
+        if (experimentObj.getMode().equals(Modes.NGRAMS)) {
+            double IDF_Treshold = (double) experiment.get("IDF_Treshold");
+            dictionaryParam.setIDF_Treshold(IDF_Treshold);
+            String IDF_Type = (String) experiment.get("IDF_Type");
+            dictionaryParam.setIDF_Type(IDF_Type);
+            String TF_Type = (String) experiment.get("TF_Type");
+            dictionaryParam.setTF_Type(TF_Type);
+            int featuresByCategory = (int) experiment.get("featuresByCategory");
+            dictionaryParam.setFeaturesByCategory(featuresByCategory);
+            int nGramSize = (int) experiment.get("nGramSize");
+            dictionaryParam.setNGramSize(nGramSize);
+        }
+    }
+
+    private void initializeTextFromTagMode(Map<String, Object> experiment, Experiment experimentObj,
+                                           DictionaryParam dictionaryParam) {
+        if (experimentObj.getMode().equals(Modes.TEXT_FROM_TAGS)) {
+            double IDF_Treshold = (double) experiment.get("IDF_Treshold");
+            dictionaryParam.setIDF_Treshold(IDF_Treshold);
+            String IDF_Type = (String) experiment.get("IDF_Type");
+            dictionaryParam.setIDF_Type(IDF_Type);
+            String TF_Type = (String) experiment.get("TF_Type");
+            dictionaryParam.setTF_Type(TF_Type);
+            int featuresByCategory = (int) experiment.get("featuresByCategory");
+            dictionaryParam.setFeaturesByCategory(featuresByCategory);
+            String tagName = (String) experiment.get("tagName");
+            dictionaryParam.setTagName(tagName);
+        }
     }
 
     private void initializeTextMainMode(Map<String, Object> experiment,

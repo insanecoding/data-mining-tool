@@ -81,28 +81,64 @@ export const initialState = Immutable.fromJS({
         isOn: false,
         stopWordsPath: "\\stopwords.dat",
         experiments: [
+            // {
+            //     name: "exp_1",
+            //     description: "text experiment 1",
+            //     dataSetName: "set_1",
+            //     mode: "text_main",
+            //     type: "binomial",
+            //     IDF_Treshold: 0.001,
+            //     IDF_Type: "M",
+            //     TF_Type: "S",
+            //     featuresByCategory: 50
+            // },
+            // {
+            //     name: "exp_2",
+            //     description: "text experiment 2",
+            //     dataSetName: "set_2",
+            //     mode: "text_main",
+            //     type: "binomial",
+            //     IDF_Treshold: 0.001,
+            //     IDF_Type: "M",
+            //     TF_Type: "S",
+            //     featuresByCategory: 50
+            // },
+            // {
+            //     name: "exp_3",
+            //     description: "text from tag experiment 1",
+            //     dataSetName: "set_2",
+            //     mode: "text_from_tags",
+            //     type: "binomial",
+            //     tagName: "h1",
+            //     IDF_Treshold: 0.001,
+            //     IDF_Type: "M",
+            //     TF_Type: "S",
+            //     featuresByCategory: 50
+            // },
+            // {
+            //     name: "exp_4",
+            //     description: "text from tag experiment 2",
+            //     dataSetName: "set_1",
+            //     mode: "text_from_tags",
+            //     type: "binomial",
+            //     tagName: "h2",
+            //     IDF_Treshold: 0.001,
+            //     IDF_Type: "M",
+            //     TF_Type: "S",
+            //     featuresByCategory: 50
+            // }
             {
-                name: "exp_1",
-                description: "text experiment 1",
-                dataSetName: "set_1",
-                mode: "text_main",
+                name: "exp_5",
+                description: "ngram experiment 1",
+                dataSetName: "set_2",
+                mode: "ngrams",
                 type: "binomial",
+                nGramSize: 3,
                 IDF_Treshold: 0.001,
                 IDF_Type: "M",
                 TF_Type: "S",
                 featuresByCategory: 50
             },
-            {
-                name: "exp_2",
-                description: "text experiment 2",
-                dataSetName: "set_2",
-                mode: "text_main",
-                type: "binomial",
-                IDF_Treshold: 0.001,
-                IDF_Type: "M",
-                TF_Type: "S",
-                featuresByCategory: 50
-            }
         ]
     },
 });

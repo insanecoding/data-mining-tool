@@ -124,8 +124,8 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @Override
     public Tag trySaveTag(Tag tag) {
-       Tag newTag = findTag(tag.getTagName());
-       return (newTag == null) ? saveEntity(tag) : newTag;
+        Tag newTag = findTag(tag.getTagName());
+        return (newTag == null) ? saveEntity(tag) : newTag;
     }
 
     @Override
@@ -191,7 +191,7 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 throw new IllegalArgumentException("Illegal argument 'whatToFind'");
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private List<HTML> findHTMLByCategory(Category category) {
         return sessionFactory.getCurrentSession()
@@ -289,27 +289,27 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 "      HAVING count(*) > 1 " +
                 "     ) AS dupes";
         return jdbcTemplate.queryForObject(
-                sql, new Object[] {}, Long.class);
+                sql, new Object[]{}, Long.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Website> findWebsitesWithCondition(Category category, MainDataSplitParams mdp) {
-            return sessionFactory.getCurrentSession()
-                    .createQuery("select tm.website " +
-                            " from TextMain as tm where tm.website.category = :category " +
-                            " and tm.lang = :lang and tm.length between :minTextLength and :maxTextLength")
-                    .setParameter("category", category)
-                    .setParameter("lang", mdp.getLang())
-                    .setParameter("minTextLength", mdp.getMinTextLength())
-                    .setParameter("maxTextLength", mdp.getMaxTextLength())
-                    .setMaxResults(mdp.getWebsitesPerCategory())
-                    .list();
+        return sessionFactory.getCurrentSession()
+                .createQuery("select tm.website " +
+                        " from TextMain as tm where tm.website.category = :category " +
+                        " and tm.lang = :lang and tm.length between :minTextLength and :maxTextLength")
+                .setParameter("category", category)
+                .setParameter("lang", mdp.getLang())
+                .setParameter("minTextLength", mdp.getMinTextLength())
+                .setParameter("maxTextLength", mdp.getMaxTextLength())
+                .setMaxResults(mdp.getWebsitesPerCategory())
+                .list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Experiment> findExperimentsByNames(List<String> experimentNames){
+    public List<Experiment> findExperimentsByNames(List<String> experimentNames) {
         return sessionFactory.getCurrentSession()
                 .createQuery("from Experiment e where e.expName in :expNames")
                 .setParameterList("expNames", experimentNames)
@@ -342,17 +342,29 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
         switch (mode) {
             case TEXT_MAIN:
                 return findMainTexts(IDs);
-//            case TEXT_FROM_TAGS:
-//                return findTextFromTags(chosenWebsites, param);
-//            case NGRAMS:
-//                return findNGrams(chosenWebsites, param);
+            case TEXT_FROM_TAGS:
+                return findTextFromTags(IDs, experimentParam);
+            case NGRAMS:
+                return findNGrams(IDs, experimentParam);
             default:
                 return null;
         }
     }
 
     @SuppressWarnings("unchecked")
-    private List<TextMain> findMainTexts (List<Long> ids) {
+    private List<? extends AbstractText> findTextFromTags(List<Long> chosenIDs,
+                                                          DictionaryParam param) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from TextFromTag tm " +
+                        "where tm.website.websiteId in :chosenWebsiteIDs " +
+                        " and tm.tag.tagName = :tagName")
+                .setParameterList("chosenWebsiteIDs", chosenIDs)
+                .setParameter("tagName", param.getTagName())
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<TextMain> findMainTexts(List<Long> ids) {
         return sessionFactory.getCurrentSession().createQuery("from TextMain tm " +
                 "where tm.website.websiteId in :ids")
                 .setParameterList("ids", ids)
@@ -364,108 +376,19 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     public DataSet findDataSetByName(String dataSetName) {
         return (DataSet) sessionFactory.getCurrentSession()
                 .createQuery("from DataSet ds " +
-                "where ds.name = :name")
+                        "where ds.name = :name")
                 .setParameter("name", dataSetName)
                 .uniqueResult();
     }
 
-
-
-
-//
-//    @SuppressWarnings("unchecked")
-//    private List<NGrams> findNGrams(List<ChosenWebsite> chosenWebsites,
-//                                    Map<String, String> param) {
-//        List<NGrams> result = null;
-//        if (param != null && param.containsKey("nGramSize")
-//                && param.get("nGramSize") != null) {
-//            int nGramSize = Integer.parseInt(param.get("nGramSize"));
-//            // they were chosen for ngrams processing
-//            Map<Long, Website> chosenData = getChosenIDsList(chosenWebsites);
-//            List<Long> idsFromChosen = new ArrayList<>(chosenData.keySet());
-//
-//            result = sessionFactory.getCurrentSession().createQuery("from NGrams ng " +
-//                    "where ng.website.id in :chosenWebsites and ng.nGramSize = :nGramSize")
-//                    .setParameter("chosenWebsites", idsFromChosen)
-//                    .setParameter("nGramSize", nGramSize)
-//                    .list();
-//
-//            List<Long> idsWithFeatures = getIDsWithFeatures(result);
-//
-//            // now process those ones that are in ChosenWebsites, but have no features for nGrams
-//            List<Long> unknowns = (List<Long>)
-//                    CollectionUtils.subtract(idsFromChosen, idsWithFeatures);
-//            // create dummy data for unknowns
-//            List<NGrams> unknownNGrams = new LinkedList<>();
-//            unknowns.forEach(unknown -> {
-//                Website ws = chosenData.get(unknown);
-//                NGrams nGram = EntitiesFactory.createNGrams(ws, "", nGramSize);
-//                unknownNGrams.add(nGram);
-//            });
-//            result.addAll(unknownNGrams);
-//        } else {
-//            logger.error("empty parameters!");
-//        }
-//        return result;
-//    }
-//
-//    /**
-//     * returns list of ids for the websites that were chosen
-//     */
-//    private Map<Long, Website> getChosenIDsList(List<ChosenWebsite> chosenWebsites) {
-//        return chosenWebsites.stream()
-//                .map(ChosenWebsite::getWebsite)
-//                .collect(Collectors.toMap(Website::getWebsiteID, i -> i));
-//    }
-//
-//    /**
-//     * returns list of ids for the websites that have desired features
-//     */
-//    private List<Long> getIDsWithFeatures(List<? extends AbstractText> result){
-//        return result.stream()
-//                .map(elem -> elem.getWebsite().getWebsiteID())
-//                .collect(Collectors.toList());
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    private List<TextFromTag> findTextFromTags(List<ChosenWebsite> chosenWebsites,
-//                                               Map<String, String> param) {
-//        List<TextFromTag> result = null;
-//        if (param != null && param.containsKey("tagName")
-//                && param.get("tagName") != null) {
-//            String tagName = param.get("tagName");
-//            Map<Long, Website> chosenData = getChosenIDsList(chosenWebsites);
-//            List <Long> idsFromChosen = new ArrayList<>(chosenData.keySet());
-//
-//            result = sessionFactory.getCurrentSession().createQuery("from TextFromTag tm " +
-//                    "where tm.website.websiteID in :chosenWebsites and tm.tag.tagName = :tagName")
-//                    .setParameter("chosenWebsites", idsFromChosen)
-//                    .setParameter("tagName", tagName)
-//                    .list();
-//
-//            List<Long> idsWithFeatures = getIDsWithFeatures(result);
-//
-//            // now process those ones that are in ChosenWebsites, but have no features for nGrams
-//            List<Long> unknowns = (List<Long>)
-//                    CollectionUtils.subtract(idsFromChosen, idsWithFeatures);
-//
-//            // get current tag (wil be required for dummy unknowns)
-//            Tag tag = result.get(0).getTag();
-//
-//            // create dummy data for unknowns
-//            List<TextFromTag> unknownTexts = new LinkedList<>();
-//            unknowns.forEach(unknown -> {
-//                Website ws = chosenData.get(unknown);
-//                TextFromTag textFromTag = EntitiesFactory.createTextFromTag(0, tag, "", ws);
-//                unknownTexts.add(textFromTag);
-//            });
-//            result.addAll(unknownTexts);
-//        } else {
-//            log.error("empty parameters!");
-//        }
-//        return result;
-//    }
-//
-
-
+    @SuppressWarnings("unchecked")
+    private List<NGrams> findNGrams(List<Long> chosenWebsites,
+                                    DictionaryParam param) {
+        return (List<NGrams>) sessionFactory.getCurrentSession()
+                .createQuery("from NGrams ng " +
+                        "where ng.website.websiteId in :chosenWebsites and ng.nGramSize = :nGramSize")
+                .setParameterList("chosenWebsites", chosenWebsites)
+                .setParameter("nGramSize", param.getNGramSize())
+                .list();
+    }
 }
