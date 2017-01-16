@@ -2,6 +2,7 @@ package com.me.core.service.download;
 
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
+import com.me.core.domain.dto.DownloaderParameters;
 import com.me.core.domain.entities.Category;
 import com.me.core.domain.entities.Connect;
 import com.me.core.domain.entities.HTML;

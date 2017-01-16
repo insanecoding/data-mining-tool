@@ -3,6 +3,7 @@ package com.me.core.service.splitter;
 import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
+import com.me.core.domain.dto.DataSplitterParam;
 import com.me.core.domain.entities.ChosenCategory;
 import com.me.core.domain.entities.DataSet;
 import com.me.core.service.dao.MyDao;

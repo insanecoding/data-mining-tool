@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -107,7 +111,7 @@ public class CreateDictionaryUtility {
                                        boolean isTFCorrect,
                                        Map<String, Integer> termCount,
                                        Integer wordsCount, String stopWordsPath) throws Exception {
-        Vector<String> stopWords = CreateDictionaryHelper.getStopWords(stopWordsPath);
+        Vector<String> stopWords = getStopWords(stopWordsPath);
         for (AbstractText at : textsInCategory) {
             String text = at.getText();
             Vector<String> vec = new Vector<>();
@@ -217,6 +221,28 @@ public class CreateDictionaryUtility {
                         .map(term -> new DictionaryWords(experiment, term))
                         .collect(Collectors.toList());
         dao.batchSave(words);
+    }
+
+    /**
+     * loads stopwords from file with path into vector
+     */
+    private Vector<String> getStopWords(String path) {
+        Vector<String> stopwords = new Vector<>();
+
+        try (FileInputStream fstream = new FileInputStream(path);
+             BufferedReader br = new BufferedReader(new InputStreamReader(fstream))) {
+            //Read File Line By Line
+            String strLine;
+            while ((strLine = br.readLine()) != null) {
+                strLine = strLine.replace(System.getProperty("line.separator"), "");
+                if (!strLine.equals("")) {
+                    stopwords.add(strLine);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stopwords;
     }
 
     public void clear(){

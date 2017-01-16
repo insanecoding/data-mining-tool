@@ -1,7 +1,7 @@
 package com.me.common.initializer;
 
 import com.me.common.MyExecutable;
-import com.me.core.service.download.DownloaderParameters;
+import com.me.core.domain.dto.DownloaderParameters;
 import com.me.core.service.download.DownloaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

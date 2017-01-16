@@ -1,9 +1,9 @@
 package com.me.core.service.dao;
 
+import com.me.core.domain.dto.DictionaryParam;
+import com.me.core.domain.dto.MainDataSplitParams;
+import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.*;
-import com.me.core.service.experiment.Modes;
-import com.me.core.service.experiment.text.dictionary.DictionaryParam;
-import com.me.core.service.splitter.MainDataSplitParams;
 
 import java.io.Serializable;
 import java.util.List;

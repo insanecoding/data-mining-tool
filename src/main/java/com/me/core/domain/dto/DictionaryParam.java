@@ -1,4 +1,4 @@
-package com.me.core.service.experiment.text.dictionary;
+package com.me.core.domain.dto;
 
 import com.me.core.domain.entities.Experiment;
 import lombok.AllArgsConstructor;

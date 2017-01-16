@@ -1,5 +1,6 @@
 package com.me.core.service.splitter;
 
+import com.me.core.domain.dto.DataSplitterParam;
 import com.me.core.domain.entities.ChosenCategory;
 import com.me.core.domain.entities.ChosenWebsite;
 import com.me.core.domain.entities.Website;

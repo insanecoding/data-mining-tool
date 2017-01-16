@@ -1,10 +1,10 @@
 package com.me.common.initializer;
 
 import com.me.common.MyExecutable;
+import com.me.core.domain.dto.DataSplitterParam;
+import com.me.core.domain.dto.MainDataSplitParams;
 import com.me.core.domain.entities.DataSet;
-import com.me.core.service.splitter.DataSplitterParam;
 import com.me.core.service.splitter.DataSplitterService;
-import com.me.core.service.splitter.MainDataSplitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

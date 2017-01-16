@@ -1,6 +1,6 @@
 package com.me.core.domain.entities;
 
-import com.me.core.service.download.DownloadResult;
+import com.me.core.domain.dto.DownloadResult;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

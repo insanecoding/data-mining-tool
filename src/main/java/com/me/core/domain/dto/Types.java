@@ -1,4 +1,4 @@
-package com.me.core.service.experiment;
+package com.me.core.domain.dto;
 
 public enum Types {
     BINOMIAL("binomial"), REAL("real");

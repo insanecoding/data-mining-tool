@@ -3,6 +3,7 @@ package com.me.core.service.download;
 import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
+import com.me.core.domain.dto.DownloaderParameters;
 import com.me.core.domain.entities.Category;
 import com.me.core.service.dao.MyDao;
 import lombok.Getter;

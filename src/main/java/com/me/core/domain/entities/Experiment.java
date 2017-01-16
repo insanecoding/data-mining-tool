@@ -1,7 +1,7 @@
 package com.me.core.domain.entities;
 
-import com.me.core.service.experiment.Modes;
-import com.me.core.service.experiment.Types;
+import com.me.core.domain.dto.Modes;
+import com.me.core.domain.dto.Types;
 import lombok.*;
 
 import javax.persistence.*;

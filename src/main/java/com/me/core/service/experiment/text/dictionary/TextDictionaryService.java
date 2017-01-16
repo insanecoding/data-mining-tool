@@ -3,6 +3,7 @@ package com.me.core.service.experiment.text.dictionary;
 import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
+import com.me.core.domain.dto.DictionaryParam;
 import com.me.core.domain.entities.AbstractText;
 import com.me.core.domain.entities.ChosenCategory;
 import com.me.core.domain.entities.Experiment;

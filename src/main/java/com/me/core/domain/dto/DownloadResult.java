@@ -1,4 +1,4 @@
-package com.me.core.service.download;
+package com.me.core.domain.dto;
 
 
 public enum DownloadResult {

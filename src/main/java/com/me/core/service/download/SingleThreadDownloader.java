@@ -1,5 +1,6 @@
 package com.me.core.service.download;
 
+import com.me.core.domain.dto.DownloadResult;
 import com.me.core.domain.entities.Connect;
 import com.me.core.domain.entities.HTML;
 import com.me.core.domain.entities.Website;

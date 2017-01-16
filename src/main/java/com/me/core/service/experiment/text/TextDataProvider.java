@@ -1,9 +1,9 @@
 package com.me.core.service.experiment.text;
 
+import com.me.core.domain.dto.DictionaryParam;
+import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.*;
 import com.me.core.service.dao.MyDao;
-import com.me.core.service.experiment.Modes;
-import com.me.core.service.experiment.text.dictionary.DictionaryParam;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

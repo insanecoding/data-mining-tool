@@ -1,4 +1,4 @@
-package com.me.core.service.splitter;
+package com.me.core.domain.dto;
 
 import com.me.core.domain.entities.DataSet;
 import lombok.AllArgsConstructor;

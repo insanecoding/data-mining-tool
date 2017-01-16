@@ -1,4 +1,4 @@
-package com.me.core.service.experiment;
+package com.me.core.domain.dto;
 
 public enum Modes {
     TEXT_MAIN("text_main"), TEXT_FROM_TAGS("text_from_tags"),

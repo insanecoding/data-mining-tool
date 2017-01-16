@@ -1,11 +1,11 @@
 package com.me.common.initializer;
 
 import com.me.common.MyExecutable;
+import com.me.core.domain.dto.DictionaryParam;
+import com.me.core.domain.dto.Modes;
+import com.me.core.domain.dto.Types;
 import com.me.core.domain.entities.Experiment;
 import com.me.core.service.experiment.ExperimentCreator;
-import com.me.core.service.experiment.Modes;
-import com.me.core.service.experiment.Types;
-import com.me.core.service.experiment.text.dictionary.DictionaryParam;
 import com.me.core.service.experiment.text.dictionary.TextDictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
