@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Repository("myDaoImpl")
+@Repository("expDaoImpl")
 @Transactional
 public class ExperimentDaoImpl implements ExperimentDao {
 

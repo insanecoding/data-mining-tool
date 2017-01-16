@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,13 +48,6 @@ public class DataSplitterService extends StoppableObservable implements MyExecut
 
             dataSplitterUtil.createDivideSave(param, categories);
         }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        List<DataSplitterParam> dsp = (List<DataSplitterParam>) param.get("splitter");
-        this.params = new ArrayList<>(dsp);
     }
 
     @Override

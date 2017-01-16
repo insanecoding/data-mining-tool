@@ -1,9 +1,8 @@
 package com.me.core.service.dao;
 
-import com.me.core.domain.entities.Blacklist;
-import com.me.core.domain.entities.Category;
-import com.me.core.domain.entities.Tag;
-import com.me.core.domain.entities.Website;
+import com.me.core.domain.entities.*;
+import com.me.core.service.experiment.Modes;
+import com.me.core.service.experiment.text.dictionary.DictionaryParam;
 import com.me.core.service.splitter.MainDataSplitParams;
 
 import java.io.Serializable;
@@ -25,6 +24,8 @@ public interface MyDao {
     Blacklist trySaveBlacklist(Blacklist blacklist);
 
     Tag trySaveTag(Tag tag);
+
+    Experiment trySaveExperiment(Experiment experiment);
 /*
  * finders
  */
@@ -39,4 +40,15 @@ public interface MyDao {
     Long countDuplicates();
 
     List<Website> findWebsitesWithCondition(Category category, MainDataSplitParams mdp);
+
+    List<Experiment> findExperimentsByNames(List<String> experimentNames);
+
+    List<ChosenWebsite> findChosenWebsites(DataSet dataSet, Category category);
+
+    List<ChosenCategory> findCategoriesByDataSet(DataSet dataSet);
+
+    List<? extends AbstractText> findTextsForIDs(List<Long> IDs, Category category,
+                                                 Modes mode, DictionaryParam param);
+
+    DataSet findDataSetByName(String dataSetName);
 }

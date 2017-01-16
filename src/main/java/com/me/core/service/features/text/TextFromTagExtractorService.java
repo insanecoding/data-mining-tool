@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -85,16 +83,6 @@ public class TextFromTagExtractorService extends StoppableObservable implements 
         alreadyProcessed.clear();
         HTMLs.clear();
         return notProcessed;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        Map<String, Object> props = (Map<String, Object>) param.get("textFromTagExtractor");
-        List<String> tempCategories = (List<String>) props.get("categories");
-        List<String> tempTags = (List<String>) props.get("tagsWithText");
-        categories = new ArrayList<>(tempCategories);
-        tags = new ArrayList<>(tempTags);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.me.core.service.dao;
 
 import com.me.common.StoppableObservable;
 import com.me.core.domain.entities.*;
+import com.me.core.service.experiment.Modes;
+import com.me.core.service.experiment.text.dictionary.DictionaryParam;
 import com.me.core.service.splitter.MainDataSplitParams;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
@@ -124,6 +126,19 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
     public Tag trySaveTag(Tag tag) {
        Tag newTag = findTag(tag.getTagName());
        return (newTag == null) ? saveEntity(tag) : newTag;
+    }
+
+    @Override
+    public Experiment trySaveExperiment(Experiment experiment) {
+        Experiment existing = findExperiment(experiment.getExpName());
+        return (existing == null) ? saveEntity(experiment) : existing;
+    }
+
+    private Experiment findExperiment(String expName) {
+        return (Experiment) sessionFactory.getCurrentSession()
+                .createQuery("from Experiment exp where exp.expName = :expName")
+                .setParameter("expName", expName)
+                .uniqueResult();
     }
 
     private Tag findTag(String tagName) {
@@ -285,4 +300,165 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                     .setMaxResults(mdp.getWebsitesPerCategory())
                     .list();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Experiment> findExperimentsByNames(List<String> experimentNames){
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Experiment e where e.expName in :expNames")
+                .setParameterList("expNames", experimentNames)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ChosenWebsite> findChosenWebsites(DataSet dataSet, Category category) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from ChosenWebsite ch where ch.dataSet = :dataSet " +
+                        " and ch.website.category = :category ")
+                .setParameter("dataSet", dataSet)
+                .setParameter("category", category)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ChosenCategory> findCategoriesByDataSet(DataSet dataSet) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from ChosenCategory ch where ch.dataSet = :dataSet")
+                .setParameter("dataSet", dataSet)
+                .list();
+    }
+
+    @Override
+    public List<? extends AbstractText> findTextsForIDs(List<Long> IDs, Category category,
+                                                        Modes mode, DictionaryParam experimentParam) {
+        switch (mode) {
+            case TEXT_MAIN:
+                return findMainTexts(IDs);
+//            case TEXT_FROM_TAGS:
+//                return findTextFromTags(chosenWebsites, param);
+//            case NGRAMS:
+//                return findNGrams(chosenWebsites, param);
+            default:
+                return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<TextMain> findMainTexts (List<Long> ids) {
+        return sessionFactory.getCurrentSession().createQuery("from TextMain tm " +
+                "where tm.website.websiteID in :ids")
+                .setParameter("ids", ids).list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public DataSet findDataSetByName(String dataSetName) {
+        return (DataSet) sessionFactory.getCurrentSession()
+                .createQuery("from DataSet ds " +
+                "where ds.name = :name")
+                .setParameter("name", dataSetName)
+                .uniqueResult();
+    }
+
+
+
+
+//
+//    @SuppressWarnings("unchecked")
+//    private List<NGrams> findNGrams(List<ChosenWebsite> chosenWebsites,
+//                                    Map<String, String> param) {
+//        List<NGrams> result = null;
+//        if (param != null && param.containsKey("nGramSize")
+//                && param.get("nGramSize") != null) {
+//            int nGramSize = Integer.parseInt(param.get("nGramSize"));
+//            // they were chosen for ngrams processing
+//            Map<Long, Website> chosenData = getChosenIDsList(chosenWebsites);
+//            List<Long> idsFromChosen = new ArrayList<>(chosenData.keySet());
+//
+//            result = sessionFactory.getCurrentSession().createQuery("from NGrams ng " +
+//                    "where ng.website.id in :chosenWebsites and ng.nGramSize = :nGramSize")
+//                    .setParameter("chosenWebsites", idsFromChosen)
+//                    .setParameter("nGramSize", nGramSize)
+//                    .list();
+//
+//            List<Long> idsWithFeatures = getIDsWithFeatures(result);
+//
+//            // now process those ones that are in ChosenWebsites, but have no features for nGrams
+//            List<Long> unknowns = (List<Long>)
+//                    CollectionUtils.subtract(idsFromChosen, idsWithFeatures);
+//            // create dummy data for unknowns
+//            List<NGrams> unknownNGrams = new LinkedList<>();
+//            unknowns.forEach(unknown -> {
+//                Website ws = chosenData.get(unknown);
+//                NGrams nGram = EntitiesFactory.createNGrams(ws, "", nGramSize);
+//                unknownNGrams.add(nGram);
+//            });
+//            result.addAll(unknownNGrams);
+//        } else {
+//            logger.error("empty parameters!");
+//        }
+//        return result;
+//    }
+//
+//    /**
+//     * returns list of ids for the websites that were chosen
+//     */
+//    private Map<Long, Website> getChosenIDsList(List<ChosenWebsite> chosenWebsites) {
+//        return chosenWebsites.stream()
+//                .map(ChosenWebsite::getWebsite)
+//                .collect(Collectors.toMap(Website::getWebsiteID, i -> i));
+//    }
+//
+//    /**
+//     * returns list of ids for the websites that have desired features
+//     */
+//    private List<Long> getIDsWithFeatures(List<? extends AbstractText> result){
+//        return result.stream()
+//                .map(elem -> elem.getWebsite().getWebsiteID())
+//                .collect(Collectors.toList());
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    private List<TextFromTag> findTextFromTags(List<ChosenWebsite> chosenWebsites,
+//                                               Map<String, String> param) {
+//        List<TextFromTag> result = null;
+//        if (param != null && param.containsKey("tagName")
+//                && param.get("tagName") != null) {
+//            String tagName = param.get("tagName");
+//            Map<Long, Website> chosenData = getChosenIDsList(chosenWebsites);
+//            List <Long> idsFromChosen = new ArrayList<>(chosenData.keySet());
+//
+//            result = sessionFactory.getCurrentSession().createQuery("from TextFromTag tm " +
+//                    "where tm.website.websiteID in :chosenWebsites and tm.tag.tagName = :tagName")
+//                    .setParameter("chosenWebsites", idsFromChosen)
+//                    .setParameter("tagName", tagName)
+//                    .list();
+//
+//            List<Long> idsWithFeatures = getIDsWithFeatures(result);
+//
+//            // now process those ones that are in ChosenWebsites, but have no features for nGrams
+//            List<Long> unknowns = (List<Long>)
+//                    CollectionUtils.subtract(idsFromChosen, idsWithFeatures);
+//
+//            // get current tag (wil be required for dummy unknowns)
+//            Tag tag = result.get(0).getTag();
+//
+//            // create dummy data for unknowns
+//            List<TextFromTag> unknownTexts = new LinkedList<>();
+//            unknowns.forEach(unknown -> {
+//                Website ws = chosenData.get(unknown);
+//                TextFromTag textFromTag = EntitiesFactory.createTextFromTag(0, tag, "", ws);
+//                unknownTexts.add(textFromTag);
+//            });
+//            result.addAll(unknownTexts);
+//        } else {
+//            log.error("empty parameters!");
+//        }
+//        return result;
+//    }
+//
+
+
 }

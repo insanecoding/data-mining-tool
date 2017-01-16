@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class UncompressService extends StoppableObservable implements MyExecutable  {
@@ -24,7 +21,7 @@ public class UncompressService extends StoppableObservable implements MyExecutab
     }
 
     @Getter @Setter
-    private List<String> compressed = new LinkedList<>();
+    private List<String> compressed;
 
     /**
      * Uncompress all the archives inside the <code>compressed</code> folder
@@ -58,13 +55,6 @@ public class UncompressService extends StoppableObservable implements MyExecutab
             super.updateMessageCheck("uncompressing: " + pathToCompressed);
             uncompress(pathToCompressed, pathToCompressed);
         }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        List<String> temp = (List<String>) param.get("uncompress");
-        this.compressed = new ArrayList<>(temp);
     }
 
     @Override

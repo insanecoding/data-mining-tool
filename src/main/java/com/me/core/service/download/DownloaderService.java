@@ -6,21 +6,18 @@ import com.me.common.StoppableObservable;
 import com.me.core.domain.entities.Category;
 import com.me.core.service.dao.MyDao;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class DownloaderService extends StoppableObservable implements MyExecutable {
 
-    @NonNull
+    @Getter @Setter
     private List<String> categories;
 
     @Getter @Setter
@@ -49,21 +46,6 @@ public class DownloaderService extends StoppableObservable implements MyExecutab
         for (Category category : categoryObjects) {
             downloaderUtility.processSingleCategory(parameters, category);
         }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        Map<String, Object> downloaderProperties = (Map<String, Object>) param.get("downloader");
-        List<String> tempCategories = (List<String>) downloaderProperties.get("categories");
-        int downloadsPerCategory = (int) downloaderProperties.get("downloadsPerCategory");
-        int threadsNumber = (int) downloaderProperties.get("threadsNumber");
-        int readTimeOut = (int) downloaderProperties.get("readTimeout");
-        int connectTimeOut = (int) downloaderProperties.get("connectTimeout");
-
-        this.categories = new ArrayList<>(tempCategories);
-        this.parameters = new DownloaderParameters(downloadsPerCategory, threadsNumber,
-                readTimeOut, connectTimeOut);
     }
 
     @Override

@@ -127,25 +127,6 @@ export const initialState = Immutable.fromJS({
         param: [
             {
                 dataSetName: "set_1",
-                description: "small data set",
-                categories: [
-                    {
-                        name: "medical",
-                        key: 1
-                    },
-                    {
-                        name: "chat",
-                        key: 2
-                    }
-                ],
-                partitionLearn: 0.7,
-                lang: "en",
-                minTextLength: 500,
-                maxTextLength: 5000,
-                websitesPerCategory: 1000,
-            },
-            {
-                dataSetName: "set_2",
                 description: "large data set",
                 categories: [
                     {
@@ -153,15 +134,15 @@ export const initialState = Immutable.fromJS({
                         key: 1
                     },
                     {
-                        name: "chat",
+                        name: "religion",
                         key: 2
                     },
                     {
-                        name: "news",
+                        name: "alcohol",
                         key: 3
                     },
                     {
-                        name: "pets",
+                        name: "shopping",
                         key: 4
                     }
                 ],
@@ -169,7 +150,30 @@ export const initialState = Immutable.fromJS({
                 lang: "en",
                 minTextLength: 500,
                 maxTextLength: 5000,
-                websitesPerCategory: 5000
+                websitesPerCategory: 2000,
+            },
+            {
+                dataSetName: "set_2",
+                description: "small data set",
+                categories: [
+                    {
+                        name: "religion",
+                        key: 1
+                    },
+                    {
+                        name: "alcohol",
+                        key: 2
+                    },
+                    {
+                        name: "adult",
+                        key: 3
+                    }
+                ],
+                partitionLearn: 0.7,
+                lang: "en",
+                minTextLength: 500,
+                maxTextLength: 5000,
+                websitesPerCategory: 1000
             }
         ]
     },
@@ -178,6 +182,31 @@ export const initialState = Immutable.fromJS({
         route: "/run",
         displayName: "Run experiments",
         isOn: false,
+        stopWordsPath: "\\stopwords.dat",
+        experiments: [
+        {
+            name: "exp_1",
+            description: "text experiment 1",
+            dataSetName: "set_1",
+            mode: "text_main",
+            type: "binomial",
+            IDF_Treshold: 0.001,
+            IDF_Type: "M",
+            TF_Type: "S",
+            featuresByCategory: 50
+        },
+        {
+            name: "exp_2",
+            description: "text experiment 2",
+            dataSetName: "set_2",
+            mode: "text_main",
+            type: "binomial",
+            IDF_Treshold: 0.001,
+            IDF_Type: "M",
+            TF_Type: "S",
+            featuresByCategory: 50
+        }
+    ]
     },
 });
 

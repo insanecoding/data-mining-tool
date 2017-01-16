@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
 
-public class CreateDictionaryHelper {
+class CreateDictionaryHelper {
     /**
      * loads stopwords from file with path into vector
      */
-    public static Vector<String> getStopWords(String path) {
+    static Vector<String> getStopWords(String path) {
         Vector<String> stopwords = new Vector<>();
 
         try (FileInputStream fstream = new FileInputStream(path);

@@ -1,7 +1,9 @@
 //package com.me.core.service.experiment.text.aml;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
+//import com.me.core.domain.entities.*;
+//import com.me.core.service.dao.ExperimentDao;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Component;
 //
 //import java.io.ByteArrayInputStream;
 //import java.io.InputStream;
@@ -11,19 +13,19 @@
 //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 //
+//@Component
+//@SuppressWarnings("unchecked")
 //public class AMLDATUtility {
 //
-//    private WebsiteDAO websiteDAO;
 //    private Vector<String>[] dictionaryWords;
 //    private Vector<String> categories = new Vector();
+//    private final ExperimentDao dao;
 //
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
+//    @Autowired
+//    public AMLDATUtility(ExperimentDao dao) {
+//        this.dao = dao;
 //    }
 //
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
 //
 //    private void validateDictionaryWords(int[] count,
 //                                         Vector<String>[] dictionary,
@@ -35,7 +37,8 @@
 //            if (m.find(0)) {
 //                if (m.group(3).matches("\\d+")) {
 //                    String categoryMin = m.group(1) + "_"
-//                            + m.group(2).replaceAll("[^A-Za-z&_]+", "_").replaceAll("__+", "_");
+//                            + m.group(2).replaceAll("[^A-Za-z&_]+", "_")
+//                            .replaceAll("__+", "_");
 //                    if (!categories.contains(categoryMin))
 //                        categories.add(categoryMin);
 //
@@ -111,20 +114,19 @@
 //        }
 //
 //        List<DictionaryWords> wordsFromDictionary =
-//                websiteDAO.findDictionaryWords(experiment);
+//                dao.findDictionaryWords(experiment);
 //
 //        validateDictionaryWords(count, dictionary, wordsFromDictionary);
 //
 //        List<AmlFile> amlFiles = new LinkedList<>();
 //        for (int i = 0; i < count.length; i++) {
 //            for (String word : dictionary[i]) {
-//                AmlFile amlFile = new AmlFile();
-//                amlFile.setExperiment(experiment);
-//                amlFile.setFeature(experiment.getExpName() + '_' + word);
+//                AmlFile amlFile =
+//                        new AmlFile(experiment.getExpName() + '_' + word, experiment);
 //                amlFiles.add(amlFile);
 //            }
 //        }
-//        websiteDAO.batchSave(amlFiles);
+//        dao.batchSave(amlFiles);
 //    }
 //
 //    public void saveDATs(Experiment experiment,
@@ -143,13 +145,13 @@
 //            fileText = stemmString(fileText);
 //
 //            List<DatFile> datFileList = new LinkedList<>();
-//            for (int i = 0; i < dictionaryWords.length; i++) {
+//            for (Vector<String> dictionaryWord : dictionaryWords) {
 //                DatFile datFile = new DatFile();
 //                datFile.setExperiment(experiment);
 //                datFile.setWebsite(text.getWebsite());
 //
 //                String features = "";
-//                for (String word : dictionaryWords[i]) {
+//                for (String word : dictionaryWord) {
 //                    int count = 0;
 //                    int offset = 0;
 //                    int foundIndex = -1;
@@ -168,26 +170,25 @@
 //                    String categoryMin = categoryName
 //                            .replaceAll("[^A-Za-z_]+", "_")
 //                            .replaceAll("__+", "_");
-////                    features += ((category.indexOf(categoryMin) > -1) ? "\"1\"" : "\"0\"") + " ";
-//                    categoriesBasis += ((element.indexOf(categoryMin) > -1) ? "\"1\"" : "\"0\"") + " ";
+//
+//                    categoriesBasis += ((element.contains(categoryMin)) ? "\"1\"" : "\"0\"") + " ";
 //                }
 //                categoriesBasis += categoryName;
 //                datFile.setCategoryBasis(categoriesBasis);
-////                features += categoryName;
 //
 //                boolean isUnknown = isUnknown(features);
 //                datFile.setUnknown(isUnknown); // isUnknown = false
 //                datFileList.add(datFile);
 //            }
-//            websiteDAO.batchSave(datFileList);
+//            dao.batchSave(datFileList);
 //        }
 //        System.out.println("Done with: " + categoryName);
 //    }
 //
 //    private boolean isUnknown(String features) {
 //        String patternToCompare = "";
-//        for (int i = 0; i < dictionaryWords.length; i++) {
-//            for (String ignored : dictionaryWords[i]) {
+//        for (Vector<String> dictionaryWord : dictionaryWords) {
+//            for (String ignored : dictionaryWord) {
 //                patternToCompare += "\"0\"" + " ";
 //            }
 //        }

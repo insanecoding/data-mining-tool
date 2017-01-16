@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class BlacklistImporterService extends StoppableObservable implements MyExecutable {
@@ -39,13 +37,6 @@ public class BlacklistImporterService extends StoppableObservable implements MyE
             super.checkCancel();
             addBehaviour.importBlacklist(blacklist, blacklistProperty.getPathName());
         }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        List<BlacklistProperty> temp = (List<BlacklistProperty>) param.get("importer");
-        this.blacklistProperties = new ArrayList<>(temp);
     }
 
     @Override

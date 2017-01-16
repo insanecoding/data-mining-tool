@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -75,16 +77,6 @@ public class NGramExtractorService extends StoppableObservable implements MyExec
         alreadyProcessed.clear();
         websites.clear();
         return notProcessed;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        Map<String, Object> props = (Map<String, Object>) param.get("nGramsExtractor");
-        List<String> tempCategories = (List<String>) props.get("categories");
-
-        this.maxNGramSize = (int) props.get("maxNGramSize");
-        this.categories = new ArrayList<>(tempCategories);
     }
 
     @Override

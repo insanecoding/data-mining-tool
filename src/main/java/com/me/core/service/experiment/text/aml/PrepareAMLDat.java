@@ -1,50 +1,38 @@
 //package com.me.core.service.experiment.text.aml;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.AbstractText;
-//import com.me.data.entities.Category;
-//import com.me.data.entities.ChosenWebsite;
-//import com.me.data.entities.Experiment;
-//import com.me.services.experiment.Modes;
+//import com.me.core.domain.entities.AbstractText;
+//import com.me.core.domain.entities.Category;
+//import com.me.core.domain.entities.ChosenWebsite;
+//import com.me.core.domain.entities.Experiment;
+//import com.me.core.service.dao.ExperimentDao;
+//import com.me.core.service.experiment.Modes;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Component;
 //
 //import java.util.List;
 //import java.util.Map;
 //import java.util.stream.Collectors;
 //
+//@Component
 //public class PrepareAMLDat {
 //
 //    private int[] count;
-//    private WebsiteDAO websiteDAO;
 //    private AMLDATUtility AMLDATUtility;
+//    private final ExperimentDao dao;
 //
-//    public AMLDATUtility getAMLDATUtility() {
-//        return AMLDATUtility;
+//    @Autowired
+//    public PrepareAMLDat(ExperimentDao dao) {
+//        this.dao = dao;
 //    }
 //
-//    public void setAMLDATUtility(AMLDATUtility AMLDATUtility) {
-//        this.AMLDATUtility = AMLDATUtility;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
-//
-//    public int[] getCount() {
-//        return count;
-//    }
-//
-//    public void setCount(int[] count) {
-//        this.count = count;
-//    }
 //
 //    private List<? extends AbstractText> getTextsInCategory(List<? extends AbstractText> abstractTexts,
 //                                                            Category category) {
 //        return abstractTexts.stream()
-//                .filter(text -> text.getWebsite().getCategory().getCategoryName().equals(category.getCategoryName()))
+//                .filter(
+//                        text -> text.getWebsite().getCategory().getCategoryName()
+//                        .equals(category.getCategoryName())
+//                )
 //                .collect(Collectors.toList());
 //    }
 //
@@ -57,10 +45,10 @@
 //
 //        try {
 //            List<Category> chosenCategories =
-//                    websiteDAO.findCategoriesByDataSet(experiment.getDataSet().getName());
+//                    dao.findCategoriesByDataSet(experiment.getDataSet());
 //            Modes mode = experiment.getMode();
 //            List<? extends AbstractText> abstractTexts
-//                    = websiteDAO.findTextsForChosenWebsites(chosenWebsites, mode, param);
+//                    = dao.findTextsForChosenWebsites(chosenWebsites, mode, param);
 //
 //            for (Category category : chosenCategories) {
 //                // getting texts in this category

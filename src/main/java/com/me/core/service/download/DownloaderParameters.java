@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-class DownloaderParameters {
+public class DownloaderParameters {
 
     private int downloadsPerCategory;
 

@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -122,16 +124,6 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
         alreadyProcessed.clear();
         HTMLs.clear();
         return notProcessed;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initialize(Map<String, Object> param) {
-        Map<String, Object> props = (Map<String, Object>) param.get("tagStatExtractor");
-        List<String> tempCategories = (List<String>) props.get("categories");
-        List<String> tempTags = (List<String>) props.get("tagsToSkip");
-        this.categories = new ArrayList<>(tempCategories);
-        this.tagsToSkip = new ArrayList<>(tempTags);
     }
 
     @Override

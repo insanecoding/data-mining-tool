@@ -1,13 +1,5 @@
 //package com.me.core.service.experiment;
 //
-//import com.me.core.service.splitter.DataSplitter;
-//import com.me.core.service.splitter.DataSplittingService;
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
-//import com.me.data.factory.EntitiesFactory;
-//import com.me.services.experiment.text.aml.PrepareAMLDat;
-//import com.me.services.experiment.text.dictionary.CreateTextDictionaryService;
-//import com.me.services.experiment.text.output.AMLDATCreator;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.beans.factory.InitializingBean;
@@ -17,7 +9,7 @@
 //import java.util.List;
 //import java.util.Map;
 //
-//public class GenericExperiment implements InitializingBean {
+//public class GenericExperiment {
 //
 //    private WebsiteDAO websiteDAO;
 //    private List<String> targetCategories;
@@ -30,84 +22,6 @@
 //    private Logger logger = LoggerFactory.getLogger(this.getClass());
 //    private List<String> targetTags;
 //    private AMLDATCreator amldatCreator;
-//
-//    public AMLDATCreator getAmldatCreator() {
-//        return amldatCreator;
-//    }
-//
-//    public void setAmldatCreator(AMLDATCreator amldatCreator) {
-//        this.amldatCreator = amldatCreator;
-//    }
-//
-//    public List<String> getTargetTags() {
-//        return targetTags;
-//    }
-//
-//    public void setTargetTags(List<String> targetTags) {
-//        this.targetTags = targetTags;
-//    }
-//
-//    public PrepareAMLDat getPrepareAMLDat() {
-//        return prepareAMLDat;
-//    }
-//
-//    public void setPrepareAMLDat(PrepareAMLDat prepareAMLDat) {
-//        this.prepareAMLDat = prepareAMLDat;
-//    }
-//
-//    public DataSet getDataSet() {
-//        return dataSet;
-//    }
-//
-//    public void setDataSet(DataSet dataSet) {
-//        this.dataSet = dataSet;
-//    }
-//
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
-////         create categories objects from strings
-//        this.categories = websiteDAO.findDesiredCategories(targetCategories);
-//    }
-//
-//    public CreateTextDictionaryService getDictionaryService() {
-//        return dictionaryService;
-//    }
-//
-//    public void setDictionaryService(CreateTextDictionaryService dictionaryService) {
-//        this.dictionaryService = dictionaryService;
-//    }
-//
-//    public List<String> getTargetCategories() {
-//        return targetCategories;
-//    }
-//
-//    public void setTargetCategories(List<String> targetCategories) {
-//        this.targetCategories = targetCategories;
-//    }
-//
-//    public DataSplitter getDataSplitter() {
-//        return dataSplitter;
-//    }
-//
-//    public void setDataSplitter(DataSplitter dataSplitter) {
-//        this.dataSplitter = dataSplitter;
-//    }
-//
-//    public Experiment getExperiment() {
-//        return experiment;
-//    }
-//
-//    public void setExperiment(Experiment experiment) {
-//        this.experiment = experiment;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
 //
 //    // retrieve previously chosen websites from db
 //    private List<ChosenWebsite> retrieveChosenWebsites(DataSet dataSet){
@@ -195,19 +109,5 @@
 //        logger.info(" >> start writing aml/dat for experiment {}", experiment.getExpName());
 //        amldatCreator.createAMLDat(experiment);
 //        logger.info("finished!");
-//    }
-//
-//    public static void main(String[] args) {
-//        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
-//        ctx.load("META-INF/spring/spring-root.xml");
-//        ctx.refresh();
-//
-//        GenericExperiment genericExperiment =
-//                (GenericExperiment) ctx.getBean("genericExperiment");
-//
-//        List<Experiment> experiments =
-//                genericExperiment.getWebsiteDAO().findExperimentsAll();
-//
-//        experiments.forEach(genericExperiment::writeAMLDat);
 //    }
 //}

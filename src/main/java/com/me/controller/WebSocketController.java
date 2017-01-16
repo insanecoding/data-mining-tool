@@ -1,8 +1,8 @@
 package com.me.controller;
 
 import com.me.common.AsyncExecutor;
-import com.me.common.ExecutableInitializer;
 import com.me.common.MyExecutable;
+import com.me.common.initializer.ExecutableCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,13 +18,13 @@ import java.util.Map;
 public class WebSocketController {
 
     private final AsyncExecutor executor;
-    private final ExecutableInitializer initializer;
     private boolean cancelFlag = false;
+    private final ExecutableCreator executableCreator;
 
     @Autowired
-    public WebSocketController(AsyncExecutor executor, ExecutableInitializer initializer) {
+    public WebSocketController(AsyncExecutor executor, ExecutableCreator executableCreator) {
         this.executor = executor;
-        this.initializer = initializer;
+        this.executableCreator = executableCreator;
     }
 
     // when client sends cancel command to this address
@@ -42,7 +42,7 @@ public class WebSocketController {
     @SendTo("/topic/broker")
     public Map<String, String> invoker(Map<String, Object> dto) {
         log.info(" >>> [websocket] client connected");
-        List<MyExecutable> executables = initializer.createExecutables(dto);
+        List<MyExecutable> executables = executableCreator.createExecutables(dto);
 
         if (executables.size() != 0)
             executor.invokeAll(executables);
