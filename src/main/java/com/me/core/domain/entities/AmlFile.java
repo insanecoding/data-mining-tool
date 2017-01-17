@@ -18,7 +18,7 @@ public class AmlFile implements Serializable{
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "entry_id")
-    private long entry_id;
+    private Long entry_id;
 
     @Column(name = "feature_val", columnDefinition="TEXT")
     @NonNull

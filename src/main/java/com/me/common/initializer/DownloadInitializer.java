@@ -4,6 +4,7 @@ import com.me.common.MyExecutable;
 import com.me.core.domain.dto.DownloaderParameters;
 import com.me.core.service.download.DownloaderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Map;
 @Component
 public class DownloadInitializer implements Initializer {
 
+    @Lazy
     private final DownloaderService downloaderService;
     private final ExtractorsInitializer next;
 

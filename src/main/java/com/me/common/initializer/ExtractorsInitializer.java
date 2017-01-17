@@ -6,6 +6,7 @@ import com.me.core.service.features.tag.TagStatExtractService;
 import com.me.core.service.features.text.TextFromTagExtractorService;
 import com.me.core.service.features.text.TextMainExtractorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,10 +16,13 @@ import java.util.Map;
 @Component
 public class ExtractorsInitializer implements Initializer {
 
-
+    @Lazy
     private final TextMainExtractorService textMainExtractor;
+    @Lazy
     private final TextFromTagExtractorService textFromTagExtractorService;
+    @Lazy
     private final NGramExtractorService nGramExtractorService;
+    @Lazy
     private final TagStatExtractService tagStatExtractService;
     private final SplitterInitializer next;
 

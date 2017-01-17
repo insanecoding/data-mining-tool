@@ -54,4 +54,10 @@ public interface MyDao {
     DataSet findDataSetByName(String dataSetName);
 
     List<DictionaryWords> findDictionaryWords(Experiment experiment);
+
+    List<AmlFile> findAMLByExperiment(Experiment experiment);
+
+    List<DatFile> findDatFilesForExperiment(Experiment experiment, List<Long> subsetIDs);
+
+    List<Long> findIDsForSubset(Experiment experiment, boolean isLearn);
 }

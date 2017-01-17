@@ -80,6 +80,7 @@ export const initialState = Immutable.fromJS({
         displayName: "Run experiments",
         isOn: false,
         stopWordsPath: "\\stopwords.dat",
+        amlPath: "\\amls\\",
         experiments: [
             {
                 name: "exp_6",

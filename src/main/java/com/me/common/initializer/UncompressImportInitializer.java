@@ -6,6 +6,7 @@ import com.me.core.service.importbl.BlacklistImporterService;
 import com.me.core.service.uncompress.UncompressService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,7 +18,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UncompressImportInitializer implements Initializer {
 
+    @Lazy
     private final UncompressService uncompressService;
+    @Lazy
     private final BlacklistImporterService importerService;
     private final DownloadInitializer next;
 

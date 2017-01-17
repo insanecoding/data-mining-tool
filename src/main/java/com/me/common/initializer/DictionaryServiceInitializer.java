@@ -8,7 +8,9 @@ import com.me.core.domain.entities.ExperimentParam;
 import com.me.core.service.experiment.ExperimentCreator;
 import com.me.core.service.experiment.text.aml.PrepareAMLDatService;
 import com.me.core.service.experiment.text.dictionary.TextDictionaryService;
+import com.me.core.service.experiment.text.output.AMLDATWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -20,17 +22,23 @@ import java.util.stream.Collectors;
 @Component
 public class DictionaryServiceInitializer implements Initializer {
 
+    @Lazy
     private final TextDictionaryService dictionaryService;
+    @Lazy
     private final ExperimentCreator experimentCreator;
-    private final PrepareAMLDatService amlDatService;
+    @Lazy
+    private final PrepareAMLDatService amlDatPrepareService;
+    @Lazy
+    private final AMLDATWriter amldatWriter;
 
     @Autowired
     public DictionaryServiceInitializer(TextDictionaryService dictionaryService,
                                         ExperimentCreator experimentCreator,
-                                        PrepareAMLDatService amlDatService) {
+                                        PrepareAMLDatService amlDatPrepareService, AMLDATWriter amldatWriter) {
         this.dictionaryService = dictionaryService;
         this.experimentCreator = experimentCreator;
-        this.amlDatService = amlDatService;
+        this.amlDatPrepareService = amlDatPrepareService;
+        this.amldatWriter = amldatWriter;
     }
 
     @Override
@@ -50,12 +58,14 @@ public class DictionaryServiceInitializer implements Initializer {
 
             experimentCreator.setExperimentDataSetName(new LinkedHashMap<>(experimentDataSetName));
             dictionaryService.setExpNames(new ArrayList<>(expNames));
-            setFullPath(dto, settings);
-            amlDatService.setExpNames(new ArrayList<>(expNames));
+            setFullPaths(dto, settings);
+            amlDatPrepareService.setExpNames(new ArrayList<>(expNames));
+            amldatWriter.setExpNames(new ArrayList<>(expNames));
 
-            executables.add(experimentCreator);
-            executables.add(dictionaryService);
-            executables.add(amlDatService);
+//            executables.add(experimentCreator);
+//            executables.add(dictionaryService);
+//            executables.add(amlDatPrepareService);
+            executables.add(amldatWriter);
         }
     }
 
@@ -95,11 +105,17 @@ public class DictionaryServiceInitializer implements Initializer {
     }
 
     @SuppressWarnings("unchecked")
-    private void setFullPath(Map<String, Object> dto, Map<String, Object> settings) {
+    private void setFullPaths(Map<String, Object> dto, Map<String, Object> settings) {
         Map<String, Object> formImport = (Map<String, Object>) dto.get("import");
         String cwd = (String) formImport.get("cwd");
+
         String stopWordsSubPath = (String) settings.get("stopWordsPath");
-        String fullPath = cwd + "\\" + stopWordsSubPath;
-        dictionaryService.setStopWordsPath(fullPath);
+        String fullStopWordsPath = cwd + "\\" + stopWordsSubPath;
+
+        String amlPath = (String) settings.get("amlPath");
+        String fullAmlPath = cwd + "\\" + amlPath;
+
+        dictionaryService.setStopWordsPath(fullStopWordsPath);
+        amldatWriter.setOutputFolder(fullAmlPath);
     }
 }

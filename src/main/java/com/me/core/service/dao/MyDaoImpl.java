@@ -390,6 +390,39 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .list();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<AmlFile> findAMLByExperiment(Experiment experiment) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from AmlFile af " +
+                        "where af.experiment = :experiment")
+                .setParameter("experiment", experiment)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DatFile> findDatFilesForExperiment(Experiment experiment, List<Long> subsetIDs) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from DatFile df " +
+                        "where df.experiment = :experiment and df.website.websiteId in :ids")
+                .setParameter("experiment", experiment)
+                .setParameterList("ids", subsetIDs)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> findIDsForSubset(Experiment experiment, boolean isLearn) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select cw.website.websiteId " +
+                        " from ChosenWebsite cw " +
+                        "where cw.dataSet = :dataSet and cw.isForLearning = :isLearn")
+                .setParameter("dataSet", experiment.getDataSet())
+                .setParameter("isLearn", isLearn)
+                .list();
+    }
+
     @SuppressWarnings("unchecked")
     private List<NGrams> findNGrams(List<Long> chosenWebsites,
                                     ExperimentParam param) {

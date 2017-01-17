@@ -6,6 +6,7 @@ import com.me.core.domain.dto.MainDataSplitParams;
 import com.me.core.domain.entities.DataSet;
 import com.me.core.service.splitter.DataSplitterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 @Component
 public class SplitterInitializer implements Initializer {
 
-
+    @Lazy
     private final DataSplitterService splitter;
     private final DictionaryServiceInitializer next;
 
