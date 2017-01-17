@@ -33,7 +33,6 @@ public class Experiment implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="dataset_id")
-    @NonNull
     private DataSet dataSet;
 
     @Enumerated(EnumType.STRING)
@@ -45,4 +44,9 @@ public class Experiment implements Serializable {
     @Column(name = "type")
     @NonNull
     private Types type;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="param_id")
+    @NonNull
+    private ExperimentParam experimentParam;
 }

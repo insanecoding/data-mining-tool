@@ -1,6 +1,5 @@
 package com.me.core.service.experiment.text;
 
-import com.me.core.domain.dto.DictionaryParam;
 import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.*;
 import com.me.core.service.dao.MyDao;
@@ -26,7 +25,7 @@ public class TextDataProvider {
     }
 
     public List<? extends AbstractText> provideTextData(Experiment experiment,
-                                                         DictionaryParam param,
+                                                         ExperimentParam param,
                                                          ChosenCategory chosenCategory) {
         List<ChosenWebsite> chosenWebsites = dao.findChosenWebsites(
                 experiment.getDataSet(), chosenCategory.getCategory()
@@ -47,7 +46,7 @@ public class TextDataProvider {
         return textsInCategory;
     }
 
-    private List<? extends AbstractText> addUnknowns(DictionaryParam param,
+    private List<? extends AbstractText> addUnknowns(ExperimentParam param,
                                                      Map<Long, Website> IDsAndWebsites,
                                                      List<Long> chosenIDs,
                                                      List<? extends AbstractText> textsInCategory,
@@ -65,10 +64,10 @@ public class TextDataProvider {
         return ListUtils.union(textsInCategory, unknownTexts);
     }
 
-    private List<? extends AbstractText> createListByMode(DictionaryParam param,
+    private List<? extends AbstractText> createListByMode(ExperimentParam param,
                                                           Map<Long, Website> IDsAndWebsites,
                                                           Modes mode, Stream<Long> unknownIDsStream) {
-        List<? extends AbstractText> list;
+        List<? extends AbstractText> list = null;
 
         if (mode.equals(Modes.NGRAMS)) {
             list = unknownIDsStream.map(unknown -> {
@@ -81,9 +80,8 @@ public class TextDataProvider {
                 return new TextFromTag(ws, new Tag(param.getTagName()), "", 0);
             })
                     .collect(Collectors.toList());
-        } else {
-            list = null;
         }
+
         return list;
     }
 

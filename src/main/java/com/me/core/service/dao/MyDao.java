@@ -1,6 +1,5 @@
 package com.me.core.service.dao;
 
-import com.me.core.domain.dto.DictionaryParam;
 import com.me.core.domain.dto.MainDataSplitParams;
 import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.*;
@@ -50,7 +49,9 @@ public interface MyDao {
     List<ChosenCategory> findCategoriesByDataSet(DataSet dataSet);
 
     List<? extends AbstractText> findTextsForIDs(List<Long> IDs, Category category,
-                                                 Modes mode, DictionaryParam param);
+                                                 Modes mode, ExperimentParam param);
 
     DataSet findDataSetByName(String dataSetName);
+
+    List<DictionaryWords> findDictionaryWords(Experiment experiment);
 }

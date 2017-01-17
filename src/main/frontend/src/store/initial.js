@@ -82,7 +82,7 @@ export const initialState = Immutable.fromJS({
         stopWordsPath: "\\stopwords.dat",
         experiments: [
             {
-                name: "exp_1",
+                name: "exp_6",
                 description: "text experiment 1",
                 dataSetName: "set_1",
                 mode: "text_main",
@@ -93,7 +93,7 @@ export const initialState = Immutable.fromJS({
                 featuresByCategory: 50
             },
             {
-                name: "exp_2",
+                name: "exp_7",
                 description: "text experiment 2",
                 dataSetName: "set_2",
                 mode: "text_main",
@@ -104,7 +104,7 @@ export const initialState = Immutable.fromJS({
                 featuresByCategory: 50
             },
             {
-                name: "exp_3",
+                name: "exp_8",
                 description: "text from tag experiment 1",
                 dataSetName: "set_2",
                 mode: "text_from_tags",
@@ -116,7 +116,7 @@ export const initialState = Immutable.fromJS({
                 featuresByCategory: 50
             },
             {
-                name: "exp_4",
+                name: "exp_9",
                 description: "text from tag experiment 2",
                 dataSetName: "set_1",
                 mode: "text_from_tags",
@@ -128,7 +128,7 @@ export const initialState = Immutable.fromJS({
                 featuresByCategory: 50
             },
             {
-                name: "exp_5",
+                name: "exp_10",
                 description: "ngram experiment 1",
                 dataSetName: "set_2",
                 mode: "ngrams",

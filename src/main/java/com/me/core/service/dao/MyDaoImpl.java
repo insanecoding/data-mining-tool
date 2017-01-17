@@ -1,7 +1,6 @@
 package com.me.core.service.dao;
 
 import com.me.common.StoppableObservable;
-import com.me.core.domain.dto.DictionaryParam;
 import com.me.core.domain.dto.MainDataSplitParams;
 import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.*;
@@ -338,7 +337,7 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @Override
     public List<? extends AbstractText> findTextsForIDs(List<Long> IDs, Category category,
-                                                        Modes mode, DictionaryParam experimentParam) {
+                                                        Modes mode, ExperimentParam experimentParam) {
         switch (mode) {
             case TEXT_MAIN:
                 return findMainTexts(IDs);
@@ -353,7 +352,7 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @SuppressWarnings("unchecked")
     private List<? extends AbstractText> findTextFromTags(List<Long> chosenIDs,
-                                                          DictionaryParam param) {
+                                                          ExperimentParam param) {
         return sessionFactory.getCurrentSession()
                 .createQuery("from TextFromTag tm " +
                         "where tm.website.websiteId in :chosenWebsiteIDs " +
@@ -381,9 +380,19 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .uniqueResult();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DictionaryWords> findDictionaryWords(Experiment experiment) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from DictionaryWords dw " +
+                "where dw.experiment = :experiment")
+                .setParameter("experiment", experiment)
+                .list();
+    }
+
     @SuppressWarnings("unchecked")
     private List<NGrams> findNGrams(List<Long> chosenWebsites,
-                                    DictionaryParam param) {
+                                    ExperimentParam param) {
         return (List<NGrams>) sessionFactory.getCurrentSession()
                 .createQuery("from NGrams ng " +
                         "where ng.website.websiteId in :chosenWebsites and ng.nGramSize = :nGramSize")

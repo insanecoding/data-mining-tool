@@ -1,13 +1,11 @@
 package com.me.core.service.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 
+@Slf4j
 public final class Utils {
-
-    private static Logger logger = LoggerFactory.getLogger(Utils.class);
 
     private Utils() {
     }
@@ -16,7 +14,7 @@ public final class Utils {
         File file = new File(filePath);
 
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            logger.info("could not create file {}", filePath);
+            log.error("could not create file {}", filePath);
             System.exit(-1);
         }
     }
