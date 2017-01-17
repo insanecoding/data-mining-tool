@@ -140,6 +140,28 @@ export const initialState = Immutable.fromJS({
                 TF_Type: "S",
                 featuresByCategory: 50
             },
+            {
+                name: "exp_11",
+                description: "tag stat",
+                dataSetName: "set_2",
+                mode: "tag_stat",
+                variation: "normalized",
+                type: "real",
+                roundToDecimalPlaces: 3,
+                normalizeRatio: 0.95,
+                featuresByCategory: 50
+            },
+            {
+                name: "exp_12",
+                description: "tag stat",
+                dataSetName: "set_1",
+                mode: "tag_stat",
+                variation: "normalized",
+                type: "real",
+                roundToDecimalPlaces: 3,
+                normalizeRatio: 0.95,
+                featuresByCategory: 50
+            },
         ]
     },
 });

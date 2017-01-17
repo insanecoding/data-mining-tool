@@ -1,41 +1,36 @@
 //package com.me.core.service.experiment.tag;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
+//import com.me.core.domain.entities.*;
+//import com.me.core.service.dao.MyDao;
+//import lombok.Getter;
+//import lombok.Setter;
+//import lombok.extern.slf4j.Slf4j;
 //import org.jetbrains.annotations.NotNull;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Component;
 //
 //import java.util.LinkedList;
 //import java.util.List;
 //
+//@Slf4j
+//@Component
 //public class TagStatCreator {
 //
-//    private WebsiteDAO websiteDAO;
-//    private Logger logger = LoggerFactory.getLogger(this.getClass());
+//    @Getter @Setter
 //    private MetricCalculator metricCalculator;
+//    private final MyDao dao;
 //
-//    public MetricCalculator getMetricCalculator() {
-//        return metricCalculator;
+//    @Autowired
+//    public TagStatCreator(MyDao dao) {
+//        this.dao = dao;
 //    }
 //
-//    public void setMetricCalculator(MetricCalculator metricCalculator) {
-//        this.metricCalculator = metricCalculator;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
 //
 //    public List<List<DatFile>> calculateTagStat(Experiment experiment,
-//                                                         List<DictionaryWords> words) {
+//                                                List<DictionaryWords> words) {
 //        List<List<DatFile>> datFileContents = new LinkedList<>();
 //        DataSet dataSet = experiment.getDataSet();
-//        List<Category> categories = websiteDAO.findCategoriesByDataSet(dataSet.getName());
+//        List<ChosenCategory> categories = dao.findCategoriesByDataSet(dataSet);
 //
 //        if (metricCalculator.getClass().equals(NormalizedTagStat.class))
 //            metricCalculator.init(experiment, words);
@@ -43,9 +38,9 @@
 ////        List<ChosenWebsite> chosenWebsites = websiteDAO.findChosenWebsitesByDataSet(dataSet);
 //
 //        categories.forEach(category -> {
-//            logger.info("processing category: {}", category);
+//            log.info("processing category: {}", category);
 //            List<ChosenWebsite> chosenWebsites =
-//                    websiteDAO.findChosenWebsitesByCategory(category, experiment);
+//                    dao.findChosenWebsites(experiment.getDataSet(), category.getCategory());
 ////            List<TagsInPage> tagsInCategory = websiteDAO.findTagsInPage(category);
 //
 //            String categoriesBasis = createCategoriesBasis(categories, category);
@@ -58,14 +53,14 @@
 //    }
 //
 //    @NotNull
-//    private String createCategoriesBasis(List<Category> categories,
-//                                         Category category) {
+//    private String createCategoriesBasis(List<ChosenCategory> categories,
+//                                         ChosenCategory category) {
 //        String categoriesBasis = "";
-//        for (Category cat : categories) {
-//            categoriesBasis += (cat.getCategoryName()
-//                    .equals(category.getCategoryName()) ? "\"1\"" : "\"0\"") + " ";
+//        for (ChosenCategory cat : categories) {
+//            categoriesBasis += (cat.getCategory().getCategoryName()
+//                    .equals(category.getCategory().getCategoryName()) ? "\"1\"" : "\"0\"") + " ";
 //        }
-//        categoriesBasis += category.getCategoryName();
+//        categoriesBasis += category.getCategory().getCategoryName();
 //        return categoriesBasis;
 //    }
 //}

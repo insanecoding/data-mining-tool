@@ -1,56 +1,59 @@
-//package com.me.core.service.experiment.tag;
-//
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.DictionaryWords;
-//import com.me.data.entities.Experiment;
-//import com.me.data.entities.Tag;
-//import com.me.data.factory.EntitiesFactory;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//public class TagDictionaryCreator {
-//
-//    private WebsiteDAO websiteDAO;
-//    private int textsInCategory;
-//    private Logger logger = LoggerFactory.getLogger(this.getClass());
-//
-//    public int getTextsInCategory() {
-//        return textsInCategory;
-//    }
-//
-//    public void setTextsInCategory(int textsInCategory) {
-//        this.textsInCategory = textsInCategory;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
-//
-//    public List<DictionaryWords> createTagDictionary(Experiment experiment){
-//        List<Tag> tags = websiteDAO.findTopTags(textsInCategory);
-//        logger.info("tags fetched");
-//
-//        List<DictionaryWords> words = populateDictionaryWords(experiment, tags);
-//        websiteDAO.batchSave(words);
-//
-//        logger.info("tags saved");
-//        return words;
-//    }
-//
-//    public List<DictionaryWords> populateDictionaryWords(Experiment experiment,
-//                                                         List<Tag> tags) {
-//        return tags.stream().map(tag -> {
-//                String tagName = tag.getTagName();
-//                int num = tags.indexOf(tag);
-//                String word = "99 - tag_" + num + "_" + tagName;
-//                return EntitiesFactory.createDictionaryWords(experiment, word);
-//            }).collect(Collectors.toList());
-//    }
-//}
+package com.me.core.service.experiment.tag;
+
+import com.me.common.MyExecutable;
+import com.me.common.ProgressWatcher;
+import com.me.common.StoppableObservable;
+import com.me.core.domain.entities.DictionaryWords;
+import com.me.core.domain.entities.Experiment;
+import com.me.core.service.dao.MyDao;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Component
+public class TagDictionaryCreator extends StoppableObservable implements MyExecutable {
+
+    @Getter @Setter
+    private List<String> expNames;
+
+    private final MyDao dao;
+
+    @Autowired
+    public TagDictionaryCreator(MyDao dao, ProgressWatcher watcher) {
+        super.addSubscriber(watcher);
+        this.dao = dao;
+    }
+
+    @Override
+    public void execute() throws Exception {
+        List<Experiment> experiments = dao.findExperimentsByNames(expNames);
+        experiments.sort(Comparator.comparing(Experiment::getExpName));
+
+        for (Experiment experiment : experiments) {
+            super.updateMessage(experiment.getExpName() + ": creating tag dictionary");
+            List<String> tags = dao.findTopTags(experiment);
+            List<DictionaryWords> words = createDictionaryWords(experiment, tags);
+            dao.batchSave(words);
+        }
+    }
+
+    private List<DictionaryWords> createDictionaryWords(Experiment experiment, List<String> tags) {
+        return tags.stream().map(tag -> {
+                    int num = tags.indexOf(tag);
+                    String word = "01 - tag_" + num + "_" + tag;
+                    return new DictionaryWords(experiment, word);
+                }).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getName() {
+        return "Tag dictionary creator";
+    }
+}

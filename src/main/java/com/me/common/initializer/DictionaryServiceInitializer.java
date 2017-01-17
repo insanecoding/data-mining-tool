@@ -6,6 +6,7 @@ import com.me.core.domain.dto.Types;
 import com.me.core.domain.entities.Experiment;
 import com.me.core.domain.entities.ExperimentParam;
 import com.me.core.service.experiment.ExperimentCreator;
+import com.me.core.service.experiment.tag.TagDictionaryCreator;
 import com.me.core.service.experiment.text.aml.PrepareAMLDatService;
 import com.me.core.service.experiment.text.dictionary.TextDictionaryService;
 import com.me.core.service.experiment.text.output.AMLDATWriter;
@@ -23,22 +24,27 @@ import java.util.stream.Collectors;
 public class DictionaryServiceInitializer implements Initializer {
 
     @Lazy
-    private final TextDictionaryService dictionaryService;
+    private final TextDictionaryService textDictionaryService;
     @Lazy
     private final ExperimentCreator experimentCreator;
     @Lazy
     private final PrepareAMLDatService amlDatPrepareService;
     @Lazy
     private final AMLDATWriter amldatWriter;
+    @Lazy
+    private final TagDictionaryCreator tagDictionaryCreator;
 
     @Autowired
-    public DictionaryServiceInitializer(TextDictionaryService dictionaryService,
+    public DictionaryServiceInitializer(TextDictionaryService textDictionaryService,
                                         ExperimentCreator experimentCreator,
-                                        PrepareAMLDatService amlDatPrepareService, AMLDATWriter amldatWriter) {
-        this.dictionaryService = dictionaryService;
+                                        PrepareAMLDatService amlDatPrepareService,
+                                        AMLDATWriter amldatWriter,
+                                        TagDictionaryCreator tagDictionaryCreator) {
+        this.textDictionaryService = textDictionaryService;
         this.experimentCreator = experimentCreator;
         this.amlDatPrepareService = amlDatPrepareService;
         this.amldatWriter = amldatWriter;
+        this.tagDictionaryCreator = tagDictionaryCreator;
     }
 
     @Override
@@ -53,19 +59,26 @@ public class DictionaryServiceInitializer implements Initializer {
             Map<Experiment, String> experimentDataSetName = new LinkedHashMap<>();
             experiments.forEach(elem -> processElem(elem, experimentDataSetName));
 
-            List<String> expNames = experimentDataSetName.keySet().stream()
+            List<String> textExperimentsNames = experimentDataSetName.keySet().stream()
+                    .filter(experiment -> !experiment.getMode().equals(Modes.TAG_STAT))
+                            .map(Experiment::getExpName).collect(Collectors.toList());
+
+            List<String> tagExperimentNames = experimentDataSetName.keySet().stream()
+                    .filter(experiment -> experiment.getMode().equals(Modes.TAG_STAT))
                     .map(Experiment::getExpName).collect(Collectors.toList());
 
             experimentCreator.setExperimentDataSetName(new LinkedHashMap<>(experimentDataSetName));
-            dictionaryService.setExpNames(new ArrayList<>(expNames));
+            textDictionaryService.setExpNames(new ArrayList<>(textExperimentsNames));
             setFullPaths(dto, settings);
-            amlDatPrepareService.setExpNames(new ArrayList<>(expNames));
-            amldatWriter.setExpNames(new ArrayList<>(expNames));
+            amlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
+            amldatWriter.setExpNames(new ArrayList<>(textExperimentsNames));
+            tagDictionaryCreator.setExpNames(tagExperimentNames);
 
 //            executables.add(experimentCreator);
-//            executables.add(dictionaryService);
+//            executables.add(textDictionaryService);
 //            executables.add(amlDatPrepareService);
-            executables.add(amldatWriter);
+//            executables.add(amldatWriter);
+            executables.add(tagDictionaryCreator);
         }
     }
 
@@ -80,13 +93,18 @@ public class DictionaryServiceInitializer implements Initializer {
         Modes mode = Modes.valueOf(strMode.toUpperCase());
         Types type = Types.valueOf(strType.toUpperCase());
 
-        double IDF_Threshold = (double) settings.get("IDF_Treshold");
-        String IDF_Type = (String) settings.get("IDF_Type");
-        String TF_Type = (String) settings.get("TF_Type");
-        int featuresByCategory = (int) settings.get("featuresByCategory");
+        ExperimentParam experimentParam = new ExperimentParam();
+        if (!mode.equals(Modes.TAG_STAT)) {
+            double IDF_Threshold = (double) settings.get("IDF_Treshold");
+            experimentParam.setIDF_Threshold(IDF_Threshold);
+            String IDF_Type = (String) settings.get("IDF_Type");
+            experimentParam.setIDF_Type(IDF_Type);
+            String TF_Type = (String) settings.get("TF_Type");
+            experimentParam.setTF_Type(TF_Type);
+        }
 
-        ExperimentParam experimentParam =
-                new ExperimentParam(IDF_Threshold, IDF_Type, TF_Type, featuresByCategory);
+        int featuresByCategory = (int) settings.get("featuresByCategory");
+        experimentParam.setFeaturesByCategory(featuresByCategory);
 
         if (mode.equals(Modes.NGRAMS)) {
             int nGramSize = (int) settings.get("nGramSize");
@@ -115,7 +133,7 @@ public class DictionaryServiceInitializer implements Initializer {
         String amlPath = (String) settings.get("amlPath");
         String fullAmlPath = cwd + "\\" + amlPath;
 
-        dictionaryService.setStopWordsPath(fullStopWordsPath);
+        textDictionaryService.setStopWordsPath(fullStopWordsPath);
         amldatWriter.setOutputFolder(fullAmlPath);
     }
 }

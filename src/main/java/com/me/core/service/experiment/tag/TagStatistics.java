@@ -1,37 +1,29 @@
 //package com.me.core.service.experiment.tag;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
-//import com.me.data.factory.EntitiesFactory;
-//import org.apache.commons.lang.StringUtils;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+//import com.me.core.domain.entities.*;
+//import com.me.core.service.dao.MyDao;
+//import lombok.Getter;
+//import lombok.Setter;
+//import lombok.extern.slf4j.Slf4j;
+//import org.apache.commons.lang3.StringUtils;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Component;
 //
 //import java.util.LinkedList;
 //import java.util.List;
 //import java.util.Map;
 //import java.util.Set;
 //
+//@Component
+//@Slf4j
 //public class TagStatistics implements MetricCalculator {
-//
+//    @Setter @Getter
 //    private int roundToDecimalPlaces;
-//    private WebsiteDAO websiteDAO;
-//    private Logger logger = LoggerFactory.getLogger(this.getClass());
+//    private final MyDao dao;
 //
-//    public int getRoundToDecimalPlaces() {
-//        return roundToDecimalPlaces;
-//    }
-//
-//    public void setRoundToDecimalPlaces(int roundToDecimalPlaces) {
-//        this.roundToDecimalPlaces = roundToDecimalPlaces;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
+//    @Autowired
+//    public TagStatistics(MyDao dao) {
+//        this.dao = dao;
 //    }
 //
 //    @Override
@@ -40,12 +32,12 @@
 //                                         String categoriesBasis) {
 //        int websitesProcessed = 0;
 //        // { website_id -> total tag count }
-//        Map<Long, Integer> totalTagsInWebsites = websiteDAO.findTagCounts(chosenWebsites);
+//        Map<Long, Integer> totalTagsInWebsites = dao.findTagCounts(chosenWebsites);
 //        List<DatFile> datInCategory = new LinkedList<>();
 //
 //        for (ChosenWebsite chosenWs : chosenWebsites) {
 //            Website website = chosenWs.getWebsite();
-//            Map<String, Integer> tagInPageCount = websiteDAO.findTagInPageCount(website);
+//            Map<String, Integer> tagInPageCount = dao.findTagInPageCount(website);
 //            Set<String> tagsInPage = tagInPageCount.keySet();
 ////            List<TagsInPage> tagsInPage = websiteDAO.findTagsInPage(website);
 ////
@@ -58,7 +50,7 @@
 //                String tagInDictionary = tokens[tokens.length - 1];
 //
 //                if (tagsInPage.contains(tagInDictionary)) {
-//                    double totalCount = totalTagsInWebsites.get(website.getWebsiteID());
+//                    double totalCount = totalTagsInWebsites.get(website.getWebsiteId());
 //                    double tagCount = tagInPageCount.get(tagInDictionary);
 //                    double res = tagCount / totalCount;
 //                    String roundedValue =
@@ -73,11 +65,12 @@
 //            int length = -1;
 //            boolean isUnknown = (StringUtils.countMatches(features, "\"0.0\"") == words.size());
 //
-//            DatFile datFile = EntitiesFactory.createDatFile(experiment, chosenWs.getWebsite(),
-//                    categoriesBasis, features, isUnknown, length);
+//            DatFile datFile =
+//                    new DatFile(categoriesBasis, features, length, website, experiment, isUnknown);
 //            datInCategory.add(datFile);
 //            websitesProcessed++;
-//            if ((websitesProcessed % 10) == 0) logger.info("processed: {}", websitesProcessed);
+//            if ((websitesProcessed % 10) == 0)
+//                log.info("processed: {}", websitesProcessed);
 //
 //        }
 //        return datInCategory;

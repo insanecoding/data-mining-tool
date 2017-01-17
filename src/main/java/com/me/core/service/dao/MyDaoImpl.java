@@ -423,6 +423,31 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .list();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<TagsInPage> findTagsInPage(Website website) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from TagsInPage tp " +
+                        "where tp.website = :website")
+                .setParameter("website", website)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> findTopTags(Experiment experiment) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select tip.tag.tagName " +
+                        "from TagsInPage as tip " +
+                        "where tip.website.websiteId in (select cw.website.websiteId " +
+                                                        "from ChosenWebsite as cw " +
+                                                        "where cw.dataSet = :dataSet) " +
+                        "GROUP BY tip.tag.tagName " +
+                        "ORDER BY count(*) desc ")
+                .setParameter("dataSet", experiment.getDataSet())
+                .list();
+    }
+
     @SuppressWarnings("unchecked")
     private List<NGrams> findNGrams(List<Long> chosenWebsites,
                                     ExperimentParam param) {

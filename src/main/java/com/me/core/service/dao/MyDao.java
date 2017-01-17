@@ -60,4 +60,8 @@ public interface MyDao {
     List<DatFile> findDatFilesForExperiment(Experiment experiment, List<Long> subsetIDs);
 
     List<Long> findIDsForSubset(Experiment experiment, boolean isLearn);
+
+    List<TagsInPage> findTagsInPage(Website website);
+
+    List<String> findTopTags(Experiment experiment);
 }

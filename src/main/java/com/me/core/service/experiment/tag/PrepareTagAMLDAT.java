@@ -1,50 +1,34 @@
 //package com.me.core.service.experiment.tag;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
+//import com.me.core.domain.entities.AmlFile;
+//import com.me.core.domain.entities.DatFile;
+//import com.me.core.domain.entities.DictionaryWords;
+//import com.me.core.domain.entities.Experiment;
+//import com.me.core.service.dao.MyDao;
+//import com.me.core.service.dao.MyDaoImpl;
+//import lombok.Getter;
+//import lombok.Setter;
+//import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.support.GenericXmlApplicationContext;
+//import org.springframework.stereotype.Component;
 //
 //import java.util.LinkedList;
 //import java.util.List;
 //import java.util.stream.Collectors;
 //
+//@Component
 //public class PrepareTagAMLDAT {
+//    @Getter @Setter
 //    private int tagsInDictionary;
 //    private TagDictionaryCreator tagDictionaryCreator;
-//    private WebsiteDAO websiteDAO;
 //    private TagStatCreator calculator;
+//    private final MyDao dao;
 //
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
+//    @Autowired
+//    public PrepareTagAMLDAT(MyDao dao) {
+//        this.dao = dao;
 //    }
 //
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
-//
-//    public TagStatCreator getCalculator() {
-//        return calculator;
-//    }
-//
-//    public void setCalculator(TagStatCreator calculator) {
-//        this.calculator = calculator;
-//    }
-//
-//    public TagDictionaryCreator getTagDictionaryCreator() {
-//        return tagDictionaryCreator;
-//    }
-//
-//    public void setTagDictionaryCreator(TagDictionaryCreator tagDictionaryCreator) {
-//        this.tagDictionaryCreator = tagDictionaryCreator;
-//    }
-//
-//    public int getTagsInDictionary() {
-//        return tagsInDictionary;
-//    }
-//
-//    public void setTagsInDictionary(int tagsInDictionary) {
-//        this.tagsInDictionary = tagsInDictionary;
-//    }
 //
 //    public void createAML(Experiment experiment){
 //        List<DictionaryWords> words = tagDictionaryCreator.createTagDictionary(experiment);
@@ -57,14 +41,14 @@
 //            amlFile.setFeature(experiment.getExpName() + '_' + wordStr);
 //            amlFiles.add(amlFile);
 //        });
-//        websiteDAO.batchSave(amlFiles);
+//        dao.batchSave(amlFiles);
 //    }
 //
 //    public void createDAT (Experiment experiment) {
-//        List<DictionaryWords> words = websiteDAO.findDictionaryWords(experiment)
+//        List<DictionaryWords> words = dao.findDictionaryWords(experiment)
 //                .stream().limit(tagsInDictionary).collect(Collectors.toList());
 //        List<List<DatFile>> dat = calculator.calculateTagStat(experiment, words);
-//        dat.forEach(websiteDAO::batchSave);
+//        dat.forEach(dao::batchSave);
 //    }
 //
 //    public static void main(String[] args) {
