@@ -5,11 +5,12 @@ import com.me.core.domain.dto.Modes;
 import com.me.core.domain.dto.Types;
 import com.me.core.domain.entities.Experiment;
 import com.me.core.domain.entities.ExperimentParam;
-import com.me.core.service.experiment.ExperimentCreator;
-import com.me.core.service.experiment.tag.TagDictionaryCreator;
+import com.me.core.service.experiment.create.ExperimentCreator;
+import com.me.core.service.experiment.output.AMLDATWriter;
+import com.me.core.service.experiment.tag.dictionary.TagDictionaryCreator;
+import com.me.core.service.experiment.tag.prepare_aml.PrepareTagAMLDATService;
 import com.me.core.service.experiment.text.aml.PrepareAMLDatService;
 import com.me.core.service.experiment.text.dictionary.TextDictionaryService;
-import com.me.core.service.experiment.text.output.AMLDATWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -33,18 +34,22 @@ public class DictionaryServiceInitializer implements Initializer {
     private final AMLDATWriter amldatWriter;
     @Lazy
     private final TagDictionaryCreator tagDictionaryCreator;
+    @Lazy
+    private final PrepareTagAMLDATService amldatService;
 
     @Autowired
     public DictionaryServiceInitializer(TextDictionaryService textDictionaryService,
                                         ExperimentCreator experimentCreator,
                                         PrepareAMLDatService amlDatPrepareService,
                                         AMLDATWriter amldatWriter,
-                                        TagDictionaryCreator tagDictionaryCreator) {
+                                        TagDictionaryCreator tagDictionaryCreator,
+                                        PrepareTagAMLDATService amldatService) {
         this.textDictionaryService = textDictionaryService;
         this.experimentCreator = experimentCreator;
         this.amlDatPrepareService = amlDatPrepareService;
         this.amldatWriter = amldatWriter;
         this.tagDictionaryCreator = tagDictionaryCreator;
+        this.amldatService = amldatService;
     }
 
     @Override
@@ -73,12 +78,14 @@ public class DictionaryServiceInitializer implements Initializer {
             amlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
             amldatWriter.setExpNames(new ArrayList<>(textExperimentsNames));
             tagDictionaryCreator.setExpNames(tagExperimentNames);
+            amldatService.setExpNames(tagExperimentNames);
 
-//            executables.add(experimentCreator);
+            executables.add(experimentCreator);
 //            executables.add(textDictionaryService);
 //            executables.add(amlDatPrepareService);
 //            executables.add(amldatWriter);
             executables.add(tagDictionaryCreator);
+            executables.add(amldatService);
         }
     }
 
@@ -114,6 +121,13 @@ public class DictionaryServiceInitializer implements Initializer {
         if (mode.equals(Modes.TEXT_FROM_TAGS)) {
             String tagName = (String) settings.get("tagName");
             experimentParam.setTagName(tagName);
+        }
+
+        if (mode.equals(Modes.TAG_STAT)) {
+            double normalizeRatio = (double) settings.get("normalizeRatio");
+            experimentParam.setNormalizeRatio(normalizeRatio);
+            int roundToDecimalPlaces = (int) settings.get("roundToDecimalPlaces");
+            experimentParam.setRoundToDecimalPlaces(roundToDecimalPlaces);
         }
 
         Experiment experiment =

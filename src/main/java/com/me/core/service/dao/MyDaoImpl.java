@@ -17,7 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository("myDaoImpl")
@@ -328,6 +331,15 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @Override
     @SuppressWarnings("unchecked")
+    public List<ChosenWebsite> findChosenWebsites(DataSet dataSet) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from ChosenWebsite ch where ch.dataSet = :dataSet ")
+                .setParameter("dataSet", dataSet)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public List<ChosenCategory> findCategoriesByDataSet(DataSet dataSet) {
         return sessionFactory.getCurrentSession()
                 .createQuery("from ChosenCategory ch where ch.dataSet = :dataSet")
@@ -457,5 +469,39 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .setParameterList("chosenWebsites", chosenWebsites)
                 .setParameter("nGramSize", param.getNGramSize())
                 .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Integer> findTagMaxCount(List<String> dictionaryTags,
+                                                List<Long> chosenWebsiteIDs) {
+
+        List<Object[]> rows = sessionFactory.getCurrentSession()
+                .createQuery("select tip.tag.tagName, max (tip.occurrencesNumber) " +
+                        "from TagsInPage tip " +
+                        "where tip.website.websiteId in :websiteIDs and " +
+                        "tip.tag.tagName in :dictionaryTags " +
+                        "group by tip.tag.tagName")
+                .setParameterList("websiteIDs", chosenWebsiteIDs)
+                .setParameterList("dictionaryTags", dictionaryTags)
+                .list();
+        Map<String, Integer> result = new LinkedHashMap<>();
+        for (Object[] row : rows) {
+            result.put((String) row[0], (Integer) row[1]);
+        }
+        return result;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Integer> findTagInPageCount(Website website) {
+        List<TagsInPage> tagsInPage = sessionFactory.getCurrentSession()
+                .createQuery("from TagsInPage tip where tip.website = :website")
+                .setParameter("website", website)
+                .list();
+
+        return tagsInPage.stream()
+                .collect(Collectors.toMap(x -> x.getTag().getTagName(),
+                        TagsInPage::getOccurrencesNumber));
     }
 }

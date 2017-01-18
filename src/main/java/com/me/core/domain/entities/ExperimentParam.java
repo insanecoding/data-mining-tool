@@ -38,4 +38,11 @@ public class ExperimentParam {
 
     @Column(name = "tag_name")
     private String tagName;
+
+    @Column(name = "norm_ratio")
+    private double normalizeRatio;
+
+    @Column(name = "round_to_places")
+    private int roundToDecimalPlaces;
+
 }

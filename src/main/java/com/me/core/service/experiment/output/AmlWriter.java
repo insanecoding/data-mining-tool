@@ -1,4 +1,4 @@
-package com.me.core.service.experiment.text.output;
+package com.me.core.service.experiment.output;
 
 import com.me.core.domain.dto.AmlDatPath;
 import com.me.core.domain.dto.Types;

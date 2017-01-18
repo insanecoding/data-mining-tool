@@ -1,4 +1,4 @@
-package com.me.core.service.experiment.tag;
+package com.me.core.service.experiment.tag.dictionary;
 
 import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
@@ -44,7 +44,8 @@ public class TagDictionaryCreator extends StoppableObservable implements MyExecu
         }
     }
 
-    private List<DictionaryWords> createDictionaryWords(Experiment experiment, List<String> tags) {
+    private List<DictionaryWords> createDictionaryWords(Experiment experiment,
+                                                        List<String> tags) {
         return tags.stream().map(tag -> {
                     int num = tags.indexOf(tag);
                     String word = "01 - tag_" + num + "_" + tag;

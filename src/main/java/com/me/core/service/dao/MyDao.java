@@ -6,6 +6,7 @@ import com.me.core.domain.entities.*;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface MyDao {
 
@@ -46,6 +47,8 @@ public interface MyDao {
 
     List<ChosenWebsite> findChosenWebsites(DataSet dataSet, Category category);
 
+    List<ChosenWebsite> findChosenWebsites(DataSet dataSet);
+
     List<ChosenCategory> findCategoriesByDataSet(DataSet dataSet);
 
     List<? extends AbstractText> findTextsForIDs(List<Long> IDs, Category category,
@@ -64,4 +67,9 @@ public interface MyDao {
     List<TagsInPage> findTagsInPage(Website website);
 
     List<String> findTopTags(Experiment experiment);
+
+    Map<String, Integer> findTagMaxCount(List<String> dictionaryTags,
+                                         List<Long> chosenWebsiteIDs);
+
+    Map<String,Integer> findTagInPageCount(Website website);
 }

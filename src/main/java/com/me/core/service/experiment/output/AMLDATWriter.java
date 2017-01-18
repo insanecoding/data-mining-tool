@@ -1,4 +1,4 @@
-package com.me.core.service.experiment.text.output;
+package com.me.core.service.experiment.output;
 
 import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
@@ -29,16 +29,13 @@ public class AMLDATWriter extends StoppableObservable implements MyExecutable {
     @Getter @Setter
     private List<String> expNames;
 
-    @Getter @Setter
-    private MyDao dao;
-    @Getter @Setter
-    private AmlWriter amlWriter;
-    @Getter @Setter
-    private DatWriter datWriter;
+    private final MyDao dao;
+    private final AmlWriter amlWriter;
+    private final DatWriter datWriter;
 
     @Autowired
-    public AMLDATWriter(MyDao dao, AmlWriter amlWriter,
-                        ProgressWatcher watcher, DatWriter datWriter) {
+    public AMLDATWriter(MyDao dao, ProgressWatcher watcher,
+                        AmlWriter amlWriter, DatWriter datWriter) {
         super.addSubscriber(watcher);
         this.dao = dao;
         this.amlWriter = amlWriter;

@@ -1,4 +1,4 @@
-package com.me.core.service.experiment.text.output;
+package com.me.core.service.experiment.output;
 
 import com.me.core.domain.dto.Modes;
 import com.me.core.domain.dto.Types;
@@ -20,7 +20,7 @@ public class DatWriter {
         writer.close();
     }
 
-    void createDATForExperiment(Experiment experiment,
+    public void createDATForExperiment(Experiment experiment,
                                 List<DatFile> subset, boolean isLearn,
                                 String datPath, int categoriesNum) throws IOException {
 
