@@ -20,11 +20,9 @@ public class DatWriter {
         writer.close();
     }
 
-    public void createDATForExperiment(Experiment experiment,
-                                List<DatFile> subset, boolean isLearn,
-                                String datPath, int categoriesNum) throws IOException {
-
-        int unknownsNumber = categoriesNum * 1000;
+    void createDATForExperiment(Experiment experiment, List<DatFile> subset,
+                                boolean isLearn, String datPath,
+                                int categoriesNum, long unknownsNum) throws IOException {
 
         Utils.createFilePath(datPath);
         writer = new PrintWriter(datPath);
@@ -33,7 +31,7 @@ public class DatWriter {
         if (isLearn) {
             int featuresPerCategory =
                     experiment.getExperimentParam().getFeaturesByCategory();
-            addUnknowns(unknownsNumber, categoriesNum, experiment, featuresPerCategory);
+            addUnknowns(unknownsNum, categoriesNum, experiment, featuresPerCategory);
         }
 
         closeWriter();
@@ -54,7 +52,7 @@ public class DatWriter {
         }
     }
 
-    private void addUnknowns(int unknownsNumber, int categoriesN,
+    private void addUnknowns(long unknownsNumber, int categoriesN,
                              Experiment experiment, int featuresPerCategory) {
         for (int counter = 0; counter < unknownsNumber; counter++) {
             String entryForUnknowns = "";

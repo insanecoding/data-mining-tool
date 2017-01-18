@@ -65,8 +65,12 @@ public class AMLDATWriter extends StoppableObservable implements MyExecutable {
         List<Long> idsForSubset = dao.findIDsForSubset(experiment, isLearn);
         List<DatFile> dat = dao.findDatFilesForExperiment(experiment, idsForSubset);
         int categoriesNum = categoryNames.size();
+        long websitesInDataSet = dao.countChosenWebsites(experiment);
+        double partitionLearn = experiment.getDataSet().getPartitionLearn();
+        long unknownsNum = (long) (websitesInDataSet * partitionLearn);
         String datPath = amlDatPath.getDatPath();
-        datWriter.createDATForExperiment(experiment, dat, isLearn, datPath, categoriesNum);
+        datWriter.createDATForExperiment(experiment, dat, isLearn,
+                datPath, categoriesNum, unknownsNum);
     }
 
     private List<String> getCategoryNames(Experiment experiment) {

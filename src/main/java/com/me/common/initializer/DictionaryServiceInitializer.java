@@ -25,31 +25,31 @@ import java.util.stream.Collectors;
 public class DictionaryServiceInitializer implements Initializer {
 
     @Lazy
-    private final TextDictionaryService textDictionaryService;
+    private final TextDictionaryService textDictionaryCreator;
     @Lazy
     private final ExperimentCreator experimentCreator;
     @Lazy
-    private final PrepareAMLDatService amlDatPrepareService;
+    private final PrepareAMLDatService textAmlDatPrepareService;
     @Lazy
     private final AMLDATWriter amldatWriter;
     @Lazy
     private final TagDictionaryCreator tagDictionaryCreator;
     @Lazy
-    private final PrepareTagAMLDATService amldatService;
+    private final PrepareTagAMLDATService tagAmlDatPrepareService;
 
     @Autowired
-    public DictionaryServiceInitializer(TextDictionaryService textDictionaryService,
+    public DictionaryServiceInitializer(TextDictionaryService textDictionaryCreator,
                                         ExperimentCreator experimentCreator,
-                                        PrepareAMLDatService amlDatPrepareService,
+                                        PrepareAMLDatService textAmlDatPrepareService,
                                         AMLDATWriter amldatWriter,
                                         TagDictionaryCreator tagDictionaryCreator,
-                                        PrepareTagAMLDATService amldatService) {
-        this.textDictionaryService = textDictionaryService;
+                                        PrepareTagAMLDATService tagAmlDatPrepareService) {
+        this.textDictionaryCreator = textDictionaryCreator;
         this.experimentCreator = experimentCreator;
-        this.amlDatPrepareService = amlDatPrepareService;
+        this.textAmlDatPrepareService = textAmlDatPrepareService;
         this.amldatWriter = amldatWriter;
         this.tagDictionaryCreator = tagDictionaryCreator;
-        this.amldatService = amldatService;
+        this.tagAmlDatPrepareService = tagAmlDatPrepareService;
     }
 
     @Override
@@ -72,20 +72,23 @@ public class DictionaryServiceInitializer implements Initializer {
                     .filter(experiment -> experiment.getMode().equals(Modes.TAG_STAT))
                     .map(Experiment::getExpName).collect(Collectors.toList());
 
-            experimentCreator.setExperimentDataSetName(new LinkedHashMap<>(experimentDataSetName));
-            textDictionaryService.setExpNames(new ArrayList<>(textExperimentsNames));
-            setFullPaths(dto, settings);
-            amlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
-            amldatWriter.setExpNames(new ArrayList<>(textExperimentsNames));
-            tagDictionaryCreator.setExpNames(tagExperimentNames);
-            amldatService.setExpNames(tagExperimentNames);
+            List<String> allExperimentNames = experimentDataSetName.keySet().stream()
+                    .map(Experiment::getExpName).collect(Collectors.toList());
 
-            executables.add(experimentCreator);
-//            executables.add(textDictionaryService);
-//            executables.add(amlDatPrepareService);
-//            executables.add(amldatWriter);
-            executables.add(tagDictionaryCreator);
-            executables.add(amldatService);
+            experimentCreator.setExperimentDataSetName(new LinkedHashMap<>(experimentDataSetName));
+            textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
+            setFullPaths(dto, settings);
+            textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
+            tagDictionaryCreator.setExpNames(tagExperimentNames);
+            tagAmlDatPrepareService.setExpNames(tagExperimentNames);
+            amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
+
+//            executables.add(experimentCreator);
+//            executables.add(textDictionaryCreator);
+//            executables.add(textAmlDatPrepareService);
+//            executables.add(tagDictionaryCreator);
+            executables.add(tagAmlDatPrepareService);
+            executables.add(amldatWriter);
         }
     }
 
@@ -147,7 +150,7 @@ public class DictionaryServiceInitializer implements Initializer {
         String amlPath = (String) settings.get("amlPath");
         String fullAmlPath = cwd + "\\" + amlPath;
 
-        textDictionaryService.setStopWordsPath(fullStopWordsPath);
+        textDictionaryCreator.setStopWordsPath(fullStopWordsPath);
         amldatWriter.setOutputFolder(fullAmlPath);
     }
 }

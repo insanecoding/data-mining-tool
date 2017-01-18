@@ -18,9 +18,9 @@ public class AmlWriter {
     private PrintWriter writer;
     private int orderNum = 1;
 
-    public void createExperimentAML(Experiment experiment,
-                                    List<String> categories, List<AmlFile> amlFeatures,
-                                    AmlDatPath amlDatPath) throws IOException {
+    void createExperimentAML(Experiment experiment,
+                             List<String> categories, List<AmlFile> amlFeatures,
+                             AmlDatPath amlDatPath) throws IOException {
         String amlPath = amlDatPath.getAmlPath();
         String datPath = amlDatPath.getDatPath();
 

@@ -72,4 +72,6 @@ public interface MyDao {
                                          List<Long> chosenWebsiteIDs);
 
     Map<String,Integer> findTagInPageCount(Website website);
+
+    long countChosenWebsites(Experiment experiment);
 }

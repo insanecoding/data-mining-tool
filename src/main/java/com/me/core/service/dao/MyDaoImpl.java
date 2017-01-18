@@ -504,4 +504,13 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .collect(Collectors.toMap(x -> x.getTag().getTagName(),
                         TagsInPage::getOccurrencesNumber));
     }
+
+    @Override
+    public long countChosenWebsites(Experiment experiment) {
+        return (long) sessionFactory.getCurrentSession()
+                .createQuery("select count(*) from ChosenWebsite cw " +
+                        " where cw.dataSet = :dataSet")
+                .setParameter("dataSet", experiment.getDataSet())
+                .uniqueResult();
+    }
 }
