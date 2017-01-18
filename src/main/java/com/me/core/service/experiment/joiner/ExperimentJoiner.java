@@ -1,11 +1,10 @@
-//package com.me.core.service.experiment;
+//package com.me.core.service.experiment.joiner;
 //
-//import com.me.data.dao.WebsiteDAO;
-//import com.me.data.entities.*;
-//import com.me.services.experiment.text.output.AMLDATCreator;
-//import com.me.utils.Utils;
+//import com.me.core.domain.dto.Modes;
+//import com.me.core.domain.dto.Types;
+//import com.me.core.domain.entities.*;
+//import com.me.core.service.utils.Utils;
 //import org.apache.commons.collections4.ListUtils;
-//import org.springframework.context.support.GenericXmlApplicationContext;
 //
 //import java.io.FileNotFoundException;
 //import java.io.PrintWriter;
@@ -19,30 +18,6 @@
 //    private PrintWriter writer;
 //    private String path;
 //    private AMLDATCreator amldatCreator;
-//
-//    public AMLDATCreator getAmldatCreator() {
-//        return amldatCreator;
-//    }
-//
-//    public void setAmldatCreator(AMLDATCreator amldatCreator) {
-//        this.amldatCreator = amldatCreator;
-//    }
-//
-//    public String getPath() {
-//        return path;
-//    }
-//
-//    public void setPath(String path) {
-//        this.path = path;
-//    }
-//
-//    public WebsiteDAO getWebsiteDAO() {
-//        return websiteDAO;
-//    }
-//
-//    public void setWebsiteDAO(WebsiteDAO websiteDAO) {
-//        this.websiteDAO = websiteDAO;
-//    }
 //
 //    private void closeWriter() {
 //        writer.close();
@@ -135,7 +110,7 @@
 //    private void writeDat(Website website, List<DatFile> datFiles) {
 //        String websiteName = website.getUrl().replaceAll("[^A-Za-z]+", "");
 //        DatFile datForMainText = datFiles.get(0);
-//        long id = website.getWebsiteID();
+//        long id = website.getWebsiteId();
 //        int fileLength = datForMainText.getLength();
 //        String categoriesBasis = datForMainText.getCategoryBasis();
 //
@@ -147,31 +122,9 @@
 //        writer.println("" + id + ' ' + features + fileLength + ' ' + categoriesBasis);
 //    }
 //
-//    public static void main(String[] args) {
-//        GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
-//        ctx.load("META-INF/spring/spring-root.xml");
-//        ctx.refresh();
-//
-//        ExperimentJoiner experimentJoiner = (ExperimentJoiner) ctx.getBean("experimentJoiner");
-//        DataSet dataSet = experimentJoiner.getWebsiteDAO().findDataSet("set 3");
-//        List<Experiment> experiments = experimentJoiner.getWebsiteDAO().findExperiments(
-//                Arrays.asList("exp_3_text_main",
-//                "exp_3_ngram_3",
-//                "exp_3_tag_title_text",
-//                "exp_3_tag_meta:description_text" ,
-//                "exp_3_tag_meta:keywords_text" ,
-//                "exp_3_tag_h1_text" ,
-//                "exp_3_tag_h2_text" ,
-//                "exp_3_tag_h3_text" ,
-//                "exp_3_tag_a_text" ,
-//                "exp_3_tag_img_text" ,
-//                "exp_3_tag_b_text",
-//                "exp_5_tag_stat")
-//        );
-//        List<Experiment> sorted = experiments.stream().sorted(Comparator.comparingLong(Experiment::getExperimentNumber))
-//                .collect(Collectors.toList());
-////        experimentJoiner.joinExperiments(dataSet, sorted);
-//        experimentJoiner.amldatCreator.createAMLDatForAll(sorted);
+//    public void main() {
+//        joinExperiments(dataSet, sorted);
+//        amldatCreator.createAMLDatForAll(sorted);
 //    }
 //}
 //

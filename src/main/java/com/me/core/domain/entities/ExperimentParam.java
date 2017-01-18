@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -14,7 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "paramId")
-public class ExperimentParam {
+public class ExperimentParam implements Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

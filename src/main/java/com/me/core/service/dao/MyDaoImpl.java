@@ -437,16 +437,6 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<TagsInPage> findTagsInPage(Website website) {
-        return sessionFactory.getCurrentSession()
-                .createQuery("from TagsInPage tp " +
-                        "where tp.website = :website")
-                .setParameter("website", website)
-                .list();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
     public List<String> findTopTags(Experiment experiment) {
         return sessionFactory.getCurrentSession()
                 .createQuery("select tip.tag.tagName " +
@@ -512,5 +502,26 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                         " where cw.dataSet = :dataSet")
                 .setParameter("dataSet", experiment.getDataSet())
                 .uniqueResult();
+    }
+
+    @Override
+    public JoinedExperiment findMe(String je) {
+
+        return (JoinedExperiment) sessionFactory.getCurrentSession()
+                .createQuery("from JoinedExperiment jp " +
+                        "where jp.expName = :name")
+                .setParameter("name", je)
+                .uniqueResult();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<RegularExperiment> findRegularByNames(List<String> names) {
+
+        return sessionFactory.getCurrentSession()
+                .createQuery("from RegularExperiment re " +
+                        "where re.expName in :names")
+                .setParameterList("names", names)
+                .list();
     }
 }

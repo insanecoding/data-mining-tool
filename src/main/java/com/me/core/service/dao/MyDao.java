@@ -64,8 +64,6 @@ public interface MyDao {
 
     List<Long> findIDsForSubset(Experiment experiment, boolean isLearn);
 
-    List<TagsInPage> findTagsInPage(Website website);
-
     List<String> findTopTags(Experiment experiment);
 
     Map<String, Integer> findTagMaxCount(List<String> dictionaryTags,
@@ -74,4 +72,9 @@ public interface MyDao {
     Map<String,Integer> findTagInPageCount(Website website);
 
     long countChosenWebsites(Experiment experiment);
+
+    JoinedExperiment findMe(String name);
+
+    @SuppressWarnings("unchecked")
+    List<RegularExperiment> findRegularByNames(List<String> names);
 }
