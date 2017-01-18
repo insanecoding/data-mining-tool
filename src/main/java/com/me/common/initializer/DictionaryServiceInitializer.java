@@ -55,7 +55,7 @@ public class DictionaryServiceInitializer implements Initializer {
     @Override
     @SuppressWarnings(value = "unchecked")
     public void initialize(Map<String, Object> dto, List<MyExecutable> executables) {
-        Map<String, Object> settings = (Map<String, Object>) dto.get("run");
+        Map<String, Object> settings = (Map<String, Object>) dto.get("prepare");
 
         if ((boolean) settings.get("isOn")) {
             List<Map<String, Object>> experiments =
@@ -83,10 +83,10 @@ public class DictionaryServiceInitializer implements Initializer {
             tagAmlDatPrepareService.setExpNames(tagExperimentNames);
             amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
 
-//            executables.add(experimentCreator);
-//            executables.add(textDictionaryCreator);
-//            executables.add(textAmlDatPrepareService);
-//            executables.add(tagDictionaryCreator);
+            executables.add(experimentCreator);
+            executables.add(textDictionaryCreator);
+            executables.add(textAmlDatPrepareService);
+            executables.add(tagDictionaryCreator);
             executables.add(tagAmlDatPrepareService);
             executables.add(amldatWriter);
         }

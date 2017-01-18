@@ -75,9 +75,9 @@ export const initialState = Immutable.fromJS({
             }
         ]
     },
-    run: {
-        route: "/run",
-        displayName: "Run experiments",
+    prepare: {
+        route: "/prepare",
+        displayName: "Create and prepare experiments",
         isOn: false,
         stopWordsPath: "\\stopwords.dat",
         amlPath: "\\amls\\",
@@ -162,6 +162,12 @@ export const initialState = Immutable.fromJS({
             },
         ]
     },
+    join: {
+        route: "/join",
+        displayName: "Join experiments",
+        isOn: false,
+        experiments: ["exp_7", "exp_8", "exp_10", "exp_13"]
+    }
 });
 
 export const connectionInitialState = Immutable.fromJS({
