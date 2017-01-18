@@ -24,12 +24,12 @@ public class DependentExperiment implements Serializable {
     private Long paramId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="joined_id")
+    @JoinColumn(name="owner_id")
     @NonNull
-    private JoinedExperiment joinedExperiment;
+    private Experiment owner;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="regular_id")
+    @JoinColumn(name="dependent_id")
     @NonNull
-    private RegularExperiment regularExperiment;
+    private Experiment dependent;
 }

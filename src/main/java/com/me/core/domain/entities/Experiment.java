@@ -37,16 +37,13 @@ public class Experiment implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "exp_mode")
-    @NonNull
     private Modes mode;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    @NonNull
     private Types type;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="param_id")
-    @NonNull
     private ExperimentParam experimentParam;
 }

@@ -134,7 +134,10 @@ public class DictionaryServiceInitializer implements Initializer {
         }
 
         Experiment experiment =
-                new Experiment(name, description, mode, type, experimentParam);
+                new Experiment(name, description);
+        experiment.setMode(mode);
+        experiment.setType(type);
+        experiment.setExperimentParam(experimentParam);
 
         experimentDataSetNameMap.put(experiment, dataSetName);
     }

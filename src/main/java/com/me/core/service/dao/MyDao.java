@@ -72,9 +72,4 @@ public interface MyDao {
     Map<String,Integer> findTagInPageCount(Website website);
 
     long countChosenWebsites(Experiment experiment);
-
-    JoinedExperiment findMe(String name);
-
-    @SuppressWarnings("unchecked")
-    List<RegularExperiment> findRegularByNames(List<String> names);
 }

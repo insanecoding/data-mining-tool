@@ -503,25 +503,4 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .setParameter("dataSet", experiment.getDataSet())
                 .uniqueResult();
     }
-
-    @Override
-    public JoinedExperiment findMe(String je) {
-
-        return (JoinedExperiment) sessionFactory.getCurrentSession()
-                .createQuery("from JoinedExperiment jp " +
-                        "where jp.expName = :name")
-                .setParameter("name", je)
-                .uniqueResult();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<RegularExperiment> findRegularByNames(List<String> names) {
-
-        return sessionFactory.getCurrentSession()
-                .createQuery("from RegularExperiment re " +
-                        "where re.expName in :names")
-                .setParameterList("names", names)
-                .list();
-    }
 }
