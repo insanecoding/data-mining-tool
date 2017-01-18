@@ -141,7 +141,7 @@ export const initialState = Immutable.fromJS({
                 featuresByCategory: 50
             },
             {
-                name: "exp_11",
+                name: "exp_13",
                 description: "tag stat",
                 dataSetName: "set_2",
                 mode: "tag_stat",
@@ -151,7 +151,7 @@ export const initialState = Immutable.fromJS({
                 featuresByCategory: 50
             },
             {
-                name: "exp_12",
+                name: "exp_14",
                 description: "tag stat",
                 dataSetName: "set_1",
                 mode: "tag_stat",

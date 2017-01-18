@@ -21,18 +21,19 @@ public class PrepareTagAMLDATService extends StoppableObservable implements MyEx
     private List<String> expNames;
 
     private final MyDao dao;
-    private final NormalizedTagStat tagStat;
+    private final MetricCalculator tagStat;
 
     @Autowired
     public PrepareTagAMLDATService(MyDao dao, ProgressWatcher watcher,
-                                   NormalizedTagStat tagStat) {
+                                   MetricCalculator tagStat) {
         super.addSubscriber(watcher);
         this.dao = dao;
         this.tagStat = tagStat;
     }
 
-    private void prepareAML(Experiment experiment, int featuresByCategory) throws InterruptedException {
+    private void prepareAML(Experiment experiment) throws InterruptedException {
         List<DictionaryWords> words = dao.findDictionaryWords(experiment);
+        int featuresByCategory = experiment.getExperimentParam().getFeaturesByCategory();
 
         List<AmlFile> amlFiles = words.stream().limit(featuresByCategory).map(word -> {
             String wordStr = word.getWord().split(" - ")[1];
@@ -42,28 +43,29 @@ public class PrepareTagAMLDATService extends StoppableObservable implements MyEx
         dao.batchSave(amlFiles);
     }
 
-    private void prepareDAT(Experiment experiment, int featuresByCategory) throws InterruptedException {
-        List<DictionaryWords> words = dao.findDictionaryWords(experiment)
-                .stream().limit(featuresByCategory).collect(Collectors.toList());
+    private void prepareDAT(Experiment experiment) throws InterruptedException {
+        tagStat.init(experiment);
         DataSet dataSet = experiment.getDataSet();
         List<ChosenCategory> categories = dao.findCategoriesByDataSet(dataSet);
 
-        processCategories(experiment, words, categories);
+        for (ChosenCategory chosenCategory : categories) {
+            processCategoryContents(experiment, chosenCategory, categories);
+        }
     }
 
-    private void processCategories(Experiment experiment,
-                                   List<DictionaryWords> words,
-                                   List<ChosenCategory> categories) throws InterruptedException {
-        for (ChosenCategory chosenCategory : categories) {
-            Category category = chosenCategory.getCategory();
-            super.updateMessage(experiment.getExpName() + ": creating dat for category:"
-                    + chosenCategory.getCategory());
-            String categoriesBasis = createCategoriesBasis(categories, category);
+    private void processCategoryContents(Experiment experiment, ChosenCategory chosenCategory,
+                                         List<ChosenCategory> categories) throws InterruptedException {
+        Category category = chosenCategory.getCategory();
+        super.updateMessage(experiment.getExpName() + ": creating dat for category:"
+                + chosenCategory.getCategory().getCategoryName());
+        String categoriesBasis = createCategoriesBasis(categories, category);
 
-            List<DatFile> datInCategory = tagStat.calculateMetric(category, words,
-                    experiment, categoriesBasis);
-            dao.batchSave(datInCategory);
-        }
+        List<ChosenWebsite> chosenWebsites =
+                dao.findChosenWebsites(experiment.getDataSet(), chosenCategory.getCategory());
+
+        List<DatFile> datInCategory = tagStat.calculateMetric(chosenWebsites,
+                experiment, categoriesBasis);
+        dao.batchSave(datInCategory);
     }
 
     private String createCategoriesBasis(List<ChosenCategory> categories,
@@ -80,14 +82,12 @@ public class PrepareTagAMLDATService extends StoppableObservable implements MyEx
     @Override
     public void execute() throws Exception {
         List<Experiment> experiments = dao.findExperimentsByNames(expNames);
+
         for (Experiment experiment : experiments) {
-            ExperimentParam param = experiment.getExperimentParam();
-            tagStat.setRoundToDecimalPlaces(param.getRoundToDecimalPlaces());
-            tagStat.setNormalizeRatio(param.getNormalizeRatio());
-            int featuresByCategory = param.getFeaturesByCategory();
             super.updateMessage(experiment.getExpName() + ": processing AML for tags");
-            prepareAML(experiment, featuresByCategory);
-            prepareDAT(experiment, featuresByCategory);
+            prepareAML(experiment);
+            prepareDAT(experiment);
+            tagStat.clear();
         }
     }
 
