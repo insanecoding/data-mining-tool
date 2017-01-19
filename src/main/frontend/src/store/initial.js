@@ -160,13 +160,27 @@ export const initialState = Immutable.fromJS({
                 normalizeRatio: 0.95,
                 featuresByCategory: 50
             },
+            {
+                name: "united_1",
+                description: "have the same dataSet #2",
+                mode: "join",
+                experiments: ["exp_7", "exp_8", "exp_10", "exp_13"]
+            },
+            {
+                name: "united_2",
+                description: "have the same dataSet #1",
+                mode: "join",
+                experiments: ["exp_6", "exp_9", "exp_14"]
+            }
         ]
     },
     join: {
         route: "/join",
         displayName: "Join experiments",
         isOn: false,
-        experiments: ["exp_7", "exp_8", "exp_10", "exp_13"]
+        toJoin: [
+
+        ]
     }
 });
 

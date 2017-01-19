@@ -1,5 +1,6 @@
 package com.me;
 
+import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.DependentExperiment;
 import com.me.core.domain.entities.Experiment;
 import com.me.core.domain.entities.Tag;
@@ -63,13 +64,17 @@ public class MiscTests {
     @Test
     public void testMe() throws Exception {
         Experiment owner =
-                new Experiment("union_2", "united 2");
+                new Experiment("union_1", "united 1", Modes.JOIN);
         myDao.saveEntity(owner);
 
-        List<Experiment> experiments = myDao.findExperimentsByNames(Arrays.asList("exp_6", "exp_8", "exp_10"));
+        List<Experiment> experiments =
+                myDao.findExperimentsByNames(Arrays.asList("exp_7", "exp_8", "exp_10", "exp_13"));
         List<DependentExperiment> deps = experiments.stream()
                 .map(elem -> new DependentExperiment(owner, elem))
                 .collect(Collectors.toList());
         myDao.batchSave(deps);
+
+        List<DependentExperiment> dependencies = myDao.findDependencies(owner);
+        int i = 0;
     }
 }

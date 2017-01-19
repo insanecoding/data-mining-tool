@@ -503,4 +503,14 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .setParameter("dataSet", experiment.getDataSet())
                 .uniqueResult();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DependentExperiment> findDependencies(Experiment experiment) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from DependentExperiment de " +
+                        " where de.owner = :experiment")
+                .setParameter("experiment", experiment)
+                .list();
+    }
 }

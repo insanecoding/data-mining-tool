@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class AmlWriter {
@@ -106,5 +107,22 @@ public class AmlWriter {
     private void closeWriter() {
         orderNum = 1;
         writer.close();
+    }
+
+    void createAMLForAll(Map<Experiment, List<AmlFile>> data, List<String> categories,
+                         AmlDatPath amlDatPath)
+            throws FileNotFoundException {
+        String amlPath = amlDatPath.getAmlPath();
+        String datPath = amlDatPath.getDatPath();
+
+        writeHeader(amlPath, datPath);
+
+        for (Experiment exp : data.keySet()) {
+            List<AmlFile> amls = data.get(exp);
+            writeBody(amls, exp.getType());
+        }
+
+        writeEnding(categories);
+
     }
 }

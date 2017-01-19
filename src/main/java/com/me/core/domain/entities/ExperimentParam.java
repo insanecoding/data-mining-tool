@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -46,4 +47,9 @@ public class ExperimentParam implements Serializable {
     @Column(name = "round_to_places")
     private int roundToDecimalPlaces;
 
+    @Transient
+    List<String> dependeciesNames;
+
+    @Transient
+    String dataSetName;
 }

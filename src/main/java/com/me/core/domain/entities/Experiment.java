@@ -37,6 +37,7 @@ public class Experiment implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "exp_mode")
+    @NonNull
     private Modes mode;
 
     @Enumerated(EnumType.STRING)

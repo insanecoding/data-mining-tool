@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,21 +60,15 @@ public class DictionaryServiceInitializer implements Initializer {
             List<Map<String, Object>> experiments =
                     (List<Map<String, Object>>) settings.get("experiments");
 
-            Map<Experiment, String> experimentDataSetName = new LinkedHashMap<>();
+            List<Experiment> experimentDataSetName = new ArrayList<>();
             experiments.forEach(elem -> processElem(elem, experimentDataSetName));
 
-            List<String> textExperimentsNames = experimentDataSetName.keySet().stream()
-                    .filter(experiment -> !experiment.getMode().equals(Modes.TAG_STAT))
-                            .map(Experiment::getExpName).collect(Collectors.toList());
+            List<String> textExperimentsNames = createTextExperimentsNames(experimentDataSetName);
+            List<String> tagExperimentNames = createTagExperimentsNames(experimentDataSetName);
+            List<String> joinedExperimentNames = createJoinedExperimentsNames(experimentDataSetName);
+            List<String> allExperimentNames = createAllExperimentsNames(experimentDataSetName);
 
-            List<String> tagExperimentNames = experimentDataSetName.keySet().stream()
-                    .filter(experiment -> experiment.getMode().equals(Modes.TAG_STAT))
-                    .map(Experiment::getExpName).collect(Collectors.toList());
-
-            List<String> allExperimentNames = experimentDataSetName.keySet().stream()
-                    .map(Experiment::getExpName).collect(Collectors.toList());
-
-            experimentCreator.setExperimentDataSetName(new LinkedHashMap<>(experimentDataSetName));
+            experimentCreator.setExperiments(new ArrayList<>(experimentDataSetName));
             textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
             setFullPaths(dto, settings);
             textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
@@ -84,27 +77,54 @@ public class DictionaryServiceInitializer implements Initializer {
             amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
 
             executables.add(experimentCreator);
-            executables.add(textDictionaryCreator);
-            executables.add(textAmlDatPrepareService);
-            executables.add(tagDictionaryCreator);
-            executables.add(tagAmlDatPrepareService);
+//            executables.add(textDictionaryCreator);
+//            executables.add(textAmlDatPrepareService);
+//            executables.add(tagDictionaryCreator);
+//            executables.add(tagAmlDatPrepareService);
             executables.add(amldatWriter);
         }
     }
 
+    private List<String> createAllExperimentsNames(List<Experiment> experiments) {
+        return experiments.stream()
+                .map(Experiment::getExpName).collect(Collectors.toList());
+    }
+
+    private List<String> createJoinedExperimentsNames(List<Experiment> experiments) {
+        return experiments.stream()
+                .filter(experiment ->
+                        experiment.getMode().equals(Modes.JOIN))
+                .map(Experiment::getExpName).collect(Collectors.toList());
+    }
+
+    private List<String> createTagExperimentsNames(List<Experiment> experiments) {
+        return experiments.stream()
+                .filter(experiment ->
+                        experiment.getMode().equals(Modes.TAG_STAT))
+                .map(Experiment::getExpName).collect(Collectors.toList());
+    }
+
+    private List<String> createTextExperimentsNames(List<Experiment> experiments) {
+        return experiments.stream()
+                .filter(experiment ->
+                        !experiment.getMode().equals(Modes.TAG_STAT) &&
+                                !experiment.getMode().equals(Modes.JOIN)
+                ).map(Experiment::getExpName).collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
     private void processElem(Map<String, Object> settings,
-                                   Map<Experiment, String> experimentDataSetNameMap) {
-        String dataSetName = (String) settings.get("dataSetName");
+                                   List<Experiment> experiments) {
+        // these are common for all experiments
         String name = (String) settings.get("name");
         String description = (String) settings.get("description");
-
         String strMode = (String) settings.get("mode");
-        String strType = (String) settings.get("type");
         Modes mode = Modes.valueOf(strMode.toUpperCase());
-        Types type = Types.valueOf(strType.toUpperCase());
+        Types type = null;
 
         ExperimentParam experimentParam = new ExperimentParam();
-        if (!mode.equals(Modes.TAG_STAT)) {
+        // text experiments only
+        if (!mode.equals(Modes.TAG_STAT) && !mode.equals(Modes.JOIN)) {
             double IDF_Threshold = (double) settings.get("IDF_Treshold");
             experimentParam.setIDF_Threshold(IDF_Threshold);
             String IDF_Type = (String) settings.get("IDF_Type");
@@ -113,8 +133,19 @@ public class DictionaryServiceInitializer implements Initializer {
             experimentParam.setTF_Type(TF_Type);
         }
 
-        int featuresByCategory = (int) settings.get("featuresByCategory");
-        experimentParam.setFeaturesByCategory(featuresByCategory);
+        if (!mode.equals(Modes.JOIN)) {
+            // all experiments except joined have type
+            String strType = (String) settings.get("type");
+            type = Types.valueOf(strType.toUpperCase());
+
+            int featuresByCategory = (int) settings.get("featuresByCategory");
+            String dataSetName = (String) settings.get("dataSetName");
+            experimentParam.setFeaturesByCategory(featuresByCategory);
+            experimentParam.setDataSetName(dataSetName);
+        } else {
+            List<String> dependenciesNames = (List<String>) settings.get("experiments");
+            experimentParam.setDependeciesNames(dependenciesNames);
+        }
 
         if (mode.equals(Modes.NGRAMS)) {
             int nGramSize = (int) settings.get("nGramSize");
@@ -134,12 +165,11 @@ public class DictionaryServiceInitializer implements Initializer {
         }
 
         Experiment experiment =
-                new Experiment(name, description);
-        experiment.setMode(mode);
+                new Experiment(name, description, mode);
         experiment.setType(type);
         experiment.setExperimentParam(experimentParam);
 
-        experimentDataSetNameMap.put(experiment, dataSetName);
+        experiments.add(experiment);
     }
 
     @SuppressWarnings("unchecked")

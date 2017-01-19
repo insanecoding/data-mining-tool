@@ -1,10 +1,12 @@
 //package com.me.core.service.experiment.joiner;
 //
+//import com.me.common.MyExecutable;
 //import com.me.core.domain.dto.Modes;
 //import com.me.core.domain.dto.Types;
 //import com.me.core.domain.entities.*;
 //import com.me.core.service.utils.Utils;
 //import org.apache.commons.collections4.ListUtils;
+//import org.springframework.stereotype.Component;
 //
 //import java.io.FileNotFoundException;
 //import java.io.PrintWriter;
@@ -13,11 +15,14 @@
 //import java.util.List;
 //import java.util.stream.Collectors;
 //
-//public class ExperimentJoiner {
+//@Component
+//public class ExperimentJoiner implements MyExecutable{
 //    private WebsiteDAO websiteDAO;
 //    private PrintWriter writer;
 //    private String path;
 //    private AMLDATCreator amldatCreator;
+//
+//    private List<String> unitedExpNames;
 //
 //    private void closeWriter() {
 //        writer.close();
@@ -125,6 +130,16 @@
 //    public void main() {
 //        joinExperiments(dataSet, sorted);
 //        amldatCreator.createAMLDatForAll(sorted);
+//    }
+//
+//    @Override
+//    public void execute() throws Exception {
+//
+//    }
+//
+//    @Override
+//    public String getName() {
+//        return "Experiment joiner";
 //    }
 //}
 //

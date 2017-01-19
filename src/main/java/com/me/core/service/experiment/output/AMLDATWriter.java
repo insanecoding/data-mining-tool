@@ -4,10 +4,8 @@ import com.me.common.MyExecutable;
 import com.me.common.ProgressWatcher;
 import com.me.common.StoppableObservable;
 import com.me.core.domain.dto.AmlDatPath;
-import com.me.core.domain.entities.AmlFile;
-import com.me.core.domain.entities.ChosenCategory;
-import com.me.core.domain.entities.DatFile;
-import com.me.core.domain.entities.Experiment;
+import com.me.core.domain.dto.Modes;
+import com.me.core.domain.entities.*;
 import com.me.core.service.dao.MyDao;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -49,12 +50,34 @@ public class AMLDATWriter extends StoppableObservable implements MyExecutable {
 
         for (Experiment experiment : experiments) {
 
-            List<String> categoryNames = getCategoryNames(experiment);
-            List <AmlFile> amlFeatures = dao.findAMLByExperiment(experiment);
+            if (!experiment.getMode().equals(Modes.JOIN)) {
+                List<String> categoryNames = getCategoryNames(experiment);
+                List<AmlFile> amlFeatures = dao.findAMLByExperiment(experiment);
 
-            createAmlDatForSubset(experiment, categoryNames, amlFeatures, true);
-            createAmlDatForSubset(experiment, categoryNames, amlFeatures, false);
+                createAmlDatForSubset(experiment, categoryNames, amlFeatures, true);
+                createAmlDatForSubset(experiment, categoryNames, amlFeatures, false);
+            } else {
+                List<DependentExperiment> deps = dao.findDependencies(experiment);
+
+                createAmlForAll(experiment, deps, true);
+                createAmlForAll(experiment, deps, false);
+            }
         }
+    }
+
+    private void createAmlForAll(Experiment owner, List<DependentExperiment> deps,
+                                 boolean isLearn) throws FileNotFoundException {
+        AmlDatPath amlDatPath = createPaths(owner, isLearn);
+        Map<Experiment, List<AmlFile>> amlData = new LinkedHashMap<>();
+
+        for (DependentExperiment dependent : deps) {
+            Experiment current = dependent.getDependent();
+            List<AmlFile> amls = dao.findAMLByExperiment(current);
+            amlData.put(current, amls);
+        }
+        List<String> categoryNames = getCategoryNames(deps.get(0).getDependent());
+
+        amlWriter.createAMLForAll(amlData, categoryNames, amlDatPath);
     }
 
     private void createAmlDatForSubset(Experiment experiment, List<String> categoryNames,
