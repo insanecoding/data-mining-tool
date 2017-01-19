@@ -33,16 +33,11 @@ public class ExperimentCreator extends StoppableObservable implements MyExecutab
     public void execute() throws Exception {
         super.updateMessage("creating experiments");
 
+        // todo: clean experiment names on client: "[^A-Z0-9a-z_\\s]" -> " "
         experiments.forEach(experiment -> {
             String dataSetName = experiment.getExperimentParam().getDataSetName();
             DataSet dataSet = dao.findDataSetByName(dataSetName);
             experiment.setDataSet(dataSet);
-
-            String fixedExpName = experiment.getExpName().replaceAll(
-                    "[^A-Z0-9a-z_\\s]", " "
-            );
-            experiment.setExpName(fixedExpName);
-
             dao.trySaveExperiment(experiment);
             processJoinedExperiment(experiment);
         });

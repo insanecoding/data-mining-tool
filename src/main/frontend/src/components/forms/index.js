@@ -4,7 +4,7 @@ import FormDownload from "./FormDownload";
 import FormPrepare from "./FormPrepare";
 import FormExtract from "./FormExtract";
 import FormSplit from "./FormSplit";
-import FormJoin from "./FormJoin";
+import FormSchemes from "./FormSchemes";
 
 export {FormDescription, FormImport, FormDownload,
-FormExtract, FormSplit, FormPrepare, FormJoin};
+FormExtract, FormSplit, FormPrepare, FormSchemes};

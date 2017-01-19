@@ -5,13 +5,13 @@ import * as connectionActions from "./../../actions/connectionActions";
 import * as formActions from "./../../actions/formActions";
 import GenericForm from "./GenericForm";
 
-class FormJoin extends Component {
+class FormSchemes extends Component {
 
     render() {
         const {formReducer} = this.props;
 
         return (
-            <GenericForm title={formReducer.getIn(['join', 'displayName'])}>
+            <GenericForm title={formReducer.getIn(['schemes', 'displayName'])}>
             </GenericForm>
         )
     }
@@ -31,4 +31,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FormJoin);
+export default connect(mapStateToProps, mapDispatchToProps)(FormSchemes);

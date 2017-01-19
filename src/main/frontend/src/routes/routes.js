@@ -6,7 +6,7 @@ import {
     FormExtract,
     FormPrepare,
     FormSplit,
-    FormJoin
+    FormSchemes
 } from "./../components/forms/index";
 import {Route, IndexRoute} from "react-router";
 import React from "react";
@@ -21,7 +21,7 @@ module.exports = (
             <Route path="/extract" component={FormExtract}/>
             <Route path="/split" component={FormSplit}/>
             <Route path="/prepare" component={FormPrepare}/>
-            <Route path="/join" component={FormJoin}/>
+            <Route path="/schemes" component={FormSchemes}/>
         </Route>
         <Route path="/results" component={Results}/>
     </Route>

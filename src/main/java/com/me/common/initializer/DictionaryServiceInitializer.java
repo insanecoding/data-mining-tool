@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,6 +36,8 @@ public class DictionaryServiceInitializer implements Initializer {
     private final TagDictionaryCreator tagDictionaryCreator;
     @Lazy
     private final PrepareTagAMLDATService tagAmlDatPrepareService;
+    private final SchemeGeneratorInitializer next;
+
 
     @Autowired
     public DictionaryServiceInitializer(TextDictionaryService textDictionaryCreator,
@@ -42,13 +45,15 @@ public class DictionaryServiceInitializer implements Initializer {
                                         PrepareAMLDatService textAmlDatPrepareService,
                                         AMLDATWriter amldatWriter,
                                         TagDictionaryCreator tagDictionaryCreator,
-                                        PrepareTagAMLDATService tagAmlDatPrepareService) {
+                                        PrepareTagAMLDATService tagAmlDatPrepareService,
+                                        SchemeGeneratorInitializer next) {
         this.textDictionaryCreator = textDictionaryCreator;
         this.experimentCreator = experimentCreator;
         this.textAmlDatPrepareService = textAmlDatPrepareService;
         this.amldatWriter = amldatWriter;
         this.tagDictionaryCreator = tagDictionaryCreator;
         this.tagAmlDatPrepareService = tagAmlDatPrepareService;
+        this.next = next;
     }
 
     @Override
@@ -63,25 +68,30 @@ public class DictionaryServiceInitializer implements Initializer {
             List<Experiment> experimentDataSetName = new ArrayList<>();
             experiments.forEach(elem -> processElem(elem, experimentDataSetName));
 
-            List<String> textExperimentsNames = createTextExperimentsNames(experimentDataSetName);
-            List<String> tagExperimentNames = createTagExperimentsNames(experimentDataSetName);
-            List<String> allExperimentNames = createAllExperimentsNames(experimentDataSetName);
-
-            experimentCreator.setExperiments(new ArrayList<>(experimentDataSetName));
-            textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
-            setFullPaths(dto, settings);
-            textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
-            tagDictionaryCreator.setExpNames(tagExperimentNames);
-            tagAmlDatPrepareService.setExpNames(tagExperimentNames);
-            amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
-
-            executables.add(experimentCreator);
-//            executables.add(textDictionaryCreator);
-//            executables.add(textAmlDatPrepareService);
-//            executables.add(tagDictionaryCreator);
-//            executables.add(tagAmlDatPrepareService);
-//            executables.add(amldatWriter);
+            List<MyExecutable> myExecutables =
+                    initializeServices(dto, settings, experimentDataSetName);
+            executables.addAll(myExecutables);
         }
+        next.initialize(dto, executables);
+    }
+
+    private List<MyExecutable> initializeServices(Map<String, Object> dto,
+                                                  Map<String, Object> settings,
+                                                  List<Experiment> experimentDataSetName) {
+        List<String> textExperimentsNames = createTextExperimentsNames(experimentDataSetName);
+        List<String> tagExperimentNames = createTagExperimentsNames(experimentDataSetName);
+        List<String> allExperimentNames = createAllExperimentsNames(experimentDataSetName);
+
+        experimentCreator.setExperiments(new ArrayList<>(experimentDataSetName));
+        textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
+        setFullPaths(dto, settings);
+        textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
+        tagDictionaryCreator.setExpNames(tagExperimentNames);
+        tagAmlDatPrepareService.setExpNames(tagExperimentNames);
+        amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
+
+        return Arrays.asList(experimentCreator, textDictionaryCreator, textAmlDatPrepareService,
+                tagDictionaryCreator, tagAmlDatPrepareService, amldatWriter);
     }
 
     private List<String> createAllExperimentsNames(List<Experiment> experiments) {
@@ -172,8 +182,7 @@ public class DictionaryServiceInitializer implements Initializer {
         String stopWordsSubPath = (String) settings.get("stopWordsPath");
         String fullStopWordsPath = cwd + "\\" + stopWordsSubPath;
 
-        String amlPath = (String) settings.get("amlPath");
-        String fullAmlPath = cwd + "\\" + amlPath;
+        String fullAmlPath = cwd + "\\amls\\";
 
         textDictionaryCreator.setStopWordsPath(fullStopWordsPath);
         amldatWriter.setOutputFolder(fullAmlPath);

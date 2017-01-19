@@ -1,29 +1,82 @@
 package com.me.core.service.rapidminer;
 
-
+import com.me.common.MyExecutable;
+import com.me.common.ProgressWatcher;
+import com.me.common.StoppableObservable;
+import com.me.core.domain.dto.Modes;
+import com.me.core.domain.entities.Category;
+import com.me.core.domain.entities.ChosenCategory;
 import com.me.core.domain.entities.Experiment;
+import com.me.core.service.dao.MyDao;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class SchemeGeneratorService {
+@Component
+public class SchemeGeneratorService extends StoppableObservable implements MyExecutable {
+    @Getter @Setter
     private String templatesPath;
+    @Getter @Setter
     private String workingDir;
-    private List<String> targetCategories;
+    @Getter @Setter
+    private List<String> expNames;
 
+    private final SchemeGenerator schemeGenerator;
+    private final MyDao dao;
 
-    public void generateSchemes(Experiment experiment, List<String> categories) throws IOException {
-        SchemeGenerator sg = new SchemeGenerator();
-        sg.setTemplatesPath(templatesPath);
-        sg.setWorkingDir(workingDir);
+    @Autowired
+    public SchemeGeneratorService(SchemeGenerator schemeGenerator,
+                                  ProgressWatcher watcher, MyDao dao) {
+        super.addSubscriber(watcher);
+        this.schemeGenerator = schemeGenerator;
+        this.dao = dao;
+    }
 
-        for (String category : categories) {
-            sg.generateBaseLearnersScheme(experiment,
-                    categories.indexOf(category) + 1, category);
+    @Override
+    public void execute() throws Exception {
+        schemeGenerator.setTemplatesPath(templatesPath);
+        schemeGenerator.setWorkingDir(workingDir);
+
+        List<Experiment> experiments = dao.findExperimentsByNames(expNames);
+        for (Experiment experiment : experiments) {
+            super.updateMessage("generating schemes for: " + experiment.getExpName());
+            List<ChosenCategory> categories =
+                    dao.findCategoriesByDataSet(experiment.getDataSet());
+            List<String> strCategories = createSortedStrCategories(categories);
+            generateForExperiment(experiment, strCategories);
         }
+    }
 
+    private void generateForExperiment(Experiment experiment,
+                                       List<String> strCategories) throws IOException {
+        if (experiment.getMode().equals(Modes.TEXT_MAIN) ||
+                experiment.getMode().equals(Modes.TEXT_FROM_TAGS)) {
+            for (String strCategory : strCategories) {
+                int indexOfCategory = strCategories.indexOf(strCategory) + 1;
+                schemeGenerator.generateBaseLearnersScheme(experiment,
+                        indexOfCategory,  strCategory);
+            }
 
-        sg.generateStackingScheme(experiment, categories.size());
-        sg.generateApplyModelScheme(experiment);
+            schemeGenerator.generateStackingScheme(experiment, strCategories.size());
+            schemeGenerator.generateApplyModelScheme(experiment);
+        }
+    }
+
+    private List<String> createSortedStrCategories(List<ChosenCategory> categories) {
+        return categories.stream()
+                .map(ChosenCategory::getCategory)
+                .sorted(Comparator.comparing(Category::getCategoryName))
+                .map(Category::getCategoryName).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getName() {
+        return "Scheme generator";
     }
 }
