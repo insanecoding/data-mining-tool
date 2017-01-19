@@ -76,7 +76,7 @@ public class DictionaryServiceInitializer implements Initializer {
             tagAmlDatPrepareService.setExpNames(tagExperimentNames);
             amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
 
-            executables.add(experimentCreator);
+//            executables.add(experimentCreator);
 //            executables.add(textDictionaryCreator);
 //            executables.add(textAmlDatPrepareService);
 //            executables.add(tagDictionaryCreator);

@@ -57,25 +57,61 @@ public class AMLDATWriter extends StoppableObservable implements MyExecutable {
                 createAmlDatForSubset(experiment, categoryNames, amlFeatures, true);
                 createAmlDatForSubset(experiment, categoryNames, amlFeatures, false);
             } else {
-                List<DependentExperiment> deps = dao.findDependencies(experiment);
+                List<Experiment> dependencies = extractExperimentsFromDependent(experiment);
 
-                createAmlForAll(experiment, deps, true);
-                createAmlForAll(experiment, deps, false);
+                createAmlForAll(experiment, dependencies, true);
+                createAmlForAll(experiment, dependencies, false);
+
+                int categoriesNum = getCategoryNames(dependencies.get(0)).size();
+
+                createDatForAll(experiment, categoriesNum, dependencies, true);
+                createDatForAll(experiment, categoriesNum, dependencies, false);
             }
         }
     }
 
-    private void createAmlForAll(Experiment owner, List<DependentExperiment> deps,
+    private List<Experiment> extractExperimentsFromDependent(Experiment owner) {
+        List<DependentExperiment> deps = dao.findDependencies(owner);
+        return deps.stream()
+                .map(DependentExperiment::getDependent)
+                .sorted(Comparator.comparing(Experiment::getExperimentNumber))
+                .collect(Collectors.toList());
+    }
+
+    private void createDatForAll(Experiment owner, int categoriesNum,
+                                 List<Experiment> dependencies, boolean isLearn) throws IOException {
+        AmlDatPath amlDatPath = createPaths(owner, isLearn);
+        Map<Experiment, Integer> expFeatures = new LinkedHashMap<>();
+        dependencies.stream()
+                .sorted(Comparator.comparing(Experiment::getExperimentNumber))
+                .forEach(experiment -> expFeatures.put(experiment, experiment.getExperimentParam().getFeaturesByCategory()));
+
+        Experiment first = dependencies.get(0);
+        DataSet dataSet = first.getDataSet();
+
+        Map<ChosenWebsite, List<DatFile>> chosen = new LinkedHashMap<>();
+        List<ChosenWebsite> websites = dao.findChosenWebsites(dataSet, isLearn);
+        long unknownsNum = (long) websites.size();
+
+        for (ChosenWebsite website : websites) {
+            List<DatFile> datFiles = dao.findDatFilesForChosenWebsite(dependencies, website);
+            chosen.put(website, datFiles);
+        }
+
+        datWriter.createDATForAll(chosen, isLearn, amlDatPath.getDatPath(), unknownsNum,
+                categoriesNum, expFeatures);
+    }
+
+    private void createAmlForAll(Experiment owner, List<Experiment> dependencies,
                                  boolean isLearn) throws FileNotFoundException {
         AmlDatPath amlDatPath = createPaths(owner, isLearn);
         Map<Experiment, List<AmlFile>> amlData = new LinkedHashMap<>();
 
-        for (DependentExperiment dependent : deps) {
-            Experiment current = dependent.getDependent();
-            List<AmlFile> amls = dao.findAMLByExperiment(current);
-            amlData.put(current, amls);
+        for (Experiment exp : dependencies) {
+            List<AmlFile> amls = dao.findAMLByExperiment(exp);
+            amlData.put(exp, amls);
         }
-        List<String> categoryNames = getCategoryNames(deps.get(0).getDependent());
+        List<String> categoryNames = getCategoryNames(dependencies.get(0));
 
         amlWriter.createAMLForAll(amlData, categoryNames, amlDatPath);
     }

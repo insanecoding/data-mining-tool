@@ -5,6 +5,7 @@
 ###First run:
 
 `gradlew runMe` - first launch. The app will fetch all the dependencies: frontend and backend (may take a while)
+If you develop with Intellij Idea, install Lombok plugin for convenience
 
 ###Develop:
 
@@ -14,7 +15,7 @@ Tip: if you're using Intellij Idea, disable safe write in order to see changes i
 `gradlew updateFrontend` - delete previous frontend assets, build current frontend production and copy into server folder 
  
 `cd src/main/frontend npm start` - starts frontend development server at `localhost:3000` 
-with proxying to `localhost:8080`. This way we don't need to enable CORS
+with proxying to `localhost:8080`. This way we don't need to enable CORS. But you should have local NodeJS installed 
 
 We've got two profiles: `dev` and `prod`
 

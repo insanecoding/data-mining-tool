@@ -47,6 +47,8 @@ public interface MyDao {
 
     List<ChosenWebsite> findChosenWebsites(DataSet dataSet, Category category);
 
+    List<ChosenWebsite> findChosenWebsites(DataSet dataSet, boolean isLearn);
+
     List<ChosenWebsite> findChosenWebsites(DataSet dataSet);
 
     List<ChosenCategory> findCategoriesByDataSet(DataSet dataSet);
@@ -63,7 +65,7 @@ public interface MyDao {
     List<DatFile> findDatFilesForExperiment(Experiment experiment, List<Long> subsetIDs);
 
     List<Long> findIDsForSubset(Experiment experiment, boolean isLearn);
-
+    
     List<String> findTopTags(Experiment experiment);
 
     Map<String, Integer> findTagMaxCount(List<String> dictionaryTags,
@@ -74,4 +76,6 @@ public interface MyDao {
     long countChosenWebsites(Experiment experiment);
 
     List<DependentExperiment> findDependencies(Experiment experiment);
+
+    List<DatFile> findDatFilesForChosenWebsite(List<Experiment> experiments, ChosenWebsite website);
 }

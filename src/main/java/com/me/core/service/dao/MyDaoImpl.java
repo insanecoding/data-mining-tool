@@ -331,6 +331,17 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
 
     @Override
     @SuppressWarnings("unchecked")
+    public List<ChosenWebsite> findChosenWebsites(DataSet dataSet, boolean isLearn) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from ChosenWebsite ch where ch.dataSet = :dataSet " +
+                        " and ch.isForLearning = :isLearn ")
+                .setParameter("dataSet", dataSet)
+                .setParameter("isLearn", isLearn)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     public List<ChosenWebsite> findChosenWebsites(DataSet dataSet) {
         return sessionFactory.getCurrentSession()
                 .createQuery("from ChosenWebsite ch where ch.dataSet = :dataSet ")
@@ -511,6 +522,19 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                 .createQuery("from DependentExperiment de " +
                         " where de.owner = :experiment")
                 .setParameter("experiment", experiment)
+                .list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DatFile> findDatFilesForChosenWebsite(List<Experiment> experiments,
+                                                      ChosenWebsite website) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from DatFile df " +
+                        " where df.experiment in :experiments and df.website = :website " +
+                        " order by df.experiment.experimentNumber")
+                .setParameterList("experiments", experiments)
+                .setParameter("website", website.getWebsite())
                 .list();
     }
 }
