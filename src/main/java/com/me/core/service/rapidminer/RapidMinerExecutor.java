@@ -1,38 +1,26 @@
 package com.me.core.service.rapidminer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-public class RapidMinerExecutor {
+@Slf4j
+@Component
+class RapidMinerExecutor {
 
-    private String pathToRM;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public String getPathToRM() {
-        return pathToRM;
-    }
-
-    public void setPathToRM(String pathToRM) {
-        this.pathToRM = pathToRM;
-    }
-
-    private void executeCommand(String command){
+    private void executeCommand(String command) throws IOException {
         CommandLine cmdLine = CommandLine.parse(command);
         DefaultExecutor executor = new DefaultExecutor();
 
-        try {
-            int exitValue = executor.execute(cmdLine);
-            logger.info(" exited with {}", exitValue);
-        } catch (IOException e) {
-            logger.error("{} : {}", e.getClass(), e.getMessage());
-        }
+        int exitValue = executor.execute(cmdLine);
+        log.info(" exited with {}", exitValue);
     }
 
-    public void executeProcessInRM(String pathToProcess) {
+    void executeProcessInRM(String pathToRM,
+                            String pathToProcess) throws IOException {
         // add quotes to path (because it may contain whitespaces which cause errors in cmd)
         String line = "'" + pathToRM + "'" +
                 " -f" +

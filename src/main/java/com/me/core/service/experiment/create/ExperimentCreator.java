@@ -37,6 +37,12 @@ public class ExperimentCreator extends StoppableObservable implements MyExecutab
             String dataSetName = experiment.getExperimentParam().getDataSetName();
             DataSet dataSet = dao.findDataSetByName(dataSetName);
             experiment.setDataSet(dataSet);
+
+            String fixedExpName = experiment.getExpName().replaceAll(
+                    "[^A-Z0-9a-z_\\s]", " "
+            );
+            experiment.setExpName(fixedExpName);
+
             dao.trySaveExperiment(experiment);
             processJoinedExperiment(experiment);
         });

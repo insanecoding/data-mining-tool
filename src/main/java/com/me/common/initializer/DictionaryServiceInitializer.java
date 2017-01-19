@@ -65,7 +65,6 @@ public class DictionaryServiceInitializer implements Initializer {
 
             List<String> textExperimentsNames = createTextExperimentsNames(experimentDataSetName);
             List<String> tagExperimentNames = createTagExperimentsNames(experimentDataSetName);
-            List<String> joinedExperimentNames = createJoinedExperimentsNames(experimentDataSetName);
             List<String> allExperimentNames = createAllExperimentsNames(experimentDataSetName);
 
             experimentCreator.setExperiments(new ArrayList<>(experimentDataSetName));
@@ -76,24 +75,17 @@ public class DictionaryServiceInitializer implements Initializer {
             tagAmlDatPrepareService.setExpNames(tagExperimentNames);
             amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
 
-//            executables.add(experimentCreator);
+            executables.add(experimentCreator);
 //            executables.add(textDictionaryCreator);
 //            executables.add(textAmlDatPrepareService);
 //            executables.add(tagDictionaryCreator);
 //            executables.add(tagAmlDatPrepareService);
-            executables.add(amldatWriter);
+//            executables.add(amldatWriter);
         }
     }
 
     private List<String> createAllExperimentsNames(List<Experiment> experiments) {
         return experiments.stream()
-                .map(Experiment::getExpName).collect(Collectors.toList());
-    }
-
-    private List<String> createJoinedExperimentsNames(List<Experiment> experiments) {
-        return experiments.stream()
-                .filter(experiment ->
-                        experiment.getMode().equals(Modes.JOIN))
                 .map(Experiment::getExpName).collect(Collectors.toList());
     }
 
