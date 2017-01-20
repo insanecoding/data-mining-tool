@@ -56,15 +56,20 @@ public class SchemeGeneratorService extends StoppableObservable implements MyExe
 
     private void generateForExperiment(Experiment experiment,
                                        List<String> strCategories) throws IOException {
-        if (experiment.getMode().equals(Modes.TEXT_MAIN) ||
-                experiment.getMode().equals(Modes.TEXT_FROM_TAGS)) {
+        if (
+                experiment.getMode().equals(Modes.TEXT_MAIN) ||
+                experiment.getMode().equals(Modes.TEXT_FROM_TAGS) ||
+                experiment.getMode().equals(Modes.NGRAMS)
+                ) {
             for (String strCategory : strCategories) {
                 int indexOfCategory = strCategories.indexOf(strCategory) + 1;
                 String expName = experiment.getExpName().replaceAll("[^A-Z0-9a-z_]", "");
                 schemeGenerator.generateBaseLearnersScheme(expName, indexOfCategory,  strCategory);
             }
             schemeGenerator.generateStackingScheme(experiment.getExpName(), strCategories.size());
-//            schemeGenerator.generateApplyModelScheme(experiment);
+            schemeGenerator.generateApplyModelScheme(experiment.getExpName());
+        } else if (experiment.getMode().equals(Modes.TAG_STAT)) {
+            schemeGenerator.generateTagStatScheme(experiment.getExpName());
         }
     }
 

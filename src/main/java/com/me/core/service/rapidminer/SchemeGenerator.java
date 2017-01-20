@@ -1,6 +1,5 @@
 package com.me.core.service.rapidminer;
 
-import com.me.core.domain.entities.Experiment;
 import com.me.core.service.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,12 +42,10 @@ class SchemeGenerator {
         content = content.replaceAll("!categoryNumber@categoryName!",
                 categoryNumber + "_" + categoryName);
 
-        String rep = workingDir + "/models/" +
-                expName + "/" + "base_" + categoryNum + ".mod";
+        String rep = workingDir + "/models/" + expName + "/" + "base_" + categoryNum + ".mod";
         content = content.replaceAll("!text_base_categoryNumber.mod!", rep);
 
-        String perf = workingDir + "/per/" +
-                expName + "/" + "base_" + categoryNum + ".per";
+        String perf = workingDir + "/per/" + expName + "/" + "base_" + categoryNum + ".per";
         content = content.replaceAll("!performanceFile!", perf);
 
         Files.write(Paths.get(generatedFileName), content.getBytes());
@@ -177,63 +174,45 @@ class SchemeGenerator {
         return result;
     }
 
-    void generateApplyModelScheme(Experiment experiment) {
-        String fixedExpName = experiment.getExpName().replaceAll("[^A-Z0-9a-z]", "");
-        try {
-            File file = new File(templatesPath + "/3)apply_model.rmp");
-            File generated = new File(workingDir + "/schemes/" + fixedExpName + "/3)applyModel.rmp");
+    void generateApplyModelScheme(String expName) throws IOException {
 
-            Utils.createFilePath(generated.getAbsolutePath());
+        String applyModelTemplate = templatesPath + "/3)apply_model.rmp";
+        String generatedFileName = workingDir + "/schemes/" + expName + "/3)applyModel.rmp";
+        File generated = new File(generatedFileName);
+        tryCreateFile(generated);
 
-            if (!generated.createNewFile()) {
-                System.out.println("Could not create file");
-            }
+        String content = new String(Files.readAllBytes(Paths.get(applyModelTemplate)));
+        String readModel = workingDir + "/models/" + expName + "/stacking.mod";
+        content = content.replaceAll("!readModel!", readModel);
+        String testAML = workingDir + "/amls/" + expName + "/" + expName + "_test.aml";
+        content = content.replaceAll("!testAML!", testAML);
+        String textPerformance = workingDir + "/per/" + expName + "/apply.per";
+        content = content.replaceAll("!textPerformance!", textPerformance);
 
-            PrintWriter pw = new PrintWriter(generated);
+        Files.write(Paths.get(generatedFileName), content.getBytes());
+    }
 
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+    void generateTagStatScheme(String expName) throws IOException {
+        String tagStatTemplate = templatesPath + "\\5)tag_Stacking.rmp";
 
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
+        String generatedFileName = workingDir + "/schemes/" + expName + "/1)tag_stacking.rmp";
+        File generated = new File(generatedFileName);
+        tryCreateFile(generated);
 
-                if (line.contains("!")) {
-                    int lastDelimiterPosition = line.lastIndexOf("!");
-                    int firstDelimiterPosition = line.indexOf("!");
-                    String forReplacement = line.substring(firstDelimiterPosition, lastDelimiterPosition + 1);
-                    String betweenDelimiters = line.substring(firstDelimiterPosition + 1, lastDelimiterPosition);
-                    String replacement;
-                    switch (betweenDelimiters) {
-                        case "readModel": {
-                            replacement = workingDir + "/models/" +
-                                    fixedExpName + "/stacking.mod";
-                            break;
-                        }
-                        case "testAML": {
-                            replacement = workingDir + "/aml/" +
-                                    fixedExpName + "/" + fixedExpName + "_test.aml";
-                            break;
-                        }
-                        case "textPerformance": {
-                            replacement = workingDir + "/per/" +
-                                    fixedExpName + "/apply.per";
-                            break;
-                        }
-                        default: {
-                            replacement = "unknown";
-                        }
-                    }
-                    pw.println(line.replaceAll(forReplacement, replacement));
-                } else {
-                    pw.println(line);
-                }
-            }
-            fileReader.close();
-            pw.close();
-            System.out.println("Applying text model scheme generated!");
+        String content = new String(Files.readAllBytes(Paths.get(tagStatTemplate)));
+        String learnAML = workingDir + "//amls//" + expName + "//" + expName + "_learn.aml";
+        content = content.replaceAll("!learnAML!", learnAML);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String testAML = workingDir + "/amls/" + expName + "/" + expName + "_test.aml";
+        content = content.replaceAll("!testAML!", testAML);
+
+        String performance = workingDir + "/per/" + expName + "/apply.per";
+        content = content.replaceAll("!performance!", performance);
+
+        String model = workingDir + "/models/" + expName + "/stacking.mod";
+        content = content.replaceAll("!model!", model);
+
+        Files.write(Paths.get(generatedFileName), content.getBytes());
+
     }
 }
