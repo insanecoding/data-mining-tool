@@ -15,42 +15,40 @@ import java.nio.file.Paths;
 @Component
 class SchemeGenerator {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String templatesPath;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String workingDir;
 
-    void generateBaseLearnersScheme(Experiment experiment,
+    void generateBaseLearnersScheme(String expName,
                                     int categoryNum, String categoryName) throws IOException {
         String baseLearnerTemplate = templatesPath + "\\1)base_learner_model.rmp";
 
-        String fixedExpName = experiment.getExpName()
-                .replaceAll("[^A-Z0-9a-z_]", "");
-
-        String generatedFileName = workingDir + "\\schemes\\" + fixedExpName +
+        String generatedFileName = workingDir + "\\schemes\\" + expName +
                 "\\1)textBase_" + categoryNum + ".rmp";
         File generated = new File(generatedFileName);
 
         tryCreateFile(generated);
 
         String content = new String(Files.readAllBytes(Paths.get(baseLearnerTemplate)));
-        String learnAML = workingDir + "//amls//" + fixedExpName + "//" + fixedExpName + "_learn.aml"
-                .replace("\\", "\\/");
+        String learnAML = workingDir + "//amls//" + expName + "//" + expName + "_learn.aml";
         content = content.replaceAll("!learnAML!", learnAML);
         String categoryNumber = createCategoryNumber(categoryNum);
 
         content = content.replaceAll("!categoryNumber!", categoryNumber)
-                .replaceAll("@mode@", experiment.getExpName());
+                .replaceAll("@mode@", expName);
 
         content = content.replaceAll("!categoryNumber@categoryName!",
                 categoryNumber + "_" + categoryName);
 
         String rep = workingDir + "/models/" +
-                fixedExpName + "/" + "base_" + categoryNum + ".mod";
+                expName + "/" + "base_" + categoryNum + ".mod";
         content = content.replaceAll("!text_base_categoryNumber.mod!", rep);
 
         String perf = workingDir + "/per/" +
-                fixedExpName + "/" + "base_" + categoryNum + ".per";
+                expName + "/" + "base_" + categoryNum + ".per";
         content = content.replaceAll("!performanceFile!", perf);
 
         Files.write(Paths.get(generatedFileName), content.getBytes());
@@ -70,122 +68,113 @@ class SchemeGenerator {
     }
 
     // manual depth and gain settings
-    void generateStackingScheme(Experiment experiment, int categoriesAmount) {
-        String fixedExpName = experiment.getExpName().replaceAll("[^A-Z0-9a-z]", "");
-        try {
-            String stackingTemplate = templatesPath + "/2)stacking.rmp";
-            File file = new File(stackingTemplate);
+    void generateStackingScheme(String expName, int categoriesNum) throws IOException {
 
-            File generated = new File(workingDir + "/schemes/" + fixedExpName +
-                    "/2)stacking.rmp");
-            tryCreateFile(generated);
+        double minGain = 0.001;
+        int maxDepth = 20;
 
+        String stackingTemplate = templatesPath + "/2)stacking.rmp";
+        File file = new File(stackingTemplate);
 
-            PrintWriter pw = new PrintWriter(generated);
+        File generated = new File(workingDir + "/schemes/" + expName +
+                "/2)stacking.rmp");
+        tryCreateFile(generated);
 
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            String line;
-            String repeatable = "";
-            int threeTimesCounter = 0;
+        String line;
+        String repeatable = "";
+        int threeTimesCounter = 0;
+        try (
+                PrintWriter pw = new PrintWriter(generated);
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(file))
+        ) {
 
             while ((line = bufferedReader.readLine()) != null) {
 
                 if (line.contains("!")) {
-                    int lastDelimiterPosition = line.lastIndexOf("!");
-                    int firstDelimiterPosition = line.indexOf("!");
-                    String forReplacement = line.substring(firstDelimiterPosition, lastDelimiterPosition + 1);
-                    String betweenDelimiters = line.substring(firstDelimiterPosition + 1, lastDelimiterPosition);
-                    String replacement;
-                    switch (betweenDelimiters) {
-                        case "learnAML": {
-                            replacement = workingDir + "/aml/" +
-                                    fixedExpName + "/" + fixedExpName + "_learn.aml";
-                            break;
-                        }
-                        case "text_stacking_mod": {
-                            replacement = workingDir + "/models/" +
-                                    fixedExpName + "/stacking.mod";
-                            break;
-                        }
-                        case "text_stacking_per": {
-                            replacement = workingDir + "/per/" +
-                                    fixedExpName + "/stacking.per";
-                            break;
-                        }
-                        case "minimal_gain": {
-                            replacement = String.valueOf(0.001);
-                            break;
-                        }
-                        case "maximal_depth": {
-                            replacement = String.valueOf(20);
-                            break;
-                        }
-                        default: {
-                            replacement = "unknown";
-                        }
-                    }
-                    pw.println(line.replaceAll(forReplacement, replacement));
+                    line = addMainSettings(expName, line, minGain, maxDepth);
+                    pw.println(line);
                 } else if (line.contains("BaseModelBlock")) {
 
                     repeatable = repeatable + line + System.getProperty("line.separator");
                     threeTimesCounter++;
 
                     if (threeTimesCounter == 3) {
-                        String result = "";
-                        String sub = repeatable.replaceAll(" No", "");
-
-                        for (int i = 1; i <= categoriesAmount; i++) {
-                            String replacement = workingDir + "/models/" +
-                                    fixedExpName + "/" + "base_" + i + ".mod";
-                            if (i == 1) {
-                                result += sub.replaceAll("Base_Model", replacement);
-                            } else {
-                                result += repeatable.replaceAll("Base_Model", replacement)
-                                        .replaceAll("No", "(" + String.valueOf(i) + ")");
-                            }
-                        }
-                        result = result.substring(0, result.length() - 2);
-
+                        String result = addPathsToBaseModels(expName, categoriesNum, repeatable);
                         pw.println(result.replaceAll("BaseModelBlock", ""));
                     }
                 } else if (line.contains("PortConnection")) {
-                    String result = "";
-
-                    for (int i = 1; i <= categoriesAmount; i++) {
-
-                        if (i == 1) {
-                            result += line.replaceAll("Num", String.valueOf(i)).replaceAll(" No", "");
-                            result += System.getProperty("line.separator");
-                        } else {
-                            result += line.replaceAll("Num", String.valueOf(i))
-                                    .replaceAll("No", "(" + String.valueOf(i) + ")");
-                            result += System.getProperty("line.separator");
-                        }
-                    }
-                    result = result.substring(0, result.length() - 2);
+                    String result = connectBaseModels(categoriesNum, line);
                     pw.println(result.replaceAll("PortConnection", ""));
                 } else if (line.contains("SyncModel")) {
-                    String result = "";
-
-                    for (int i = 1; i <= categoriesAmount; i++) {
-                        result += line.replaceAll("Num", String.valueOf(i));
-                        result += System.getProperty("line.separator");
-                    }
-                    result = result.substring(0, result.length() - 2);
+                    String result = processSyncModel(categoriesNum, line);
                     pw.println(result.replaceAll("SyncModel", ""));
                 } else {
                     pw.println(line);
                 }
             }
-            fileReader.close();
-            pw.close();
-            System.out.println("Stacking scheme for " + categoriesAmount + " categories generated!");
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+
+    private String processSyncModel(int categoriesNum, String line) {
+        String result = "";
+
+        for (int i = 1; i <= categoriesNum; i++) {
+            result += line.replaceAll("Num", String.valueOf(i));
+            result += System.getProperty("line.separator");
+        }
+        result = result.substring(0, result.length() - 2);
+        return result;
+    }
+
+    private String addMainSettings(String expName, String line, double minGain, int maxDepth) {
+        String learnAml = workingDir + "/amls/" +
+                expName + "/" + expName + "_learn.aml";
+        line = line.replaceAll("!learnAML!", learnAml);
+        String textStackingMod = workingDir + "/models/" + expName + "/stacking.mod";
+        line = line.replaceAll("!text_stacking_mod!", textStackingMod);
+        String per = workingDir + "/per/" + expName + "/stacking.per";
+        line = line.replaceAll("!text_stacking_per!", per);
+        String gain = String.valueOf(minGain);
+        line = line.replaceAll("!minimal_gain!", gain);
+        String depth = String.valueOf(maxDepth);
+        line = line.replaceAll("!maximal_depth!", depth);
+        return line;
+    }
+
+    private String connectBaseModels(int categoriesNum, String line) {
+        String result = "";
+
+        for (int i = 1; i <= categoriesNum; i++) {
+
+            if (i == 1) {
+                result += line.replaceAll("Num", String.valueOf(i)).replaceAll(" No", "");
+                result += System.getProperty("line.separator");
+            } else {
+                result += line.replaceAll("Num", String.valueOf(i))
+                        .replaceAll("No", "(" + String.valueOf(i) + ")");
+                result += System.getProperty("line.separator");
+            }
+        }
+        result = result.substring(0, result.length() - 2);
+        return result;
+    }
+
+    private String addPathsToBaseModels(String expName, int categoriesAmount, String repeatable) {
+        String result = "";
+        String sub = repeatable.replaceAll(" No", "");
+
+        for (int i = 1; i <= categoriesAmount; i++) {
+            String replacement = workingDir + "/models/" +
+                    expName + "/" + "base_" + i + ".mod";
+            if (i == 1) {
+                result += sub.replaceAll("Base_Model", replacement);
+            } else {
+                result += repeatable.replaceAll("Base_Model", replacement)
+                        .replaceAll("No", "(" + String.valueOf(i) + ")");
+            }
+        }
+        result = result.substring(0, result.length() - 2);
+        return result;
     }
 
     void generateApplyModelScheme(Experiment experiment) {

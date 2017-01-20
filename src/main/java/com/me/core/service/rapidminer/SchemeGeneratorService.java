@@ -60,11 +60,10 @@ public class SchemeGeneratorService extends StoppableObservable implements MyExe
                 experiment.getMode().equals(Modes.TEXT_FROM_TAGS)) {
             for (String strCategory : strCategories) {
                 int indexOfCategory = strCategories.indexOf(strCategory) + 1;
-                schemeGenerator.generateBaseLearnersScheme(experiment,
-                        indexOfCategory,  strCategory);
+                String expName = experiment.getExpName().replaceAll("[^A-Z0-9a-z_]", "");
+                schemeGenerator.generateBaseLearnersScheme(expName, indexOfCategory,  strCategory);
             }
-
-//            schemeGenerator.generateStackingScheme(experiment, strCategories.size());
+            schemeGenerator.generateStackingScheme(experiment.getExpName(), strCategories.size());
 //            schemeGenerator.generateApplyModelScheme(experiment);
         }
     }
