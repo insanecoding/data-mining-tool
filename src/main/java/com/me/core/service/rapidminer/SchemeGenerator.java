@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Log
 @Component
@@ -64,7 +65,6 @@ class SchemeGenerator {
                 "0" + String.valueOf(categoryNum) : String.valueOf(categoryNum);
     }
 
-    // manual depth and gain settings
     void generateStackingScheme(String expName, int categoriesNum) throws IOException {
 
         double minGain = 0.001;
@@ -214,5 +214,88 @@ class SchemeGenerator {
 
         Files.write(Paths.get(generatedFileName), content.getBytes());
 
+    }
+
+    void generateStackingForAll(String expName, List<String> dependentExperiments) throws IOException {
+
+        int dependentExperimentsNum = dependentExperiments.size();
+
+        String template = templatesPath + "/6)all_stacking.rmp";
+        File file = new File(template);
+
+        File generated = new File(workingDir + "/schemes/" + expName +
+                "/1)all_stacking.rmp");
+        tryCreateFile(generated);
+
+        String line;
+        String repeatable = "";
+        int threeTimesCounter = 0;
+        try (
+                PrintWriter pw = new PrintWriter(generated);
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(file))
+        ) {
+
+            while ((line = bufferedReader.readLine()) != null) {
+
+                if (line.contains("!")) {
+                    String learnAml = workingDir + "/amls/" +
+                            expName + "/" + expName + "_learn.aml";
+                    line = line.replaceAll("!learnAML!", learnAml);
+                    String model = workingDir + "/models/" + expName + "/stacking.mod";
+                    line = line.replaceAll("!model!", model);
+                    String per = workingDir + "/per/" + expName + "/stacking.per";
+                    line = line.replaceAll("!performance!", per);
+                    pw.println(line);
+                } else if (line.contains("BaseModelBlock")) {
+
+                    repeatable = repeatable + line + System.getProperty("line.separator");
+                    threeTimesCounter++;
+
+                    if (threeTimesCounter == 3) {
+                        String result = "";
+                        String sub = repeatable.replaceAll(" No", "");
+
+                        for (int i = 1; i <= dependentExperimentsNum; i++) {
+                            int index = i;
+                            String replacement = workingDir + "/models/" + dependentExperiments.get(--index)
+                                    + "/stacking.mod";
+                            if (i == 1) {
+                                result += sub.replaceAll("Base_Model", replacement);
+                            } else {
+                                result += repeatable.replaceAll("Base_Model", replacement)
+                                        .replaceAll("No", "(" + String.valueOf(i) + ")");
+                            }
+                        }
+                        result = result.substring(0, result.length() - 2);
+                        pw.println(result.replaceAll("BaseModelBlock", ""));
+                    }
+                } else if (line.contains("PortConnection")) {
+                    String result = connectBaseModels(dependentExperimentsNum, line);
+                    pw.println(result.replaceAll("PortConnection", ""));
+                } else if (line.contains("SyncModel")) {
+                    String result = processSyncModel(dependentExperimentsNum, line);
+                    pw.println(result.replaceAll("SyncModel", ""));
+                } else {
+                    pw.println(line);
+                }
+            }
+        }
+    }
+
+    void generateApplyModelForAll(String expName) throws IOException {
+        String applyModelTemplate = templatesPath + "/7)all_applyModel.rmp";
+        String generatedFileName = workingDir + "/schemes/" + expName + "/2)applyModel.rmp";
+        File generated = new File(generatedFileName);
+        tryCreateFile(generated);
+
+        String content = new String(Files.readAllBytes(Paths.get(applyModelTemplate)));
+        String readModel = workingDir + "/models/" + expName + "/stacking.mod";
+        content = content.replaceAll("!learnModel!", readModel);
+        String testAML = workingDir + "/amls/" + expName + "/" + expName + "_test.aml";
+        content = content.replaceAll("!testAML!", testAML);
+        String performance = workingDir + "/per/" + expName + "/apply.per";
+        content = content.replaceAll("!performance!", performance);
+
+        Files.write(Paths.get(generatedFileName), content.getBytes());
     }
 }

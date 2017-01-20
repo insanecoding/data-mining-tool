@@ -6,6 +6,7 @@ import com.me.common.StoppableObservable;
 import com.me.core.domain.dto.Modes;
 import com.me.core.domain.entities.Category;
 import com.me.core.domain.entities.ChosenCategory;
+import com.me.core.domain.entities.DependentExperiment;
 import com.me.core.domain.entities.Experiment;
 import com.me.core.service.dao.MyDao;
 import lombok.Getter;
@@ -70,6 +71,13 @@ public class SchemeGeneratorService extends StoppableObservable implements MyExe
             schemeGenerator.generateApplyModelScheme(experiment.getExpName());
         } else if (experiment.getMode().equals(Modes.TAG_STAT)) {
             schemeGenerator.generateTagStatScheme(experiment.getExpName());
+        } else if (experiment.getMode().equals(Modes.JOIN)) {
+            List<DependentExperiment> dependentExperiments = dao.findDependencies(experiment);
+            List<String> dependencies = dependentExperiments.stream()
+                    .map(elem -> elem.getDependent().getExpName())
+                    .collect(Collectors.toList());
+            schemeGenerator.generateStackingForAll(experiment.getExpName(), dependencies);
+            schemeGenerator.generateApplyModelForAll(experiment.getExpName());
         }
     }
 
