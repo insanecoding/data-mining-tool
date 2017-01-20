@@ -54,7 +54,7 @@ class FormFeatures extends Component {
                         <h2>
                             Categories
                         </h2>
-                        <RadioButtonGroup name="shipSpeed" defaultSelected="all" onChange={this.onCheck}>
+                        <RadioButtonGroup name="categories" defaultSelected="all" onChange={this.onCheck}>
                             <RadioButton
                                 value="all"
                                 label="All with >1000 websites"

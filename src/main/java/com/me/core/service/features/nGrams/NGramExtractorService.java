@@ -28,8 +28,9 @@ public class NGramExtractorService extends StoppableObservable implements MyExec
     @Getter @Setter
     private List<String> categories;
     @Getter @Setter
+    private boolean useAllRelevantCategories;
+
     private MyDao dao;
-    @Getter @Setter
     private NGramCreator nGramCreator;
 
     @Autowired
@@ -42,6 +43,10 @@ public class NGramExtractorService extends StoppableObservable implements MyExec
 
     @Override
     public void execute() throws Exception {
+
+        if (useAllRelevantCategories)
+            categories = dao.findRelevantCategoriesByHTML();
+
         List<Category> categoryObjects = dao.findCategoriesByNames(categories);
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
 

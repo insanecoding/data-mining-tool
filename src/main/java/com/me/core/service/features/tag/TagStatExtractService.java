@@ -25,8 +25,9 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
     @Getter @Setter
     private List<String> tagsToSkip;
     @Getter @Setter
+    private boolean useAllRelevantCategories;
+
     private TagUtility tagUtility;
-    @Getter @Setter
     private MyDao dao;
 
     @Autowired
@@ -39,6 +40,8 @@ public class TagStatExtractService extends StoppableObservable implements MyExec
 
     @Override
     public void execute() throws Exception {
+        if (useAllRelevantCategories)
+            categories = dao.findRelevantCategoriesByHTML();
         List<Category> categoryObjects = dao.findCategoriesByNames(this.categories);
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
         processTagCounts(categoryObjects);

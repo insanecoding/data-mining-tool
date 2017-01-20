@@ -45,26 +45,28 @@ public class ExtractorsInitializer implements Initializer {
         Map<String, Object> settings = (Map<String, Object>) dto.get("extract");
         if ((boolean) settings.get("isOn")) {
             List<String> stringCategories = (List<String>) settings.get("categories");
-            initTextMain(settings, stringCategories, executables);
-            initTextFromTags(settings, stringCategories, executables);
-            initNGrams(settings, stringCategories, executables);
-            initTagStatExtractor(settings, stringCategories, executables);
+            boolean useAllCategories = (boolean) settings.get("useAllCategories");
+            initTextMain(settings, useAllCategories, stringCategories, executables);
+            initTextFromTags(settings, useAllCategories, stringCategories, executables);
+            initNGrams(settings, useAllCategories, stringCategories, executables);
+            initTagStatExtractor(settings, useAllCategories, stringCategories, executables);
         }
         next.initialize(dto, executables);
     }
 
-    private void initTextMain(Map<String, Object> settings, List<String> stringCategories,
+    private void initTextMain(Map<String, Object> settings, boolean useAllCategories, List<String> stringCategories,
                               List<MyExecutable> executables) {
         boolean isTextMain = (boolean) settings.get("isTextMain");
         if (isTextMain) {
             textMainExtractor.setCategories(new ArrayList<>(stringCategories));
+            textMainExtractor.setUseAllRelevantCategories(useAllCategories);
             executables.add(textMainExtractor);
         }
     }
 
     @SuppressWarnings(value = "unchecked")
     private void initTextFromTags(Map<String, Object> settings,
-                                  List<String> stringCategories,
+                                  boolean useAllCategories, List<String> stringCategories,
                                   List<MyExecutable> executables) {
 
         boolean isTextFromTags = (boolean) settings.get("isTextFromTags");
@@ -72,6 +74,7 @@ public class ExtractorsInitializer implements Initializer {
             List<String> stringTags = (List<String>) settings.get("tagsWithText");
             textFromTagExtractorService.setCategories(new ArrayList<>(stringCategories));
             textFromTagExtractorService.setTags(new ArrayList<>(stringTags));
+            textFromTagExtractorService.setUseAllRelevantCategories(useAllCategories);
             executables.add(textFromTagExtractorService);
         }
     }
@@ -79,25 +82,27 @@ public class ExtractorsInitializer implements Initializer {
 
     @SuppressWarnings("unchecked")
     private void initNGrams(Map<String, Object> settings,
-                            List<String> stringCategories,
+                            boolean useAllCategories, List<String> stringCategories,
                             List<MyExecutable> executables) {
         boolean isNGrams = (boolean) settings.get("isNgrams");
         if (isNGrams) {
             int maxNGramSize = (int) settings.get("maxNGramSize");
             nGramExtractorService.setMaxNGramSize(maxNGramSize);
             nGramExtractorService.setCategories(new ArrayList<>(stringCategories));
+            nGramExtractorService.setUseAllRelevantCategories(useAllCategories);
             executables.add(nGramExtractorService);
         }
     }
 
     @SuppressWarnings(value = "unchecked")
     private void initTagStatExtractor(Map<String, Object> settings,
-                                      List<String> stringCategories, List<MyExecutable> executables) {
+                                      boolean useAllCategories, List<String> stringCategories, List<MyExecutable> executables) {
         boolean isTagStat = (boolean) settings.get("isTagStat");
         if (isTagStat) {
             List<String> tagsToSkipStr = (List<String>) settings.get("tagsToSkip");
             tagStatExtractService.setCategories(new ArrayList<>(stringCategories));
             tagStatExtractService.setTagsToSkip(new ArrayList<>(tagsToSkipStr));
+            tagStatExtractService.setUseAllRelevantCategories(useAllCategories);
             executables.add(tagStatExtractService);
         }
     }

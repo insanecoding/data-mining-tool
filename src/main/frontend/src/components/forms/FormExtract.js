@@ -9,6 +9,7 @@ import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import {onValueChange} from "./../../util/misc";
 import CheckBoxReplacement from "./../CheckBoxReplacement";
+import {RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 
 const style = {
     listElementWidth: {
@@ -30,6 +31,10 @@ class FormExtract extends Component {
         let path = ['extract'];
         path.push(e.target.name);
         onCheck(path);
+    };
+
+    onRadio = () => {
+        this.props.formActions.onCheck(['extract', 'useAllCategories'])
     };
 
     render() {
@@ -70,7 +75,7 @@ class FormExtract extends Component {
             listElementStyle: style.listElementWidth
         };
 
-        const {isTextMain, isTextFromTags, isNgrams, isTagStat, maxNGramSize} =
+        const {isTextMain, isTextFromTags, isNgrams, isTagStat, maxNGramSize, useAllCategories} =
             formReducer.getIn(['extract']).toObject();
 
         return (
@@ -102,15 +107,33 @@ class FormExtract extends Component {
                             <CheckBoxReplacement label={"tag statistics"} value={isTagStat}
                                                  name={"isTagStat"} onCheck={this.onCheck}/>
                         </div>
+                        <h2>
+                            Categories
+                        </h2>
+                        <RadioButtonGroup name="categories" defaultSelected="all" onChange={this.onRadio}>
+                            <RadioButton
+                                value="all"
+                                label="All with >1000 texts"
+                                style={style.hasMargin}
+                            />
+                            <RadioButton
+                                value="custom"
+                                label="Custom"
+                                style={style.hasMargin}
+                            />
+                        </RadioButtonGroup>
+                        <ListOfElements {...tagsToSkip}/>
                     </Col>
                     <Col xs={12} md={6}>
-                        <ListOfElements {...categories}/>
+
+
+                        { useAllCategories ? null : <ListOfElements {...categories}/> }
                     </Col>
                     <Col xs={12} md={6}>
                         <ListOfElements {...tagsWithText}/>
                     </Col>
                     <Col xs={12} md={6}>
-                        <ListOfElements {...tagsToSkip}/>
+
                     </Col>
 
 

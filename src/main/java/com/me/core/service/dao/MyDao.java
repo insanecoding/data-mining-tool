@@ -80,4 +80,6 @@ public interface MyDao {
     List<DatFile> findDatFilesForChosenWebsite(List<Experiment> experiments, ChosenWebsite website);
 
     List<String> findRelevantCategories();
+
+    List<String> findRelevantCategoriesByHTML();
 }

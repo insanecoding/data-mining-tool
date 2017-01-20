@@ -547,4 +547,14 @@ public class MyDaoImpl extends StoppableObservable implements MyDao {
                         " having count(*) > 1000")
                 .list();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> findRelevantCategoriesByHTML() {
+        return sessionFactory.getCurrentSession()
+                .createQuery("select hh.website.category.categoryName " +
+                        " from HTML hh group by hh.website.category.categoryName" +
+                        " having count(*) > 1000")
+                .list();
+    }
 }

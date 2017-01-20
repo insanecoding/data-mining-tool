@@ -28,8 +28,9 @@ public class TextFromTagExtractorService extends StoppableObservable implements 
     @Getter @Setter
     private List<String> tags;
     @Getter @Setter
+    private boolean useAllRelevantCategories;
+
     private TextExtractor extractor;
-    @Getter @Setter
     private MyDao dao;
 
     @Autowired
@@ -42,6 +43,10 @@ public class TextFromTagExtractorService extends StoppableObservable implements 
 
     @Override
     public void execute() throws Exception {
+
+        if (useAllRelevantCategories)
+            categories = dao.findRelevantCategoriesByHTML();
+
         List<Category> categoryObjects = dao.findCategoriesByNames(categories);
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
         List<Tag> tagObjects = createTagObjects();

@@ -25,9 +25,10 @@ public class TextMainExtractorService extends StoppableObservable implements MyE
     @Getter @Setter
     private List<String> categories;
     @Getter @Setter
-    private TextExtractor extractor;
-    @Getter @Setter
-    private MyDao dao;
+    private boolean useAllRelevantCategories;
+
+    private final TextExtractor extractor;
+    private final MyDao dao;
 
     @Autowired
     public TextMainExtractorService(TextExtractor extractor, MyDao dao,
@@ -39,6 +40,10 @@ public class TextMainExtractorService extends StoppableObservable implements MyE
 
     @Override
     public void execute() throws Exception {
+
+        if (useAllRelevantCategories)
+            categories = dao.findRelevantCategoriesByHTML();
+
         List<Category> categoryObjects = dao.findCategoriesByNames(categories);
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
 
