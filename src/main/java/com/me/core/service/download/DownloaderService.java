@@ -22,6 +22,9 @@ public class DownloaderService extends StoppableObservable implements MyExecutab
     private List<String> categories;
 
     @Getter @Setter
+    private boolean useAllCategoriesWithMore1000;
+
+    @Getter @Setter
     private DownloaderParameters parameters;
 
     @Getter
@@ -40,7 +43,12 @@ public class DownloaderService extends StoppableObservable implements MyExecutab
 
     @Override
     public void execute() throws Exception {
+
+        if (useAllCategoriesWithMore1000) {
+            categories = dao.findRelevantCategories();
+        }
         List<Category> categoryObjects = dao.findCategoriesByNames(categories);
+
         categoryObjects.sort(Comparator.comparing(Category::getCategoryName));
         super.checkCancel();
 

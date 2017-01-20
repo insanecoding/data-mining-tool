@@ -37,10 +37,13 @@ public class DownloadInitializer implements Initializer {
             int readTimeout = (int) settings.get("readTimeout");
             int connectTimeout = (int) settings.get("connectTimeout");
 
+            boolean useAllMoreThan1000 = (boolean) settings.get("useAllCategories");
+
             DownloaderParameters downloaderParameters =
                     new DownloaderParameters(downloadsPerCategory, threadsNumber, readTimeout, connectTimeout);
             downloaderService.setCategories(new ArrayList<>(categories));
             downloaderService.setParameters(downloaderParameters);
+            downloaderService.setUseAllCategoriesWithMore1000(useAllMoreThan1000);
             executables.add(downloaderService);
         }
         next.initialize(dto, executables);

@@ -78,4 +78,6 @@ public interface MyDao {
     List<DependentExperiment> findDependencies(Experiment experiment);
 
     List<DatFile> findDatFilesForChosenWebsite(List<Experiment> experiments, ChosenWebsite website);
+
+    List<String> findRelevantCategories();
 }

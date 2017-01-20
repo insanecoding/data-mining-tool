@@ -87,7 +87,7 @@ class FormImport extends Component {
     };
 
     render() {
-        const {displayName, userName, password, dbName, port, blacklists} =
+        const {displayName, blacklists} =
             this.props.formReducer.getIn(['import']).toObject();
 
         const fieldArrayParam = {
@@ -138,43 +138,6 @@ class FormImport extends Component {
                         </Col>
                     </Row>
                 </AlertDialog>
-                <Row>
-                    <Col xs={12} md={6}>
-                        <AdvancedTextField placeHolder="user name"
-                                           pattern={"not_empty"}
-                                           label={"user name"}
-                                           fieldName={"userName"}
-                                           value={userName}
-                                           onChangeEvent={this.changeEvent}
-                        />
-                        <AdvancedTextField placeHolder="password"
-                                           type={"password"}
-                                           pattern={"not_empty"}
-                                           label={"password"}
-                                           fieldName={"password"}
-                                           value={password}
-                                           onChangeEvent={this.changeEvent}
-                        />
-                    </Col>
-                    <Col xs={12} md={6}>
-                        <AdvancedTextField placeHolder="database name"
-                                           pattern={"not_empty"}
-                                           label={"db name"}
-                                           fieldName={"dbName"}
-                                           value={dbName}
-                                           onChangeEvent={this.changeEvent}
-                        />
-                        <AdvancedTextField placeHolder="port number"
-                                           pattern={"number"}
-                                           type={"number"}
-                                           label={"port number"}
-                                           fieldName={"port"}
-                                           value={port}
-                                           onChangeEvent={this.changeEvent}
-                        />
-                    </Col>
-                </Row>
-
                 <FieldArray {...fieldArrayParam} />
             </GenericForm>
         );

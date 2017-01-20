@@ -8,6 +8,7 @@ import {Col, Row} from "react-grid-system";
 import AdvancedTextField from "./../AdvancedTextField";
 import ListOfElements from "./../list-of-elements/ListOfElements";
 import {onValueChange} from "./../../util/misc";
+import {RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 
 const style = {
     listElementWidth: {
@@ -16,6 +17,10 @@ const style = {
 };
 
 class FormFeatures extends Component {
+
+    onCheck = () => {
+        this.props.formActions.onCheck(['download', 'useAllCategories'])
+    };
 
     changeEvent = (e) => {
         onValueChange (e, "download", this.props.formActions.onInputChange);
@@ -40,11 +45,26 @@ class FormFeatures extends Component {
             listElementStyle: style.listElementWidth
         };
 
+        const hideCustomCategories = formReducer.getIn(['download', 'useAllCategories']);
+
         return(
             <GenericForm title={displayName}>
                 <Row>
                     <Col xs={12} md={6}>
-                        <ListOfElements {...categories}/>
+                        <h2>
+                            Categories
+                        </h2>
+                        <RadioButtonGroup name="shipSpeed" defaultSelected="all" onChange={this.onCheck}>
+                            <RadioButton
+                                value="all"
+                                label="All with >1000 websites"
+                            />
+                            <RadioButton
+                                value="custom"
+                                label="Custom"
+                            />
+                        </RadioButtonGroup>
+                        { hideCustomCategories ? null : <ListOfElements {...categories}/> }
                     </Col>
                     <Col xs={12} md={6}>
                         <AdvancedTextField placeHolder="downloads per category"
