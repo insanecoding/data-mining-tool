@@ -3,6 +3,7 @@ package com.me.common.initializer;
 import com.me.common.MyExecutable;
 import com.me.core.service.rapidminer.RapidMinerExecService;
 import com.me.core.service.rapidminer.SchemeGeneratorService;
+import com.me.core.service.reporting.ExcelReporterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -16,12 +17,16 @@ public class SchemeGeneratorInitializer implements Initializer {
     private final SchemeGeneratorService schemeGenerator;
     @Lazy
     private final RapidMinerExecService execService;
+    @Lazy
+    private final ExcelReporterService reporterService;
 
     @Autowired
     public SchemeGeneratorInitializer(SchemeGeneratorService schemeGenerator,
-                                      RapidMinerExecService execService) {
+                                      RapidMinerExecService execService,
+                                      ExcelReporterService reporterService) {
         this.schemeGenerator = schemeGenerator;
         this.execService = execService;
+        this.reporterService = reporterService;
     }
 
     @Override
@@ -46,8 +51,12 @@ public class SchemeGeneratorInitializer implements Initializer {
             execService.setExpNames(experiments);
             execService.setPathToRM(pathToRM);
 
+            reporterService.setExpNames(experiments);
+            reporterService.setCwd(cwd);
+
             executables.add(schemeGenerator);
             executables.add(execService);
+            executables.add(reporterService);
         }
     }
 }

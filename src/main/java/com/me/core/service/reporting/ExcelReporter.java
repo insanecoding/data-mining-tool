@@ -11,7 +11,6 @@ import java.util.List;
 // row.createCell(currentPos); <-- if don't use setCellValue(), it'll be blank
 // Setting Cell Properties: CellUtil.setCellStyleProperties(cell, properties);
 
-
 public class ExcelReporter {
     private XSSFWorkbook wb;
     private CreationHelper createHelper;
@@ -31,11 +30,13 @@ public class ExcelReporter {
         startIndex = 0;
     }
 
-    public void setManualStartIndex (int index) {
+
+
+    void setManualStartIndex(int index) {
         this.startIndex = index;
     }
 
-    public void resetStartIndex () {
+    void resetStartIndex() {
         this.startIndex = 0;
     }
 
@@ -67,7 +68,7 @@ public class ExcelReporter {
         return row;
     }
 
-    public <T> void addTable(boolean fill, List<List<T>> table) {
+    private <T> void addTable(boolean fill, List<List<T>> table) {
         table.forEach(tableRow -> addLine(fill, tableRow));
     }
 
@@ -75,11 +76,11 @@ public class ExcelReporter {
         addTable(false, table);
     }
 
-    public <T> void addLine (List <T> tableRow) {
+    <T> void addLine(List<T> tableRow) {
         addLine(false, tableRow);
     }
 
-    public <T> void addLine (boolean fill, List <T> tableRow) {
+    <T> void addLine(boolean fill, List<T> tableRow) {
         final int[] currentPos = {startIndex};
         final Row[] row = {currentSheet.createRow((short) rowCounter++)};
 
@@ -91,7 +92,7 @@ public class ExcelReporter {
         }
     }
 
-    public void writeData() {
+    void writeData() {
         try (FileOutputStream fileOut = new FileOutputStream(outputFile)) {
             wb.write(fileOut);
         } catch (IOException e) {
