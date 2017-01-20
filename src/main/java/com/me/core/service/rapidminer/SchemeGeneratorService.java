@@ -41,6 +41,7 @@ public class SchemeGeneratorService extends StoppableObservable implements MyExe
     @Override
     public void execute() throws Exception {
         schemeGenerator.setTemplatesPath(templatesPath);
+        workingDir = workingDir.replaceAll("\\\\", "/");
         schemeGenerator.setWorkingDir(workingDir);
 
         List<Experiment> experiments = dao.findExperimentsByNames(expNames);
@@ -63,8 +64,8 @@ public class SchemeGeneratorService extends StoppableObservable implements MyExe
                         indexOfCategory,  strCategory);
             }
 
-            schemeGenerator.generateStackingScheme(experiment, strCategories.size());
-            schemeGenerator.generateApplyModelScheme(experiment);
+//            schemeGenerator.generateStackingScheme(experiment, strCategories.size());
+//            schemeGenerator.generateApplyModelScheme(experiment);
         }
     }
 

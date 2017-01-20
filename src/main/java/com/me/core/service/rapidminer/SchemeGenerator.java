@@ -22,19 +22,19 @@ class SchemeGenerator {
 
     void generateBaseLearnersScheme(Experiment experiment,
                                     int categoryNum, String categoryName) throws IOException {
-        String baseLearnerTemplate = templatesPath + "/1)base_learner_model.rmp";
+        String baseLearnerTemplate = templatesPath + "\\1)base_learner_model.rmp";
 
         String fixedExpName = experiment.getExpName()
-                .replaceAll("[^A-Z0-9a-z]", "");
+                .replaceAll("[^A-Z0-9a-z_]", "");
 
-        String generatedFileName = workingDir + "/schemes/" + fixedExpName +
-                "/1)textBase_" + categoryNum + ".rmp";
+        String generatedFileName = workingDir + "\\schemes\\" + fixedExpName +
+                "\\1)textBase_" + categoryNum + ".rmp";
         File generated = new File(generatedFileName);
 
         tryCreateFile(generated);
 
         String content = new String(Files.readAllBytes(Paths.get(baseLearnerTemplate)));
-        String learnAML = workingDir + "aml//" + fixedExpName + "//" + fixedExpName + "_learn.aml"
+        String learnAML = workingDir + "//amls//" + fixedExpName + "//" + fixedExpName + "_learn.aml"
                 .replace("\\", "\\/");
         content = content.replaceAll("!learnAML!", learnAML);
         String categoryNumber = createCategoryNumber(categoryNum);
@@ -78,11 +78,9 @@ class SchemeGenerator {
 
             File generated = new File(workingDir + "/schemes/" + fixedExpName +
                     "/2)stacking.rmp");
-            Utils.createFilePath(generated.getAbsolutePath());
+            tryCreateFile(generated);
 
-            if (!generated.createNewFile()) {
-                System.out.println("Could not create file");
-            }
+
             PrintWriter pw = new PrintWriter(generated);
 
             FileReader fileReader = new FileReader(file);

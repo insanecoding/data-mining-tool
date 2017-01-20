@@ -145,9 +145,9 @@ public class AMLDATWriter extends StoppableObservable implements MyExecutable {
 
     private AmlDatPath createPaths(Experiment experiment, boolean isLearn) {
         String fileNamePart = outputFolder + "//" +
-                experiment.getExpName().replaceAll("[^\\p{Alnum}]+", "");
+                experiment.getExpName().replaceAll("[^\\p{Alnum}_]+", "");
         fileNamePart += "//" + experiment.getExpName()
-                .replaceAll("[^\\p{Alnum}]+", "");
+                .replaceAll("[^\\p{Alnum}_]+", "");
 
         String aml_path;
         String dat_path;

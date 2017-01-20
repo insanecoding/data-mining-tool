@@ -77,7 +77,7 @@ export const initialState = Immutable.fromJS({
     },
     prepare: {
         route: "/prepare",
-        displayName: "Create and prepare experiments",
+        displayName: "Create and run experiments",
         isOn: false,
         stopWordsPath: "\\stopwords.dat",
         experiments: [
@@ -177,7 +177,9 @@ export const initialState = Immutable.fromJS({
         route: "/schemes",
         displayName: "Generate schemes",
         isOn: false,
-        templatesFolder: "\\templates\\"
+        templatesFolder: "\\templates\\",
+        experiments: ["exp_6", "exp_7"],
+        rapidMinerPath: "C:\\My Programs\\RapidMiner\\RapidMiner5\\scripts\\rapidminer.bat"
     }
 });
 
