@@ -1,11 +1,24 @@
 #Data Mining app
 
+###Information:
+
+The repository contains software infrastructure for data mining experiments with website classification
+at COMSEC laboratory (SPIIRAS Institute).
+
+This tool helps to: 
+* import categorized websites (URLBlacklist and Shalla Security Blacklist are now used),
+* download their HTML contents, 
+* extract features (all text from page, text from specific tags, ngrams and HTML tags' statistics),
+* create and prepare experiments for RapidMiner software,
+* create schemes of RapidMiner workflow,
+* execute the schemes,
+* generate .xlsx report with classification results 
 
 #How to run: 
 ###First run:
 
 `gradlew runMe` - first launch. The app will fetch all the dependencies: frontend and backend (may take a while)
-If you develop with Intellij Idea, install Lombok plugin for convenience
+If you develop with Intellij Idea, install Lombok plugin for your convenience
 
 ###Develop:
 
