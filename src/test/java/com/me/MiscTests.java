@@ -61,7 +61,7 @@ public class MiscTests {
 
     }
 
-    @Test
+    @Test @Ignore
     public void testMe() throws Exception {
         Experiment owner =
                 new Experiment("union_1", "united 1", Modes.JOIN);

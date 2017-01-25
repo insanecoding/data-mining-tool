@@ -76,7 +76,7 @@ public class DbConnectionTests {
         });
     }
 
-    @Test
+    @Test @Ignore
     public void testFindHTMLsByCategory() throws Exception {
         Category category =
                 dao.findCategoriesByNames(Collections.singletonList("news")).get(0);
@@ -84,7 +84,7 @@ public class DbConnectionTests {
         assertThat(htmls.size()).isNotEqualTo(0);
     }
 
-    @Test
+    @Test @Ignore
     public void testAlreadyProcessedTextMain() throws Exception {
         Category category =
                 dao.findCategoriesByNames(Collections.singletonList("news")).get(0);

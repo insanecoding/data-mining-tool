@@ -24,3 +24,9 @@ We've got two profiles: `dev` and `prod`
 * `prod` uses PostgreSQL 9.4 database
 
 `gradlew clean updateFrontend build` to make project (tests will be run as well)
+
+### TODO:
+
+* improve documentation
+* add more tests
+* refactor some legacy stuff (report and scheme generation)

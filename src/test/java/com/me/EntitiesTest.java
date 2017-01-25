@@ -69,7 +69,7 @@ public class EntitiesTest {
         assertEquals(ob1.hashCode(), ob2.hashCode());
     }
 
-    @Test
+    @Test @Ignore
     public void name() throws Exception {
         Category category1 = new Category("category 1");
         Category category2 = new Category("category 2");
