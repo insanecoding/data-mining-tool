@@ -33,7 +33,7 @@ export const initialState = Immutable.fromJS({
             isAll: true,
             isCustom: false
         },
-        categories: ["medical", "chat", "news", "pets"],
+        categories: ["chat", "news"],
         downloadsPerCategory: 200,
         connectTimeout: 5000,
         readTimeout: 5000,
@@ -43,13 +43,18 @@ export const initialState = Immutable.fromJS({
         route: "/extract",
         displayName: "Extract features",
         isOn: false,
-        useAllCategories: true,
+        categoriesRadio: {
+            isAll: true,
+            isCustom: false
+        },
         isTextMain: true,
         isTextFromTags: true,
-        isNgrams: false,
-        isTagStat: false,
-        categories: ["medical", "chat", "news", "pets"],
-        tagsWithText: ["h1", "h2", "h3", "title"],
+        isNgrams: true,
+        isTagStat: true,
+        defaultSkipTags: true,
+        defaultTextTags: true,
+        categories: ["chat", "news"],
+        tagsWithText: ["h1", "h2", "h3", "title", "a", "b", "img", "meta:description", "meta:keywords"],
         maxNGramSize: 6,
         tagsToSkip: ["html", "head", "title", "body"]
     },

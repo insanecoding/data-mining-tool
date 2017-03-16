@@ -17,6 +17,15 @@ const style = {
     },
     hasMargin: {
         margin: "10px"
+    },
+    inputField: {
+        marginLeft: "13px",
+        marginRight: "13px",
+        width: "65%"
+    },
+    h2withoutMargin: {
+        marginTop: "20px",
+        marginBottom: "0px"
     }
 };
 
@@ -33,8 +42,18 @@ class FormExtract extends Component {
         onCheck(path);
     };
 
-    onRadio = () => {
-        this.props.formActions.onCheck(['extract', 'useAllCategories'])
+
+    onRadioChange = (e) => {
+        const target = e.target.value;
+        console.log(target);
+        this.props.formActions.onRadioChange(target, ['extract', 'categoriesRadio']);
+    };
+
+    whoIsSelected = () => {
+        const me = this.props.formReducer.getIn(['extract', 'categoriesRadio']).toObject();
+        // the only one key has true value - return it
+        const foo = Object.keys(me).filter(k => me[k] === true);
+        return foo.toString();
     };
 
     render() {
@@ -55,7 +74,7 @@ class FormExtract extends Component {
 
         const categories = {
             elements: formReducer.getIn(['extract', 'categories']).toArray(),
-            title: "Categories",
+            title: "Choose categories",
             placeholder: "input and press Enter to submit",
             whereToSave: ['extract', 'categories'],
             onAdd: onListElementAdd,
@@ -75,22 +94,20 @@ class FormExtract extends Component {
             listElementStyle: style.listElementWidth
         };
 
-        const {isTextMain, isTextFromTags, isNgrams, isTagStat, maxNGramSize, useAllCategories} =
+        const {isTextMain, isTextFromTags, isNgrams, isTagStat, maxNGramSize, defaultSkipTags, defaultTextTags} =
             formReducer.getIn(['extract']).toObject();
+
+        const hideCustomCategories =
+            formReducer.getIn(['extract', 'categoriesRadio', 'isAll']);
 
         return (
             <GenericForm title={formReducer.getIn(['extract', 'displayName'])}>
 
                 <Row>
                     <Col xs={12} md={6}>
-                        <AdvancedTextField placeHolder={"max nGram size"}
-                                           pattern={"number"}
-                                           type="number"
-                                           label={"maximum NGram size"}
-                                           fieldName={"maxNGramSize"}
-                                           value={maxNGramSize}
-                                           onChangeEvent={this.changeEvent}
-                        />
+                        <h2>
+                            Available modes
+                        </h2>
                         <div style={style.hasMargin}>
                             <CheckBoxReplacement label={"text main"} name={"isTextMain"}
                                                  value={isTextMain} onCheck={this.onCheck}/>
@@ -100,43 +117,57 @@ class FormExtract extends Component {
                                                  value={isTextFromTags} onCheck={this.onCheck}/>
                         </div>
                         <div style={style.hasMargin}>
-                            <CheckBoxReplacement label={"Ngrams"} name={"isNgrams"}
-                                                 value={isNgrams} onCheck={this.onCheck}/>
-                        </div>
-                        <div style={style.hasMargin}>
                             <CheckBoxReplacement label={"tag statistics"} value={isTagStat}
                                                  name={"isTagStat"} onCheck={this.onCheck}/>
+                        </div>
+                        <div style={style.hasMargin}>
+                            <CheckBoxReplacement label={"Ngrams"} name={"isNgrams"}
+                                                 value={isNgrams} onCheck={this.onCheck}/>
                         </div>
                         <h2>
                             Categories
                         </h2>
-                        <RadioButtonGroup name="categories" defaultSelected="all" onChange={this.onRadio}>
+                        <RadioButtonGroup name="categories" defaultSelected={this.whoIsSelected()}
+                                          onChange={this.onRadioChange}>
                             <RadioButton
-                                value="all"
+                                value="isAll"
                                 label="All with >1000 texts"
                                 style={style.hasMargin}
                             />
                             <RadioButton
-                                value="custom"
+                                value="isCustom"
                                 label="Custom"
                                 style={style.hasMargin}
                             />
                         </RadioButtonGroup>
-                        <ListOfElements {...tagsToSkip}/>
+
+                        { hideCustomCategories ? null : <ListOfElements {...categories}/> }
+                        { defaultSkipTags ? null : <ListOfElements {...tagsToSkip} /> }
                     </Col>
                     <Col xs={12} md={6}>
 
-
-                        { useAllCategories ? null : <ListOfElements {...categories}/> }
+                        <h2 style={style.h2withoutMargin}>
+                            Extra parameters
+                        </h2>
+                        <AdvancedTextField placeHolder={"max nGram size"}
+                                           pattern={"number"}
+                                           type="number"
+                                           label={"maximum NGram size"}
+                                           fieldName={"maxNGramSize"}
+                                           value={maxNGramSize}
+                                           onChangeEvent={this.changeEvent}
+                                           style={style.inputField}
+                        />
+                        <div style={style.hasMargin}>
+                            <CheckBoxReplacement label={"default tags with text"} name={"defaultTextTags"}
+                                                 value={defaultTextTags} onCheck={this.onCheck}/>
+                        </div>
+                        <div style={style.hasMargin}>
+                            <CheckBoxReplacement label={"default tags to skip"} name={"defaultSkipTags"}
+                                                 value={defaultSkipTags} onCheck={this.onCheck}/>
+                        </div>
+                        { defaultTextTags ? null : <ListOfElements {...tagsWithText} /> }
                     </Col>
-                    <Col xs={12} md={6}>
-                        <ListOfElements {...tagsWithText}/>
-                    </Col>
-                    <Col xs={12} md={6}>
-
-                    </Col>
-
-
                 </Row>
 
             </GenericForm>

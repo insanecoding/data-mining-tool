@@ -5,7 +5,7 @@ import InputField from "./InputField";
 
 const defaultStyle = {
     header: {
-        textAlign: "center",
+        // textAlign: "center",
         marginBottom: "0px"
     },
     flex: {

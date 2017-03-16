@@ -13,6 +13,13 @@ import {RadioButton, RadioButtonGroup} from "material-ui/RadioButton";
 const style = {
     listElementWidth: {
         width: "80%"
+    },
+    hasMargin: {
+        margin: "10px"
+    },
+    h2withoutMargin: {
+        marginTop: "20px",
+        marginBottom: "0px"
     }
 };
 
@@ -22,7 +29,6 @@ class FormFeatures extends Component {
         const target = e.target.value;
         console.log(target);
         this.props.formActions.onRadioChange(target, ['download', 'categoriesRadio']);
-        // this.props.formActions.onCheck(['download', 'useAllCategories'])
     };
 
     whoIsSelected = () => {
@@ -46,7 +52,7 @@ class FormFeatures extends Component {
 
         const categories = {
             elements: formReducer.getIn(['download', 'categories']).toArray(),
-            title: "Categories",
+            title: "Choose categories",
             placeholder: "input and press Enter to submit",
             whereToSave: ['download', 'categories'],
             onAdd: onListElementAdd,
@@ -70,15 +76,20 @@ class FormFeatures extends Component {
                             <RadioButton
                                 value="isAll"
                                 label="All with >1000 websites"
+                                style={style.hasMargin}
                             />
                             <RadioButton
                                 value="isCustom"
                                 label="Custom"
+                                style={style.hasMargin}
                             />
                         </RadioButtonGroup>
                         { hideCustomCategories ? null : <ListOfElements {...categories}/> }
                     </Col>
                     <Col xs={12} md={6}>
+                        <h2 style={style.h2withoutMargin}>
+                            Download settings
+                        </h2>
                         <AdvancedTextField placeHolder="downloads per category"
                                            pattern={"number"}
                                            type={"number"}
