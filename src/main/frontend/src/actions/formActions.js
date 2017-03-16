@@ -1,13 +1,14 @@
 import {
+    CHECKBOX_CHECKED,
     COMPONENT_TOGGLED,
-    FIELD_CHANGED,
-    DIALOG_SUBMIT,
     DIALOG_EDIT,
+    DIALOG_SUBMIT,
+    FIELD_CHANGED,
     ON_BLACKLIST_DELETE,
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
     ON_LIST_ELEMENT_EDIT,
-    CHECKBOX_CHECKED
+    ON_RADIO_CHANGED
 } from "../constants/constants";
 import Immutable from "immutable";
 
@@ -96,5 +97,16 @@ export function onCheck(path) {
     return {
         type: CHECKBOX_CHECKED,
         payload: path
+    }
+}
+
+export function onRadioChange(target, whereToSeek) {
+    console.log("in actions", target, whereToSeek);
+    return {
+        type: ON_RADIO_CHANGED,
+        payload: Immutable.Map({
+            target: target,
+            whereToSeek: whereToSeek
+        })
     }
 }

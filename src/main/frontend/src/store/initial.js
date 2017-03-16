@@ -29,7 +29,10 @@ export const initialState = Immutable.fromJS({
         route: "/download",
         displayName: "Download HTML",
         isOn: false,
-        useAllCategories: true,
+        categoriesRadio: {
+            isAll: true,
+            isCustom: false
+        },
         categories: ["medical", "chat", "news", "pets"],
         downloadsPerCategory: 200,
         connectTimeout: 5000,

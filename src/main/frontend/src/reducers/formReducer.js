@@ -1,14 +1,15 @@
 import {initialState} from "./../store/initial";
 import {
+    CHECKBOX_CHECKED,
     COMPONENT_TOGGLED,
-    FIELD_CHANGED,
-    DIALOG_SUBMIT,
-    ON_BLACKLIST_DELETE,
     DIALOG_EDIT,
+    DIALOG_SUBMIT,
+    FIELD_CHANGED,
+    ON_BLACKLIST_DELETE,
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
     ON_LIST_ELEMENT_EDIT,
-    CHECKBOX_CHECKED
+    ON_RADIO_CHANGED
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
 
@@ -101,6 +102,20 @@ export default function processForm(state = initialState, action) {
             const path = action.payload;
             let oldState = state.getIn(path);
             return state.setIn(path, !oldState);
+        }
+
+        case ON_RADIO_CHANGED: {
+            const {target, whereToSeek} = action.payload.toObject();
+            const fullPath =  whereToSeek.concat(target);
+            let radiosGroup = state.getIn(whereToSeek);
+            // at first make 'em all false
+            radiosGroup = radiosGroup.map(x => false);
+
+            return state
+                // add modified object
+                .setIn(whereToSeek, radiosGroup)
+                // set target to true
+                .setIn(fullPath, true);
         }
 
 

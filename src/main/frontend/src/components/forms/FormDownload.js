@@ -18,12 +18,22 @@ const style = {
 
 class FormFeatures extends Component {
 
-    onCheck = () => {
-        this.props.formActions.onCheck(['download', 'useAllCategories'])
+    onRadioChange = (e) => {
+        const target = e.target.value;
+        console.log(target);
+        this.props.formActions.onRadioChange(target, ['download', 'categoriesRadio']);
+        // this.props.formActions.onCheck(['download', 'useAllCategories'])
+    };
+
+    whoIsSelected = () => {
+        const me = this.props.formReducer.getIn(['download', 'categoriesRadio']).toObject();
+        // the only one key has true value - return it
+        const foo = Object.keys(me).filter(k => me[k] === true);
+        return foo.toString();
     };
 
     changeEvent = (e) => {
-        onValueChange (e, "download", this.props.formActions.onInputChange);
+        onValueChange(e, "download", this.props.formActions.onInputChange);
     };
 
     render() {
@@ -45,22 +55,24 @@ class FormFeatures extends Component {
             listElementStyle: style.listElementWidth
         };
 
-        const hideCustomCategories = formReducer.getIn(['download', 'useAllCategories']);
+        const hideCustomCategories =
+            formReducer.getIn(['download', 'categoriesRadio', 'isAll']);
 
-        return(
+        return (
             <GenericForm title={displayName}>
                 <Row>
                     <Col xs={12} md={6}>
                         <h2>
                             Categories
                         </h2>
-                        <RadioButtonGroup name="categories" defaultSelected="all" onChange={this.onCheck}>
+                        <RadioButtonGroup name="categories" defaultSelected={this.whoIsSelected()}
+                                          onChange={this.onRadioChange}>
                             <RadioButton
-                                value="all"
+                                value="isAll"
                                 label="All with >1000 websites"
                             />
                             <RadioButton
-                                value="custom"
+                                value="isCustom"
                                 label="Custom"
                             />
                         </RadioButtonGroup>
