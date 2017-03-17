@@ -72,6 +72,7 @@ export const initialState = Immutable.fromJS({
                 minTextLength: 500,
                 maxTextLength: 5000,
                 websitesPerCategory: 2000,
+                key: 1
             },
             {
                 dataSetName: "set_2",
@@ -81,7 +82,8 @@ export const initialState = Immutable.fromJS({
                 lang: "en",
                 minTextLength: 500,
                 maxTextLength: 5000,
-                websitesPerCategory: 1000
+                websitesPerCategory: 1000,
+                key: 2
             }
         ]
     },
