@@ -191,15 +191,10 @@ export const initialState = Immutable.fromJS({
         isOn: false,
         templatesFolder: "\\templates\\",
         experiments: [
-            "exp_6",
-            "exp_7",
-            "exp_8",
-            "exp_9",
-            "exp_10",
-            "exp_13",
-            "exp_14",
-            "united_1",
-            "united_2"
+            "exp_1",
+            "exp_2",
+            "exp_3",
+            "united_1"
         ],
         rapidMinerPath: "C:\\My Programs\\RapidMiner\\RapidMiner5\\scripts\\rapidminer.bat"
     }

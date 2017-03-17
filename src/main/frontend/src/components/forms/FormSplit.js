@@ -22,6 +22,15 @@ const style = {
     },
     listElementWidth: {
         width: "100%"
+    },
+    wideInputField: {
+        width: "82%"
+    },
+    mediumInputField: {
+        width: "70%"
+    },
+    smallInputField: {
+        width: "68%"
     }
 };
 
@@ -65,7 +74,7 @@ class FormExtract extends Component {
                                                fieldName={"dataSetName"}
                                 // value={dataSetName}
                                 // onChangeEvent={this.changeEvent}
-                                               style={{width: "82%"}}
+                                               style={style.wideInputField}
                             />
                             <AdvancedTextField label={"description"}
                                                placeHolder={"description"}
@@ -75,14 +84,14 @@ class FormExtract extends Component {
                                 // value={dataSetName}
                                 // onChangeEvent={this.changeEvent}
                                 // style={style.inputField}
-                                               style={{width: "82%"}}
+                                               style={style.wideInputField}
                             />
                             <AdvancedTextField label={"sites per category"}
                                                placeHolder={"1000"}
                                                pattern={"not_empty"}
                                                type="not_empty"
                                                fieldName={"webSitesPerCategory"}
-                                               style={{width: "82%"}}
+                                               style={style.wideInputField}
                                 // value={dataSetName}
                                 // onChangeEvent={this.changeEvent}
                                 // style={style.inputField}
@@ -97,7 +106,7 @@ class FormExtract extends Component {
                                                        fieldName={"description"}
                                         // value={dataSetName}
                                         // onChangeEvent={this.changeEvent}
-                                                       style={{width: "70%"}}
+                                                       style={style.mediumInputField}
                                     />
                                     <AdvancedTextField placeHolder={"0.8"}
                                                        pattern={"not_empty"}
@@ -107,7 +116,7 @@ class FormExtract extends Component {
                                         // value={dataSetName}
                                         // onChangeEvent={this.changeEvent}
                                         // style={style.inputField}
-                                                       style={{width: "70%"}}
+                                                       style={style.mediumInputField}
                                     />
                                 </Col>
 
@@ -117,7 +126,7 @@ class FormExtract extends Component {
                                                        type="not_empty"
                                                        label={"min text length"}
                                                        fieldName={"description"}
-                                                       style={{width: "68%"}}
+                                                       style={style.smallInputField}
                                         // value={dataSetName}
                                         // onChangeEvent={this.changeEvent}
                                         //               style={style.inputField}
@@ -127,7 +136,7 @@ class FormExtract extends Component {
                                                        type="not_empty"
                                                        label={"max text length"}
                                                        fieldName={"description"}
-                                                       style={{width: "68%"}}
+                                                       style={style.smallInputField}
                                         // value={dataSetName}
                                         // onChangeEvent={this.changeEvent}
                                         //               style={style.inputField}
