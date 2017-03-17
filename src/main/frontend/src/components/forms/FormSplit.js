@@ -5,16 +5,39 @@ import * as connectionActions from "./../../actions/connectionActions";
 import * as formActions from "./../../actions/formActions";
 import GenericForm from "./GenericForm";
 import AdvancedTextField from "./../AdvancedTextField";
+import RaisedButton from "material-ui/RaisedButton";
 import ListOfElements from "./../list-of-elements/ListOfElements";
+import {Col, Row} from "react-grid-system";
 
+const style = {
+    buttonContainer: {
+        textAlign: "center",
+        paddingLeft: "20px",
+        paddingRight: "20px",
+    },
+    buttons: {
+        padding: "5px",
+        margin: "auto auto",
+        boxShadow: "none"
+    },
+    listElementWidth: {
+        width: "100%"
+    }
+};
+
+// todo: make separate component: dataSet form
+// this class should keep an array of such forms, foreach array elem - render it
 class FormExtract extends Component {
 
     render() {
         const {formReducer} = this.props;
         const {onListElementAdd, onListElementDelete, onListElementEdit} = this.props.formActions;
+        const arr = formReducer.getIn(['dataSplit', 'param']).toArray();
+        const first = arr[0].getIn(['categories']);
+        console.log(first);
 
         const categories = {
-            elements: formReducer.getIn(['extract', 'categories']).toArray(),
+            elements: first,
             title: "Choose categories",
             placeholder: "input and press Enter to submit",
             whereToSave: ['extract', 'categories'],
@@ -26,72 +49,98 @@ class FormExtract extends Component {
 
         return (
             <GenericForm title={formReducer.getIn(['dataSplit', 'displayName'])}>
-                <AdvancedTextField placeHolder={"dataset name"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"dataset name"}
-                                   fieldName={"dataSetName"}
-                                   // value={dataSetName}
-                                   // onChangeEvent={this.changeEvent}
-                                   // style={style.inputField}
-                />
-                <AdvancedTextField placeHolder={"description"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"description"}
-                                   fieldName={"description"}
-                    // value={dataSetName}
-                    // onChangeEvent={this.changeEvent}
-                    // style={style.inputField}
-                />
-                <AdvancedTextField placeHolder={"partition learn"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"partition learn"}
-                                   fieldName={"description"}
-                    // value={dataSetName}
-                    // onChangeEvent={this.changeEvent}
-                    // style={style.inputField}
-                />
-                <AdvancedTextField placeHolder={"lang"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"lang"}
-                                   fieldName={"description"}
-                    // value={dataSetName}
-                    // onChangeEvent={this.changeEvent}
-                    // style={style.inputField}
-                />
-                <AdvancedTextField placeHolder={"min text length"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"min text length"}
-                                   fieldName={"description"}
-                    // value={dataSetName}
-                    // onChangeEvent={this.changeEvent}
-                    // style={style.inputField}
-                />
-                <AdvancedTextField placeHolder={"max text length"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"max text length"}
-                                   fieldName={"description"}
-                    // value={dataSetName}
-                    // onChangeEvent={this.changeEvent}
-                    // style={style.inputField}
-                />
-                <AdvancedTextField placeHolder={"websites per category"}
-                                   pattern={"not_empty"}
-                                   type="not_empty"
-                                   label={"websites per category"}
-                                   fieldName={"description"}
-                    // value={dataSetName}
-                    // onChangeEvent={this.changeEvent}
-                    // style={style.inputField}
-                />
-                <ListOfElements {...categories}/>
+                <div style={style.buttonContainer}>
+                    <RaisedButton className={"button"} label="Create" secondary={true}
+                                  style={style.buttons} />
+                    <RaisedButton className={"button"} label="Remove" secondary={true}
+                                  style={style.buttons} />
+                </div>
+                <div>
+                    <Row>
+                        <Col xs={12} md={7}>
+                            <AdvancedTextField label={"dataset name"}
+                                               placeHolder={"name"}
+                                               pattern={"not_empty"}
+                                               type="not_empty"
+                                               fieldName={"dataSetName"}
+                                // value={dataSetName}
+                                // onChangeEvent={this.changeEvent}
+                                               style={{width: "82%"}}
+                            />
+                            <AdvancedTextField label={"description"}
+                                               placeHolder={"description"}
+                                               pattern={"not_empty"}
+                                               type="not_empty"
+                                               fieldName={"description"}
+                                // value={dataSetName}
+                                // onChangeEvent={this.changeEvent}
+                                // style={style.inputField}
+                                               style={{width: "82%"}}
+                            />
+                            <AdvancedTextField label={"sites per category"}
+                                               placeHolder={"1000"}
+                                               pattern={"not_empty"}
+                                               type="not_empty"
+                                               fieldName={"webSitesPerCategory"}
+                                               style={{width: "82%"}}
+                                // value={dataSetName}
+                                // onChangeEvent={this.changeEvent}
+                                // style={style.inputField}
+                            />
 
+                            <Row>
+                                <Col xs={12} md={5}>
+                                    <AdvancedTextField placeHolder={"en"}
+                                                       pattern={"not_empty"}
+                                                       type="not_empty"
+                                                       label={"lang"}
+                                                       fieldName={"description"}
+                                        // value={dataSetName}
+                                        // onChangeEvent={this.changeEvent}
+                                                       style={{width: "70%"}}
+                                    />
+                                    <AdvancedTextField placeHolder={"0.8"}
+                                                       pattern={"not_empty"}
+                                                       type="not_empty"
+                                                       label={"learn ratio"}
+                                                       fieldName={"description"}
+                                        // value={dataSetName}
+                                        // onChangeEvent={this.changeEvent}
+                                        // style={style.inputField}
+                                                       style={{width: "70%"}}
+                                    />
+                                </Col>
 
+                                <Col xs={12} md={7}>
+                                    <AdvancedTextField placeHolder={"200"}
+                                                       pattern={"not_empty"}
+                                                       type="not_empty"
+                                                       label={"min text length"}
+                                                       fieldName={"description"}
+                                                       style={{width: "68%"}}
+                                        // value={dataSetName}
+                                        // onChangeEvent={this.changeEvent}
+                                        //               style={style.inputField}
+                                    />
+                                    <AdvancedTextField placeHolder={"2000"}
+                                                       pattern={"not_empty"}
+                                                       type="not_empty"
+                                                       label={"max text length"}
+                                                       fieldName={"description"}
+                                                       style={{width: "68%"}}
+                                        // value={dataSetName}
+                                        // onChangeEvent={this.changeEvent}
+                                        //               style={style.inputField}
+                                    />
+                                </Col>
+                            </Row>
+                        </Col>
+
+                        <Col xs={12} md={5}>
+                            <ListOfElements {...categories}/>
+                        </Col>
+                    </Row>
+                </div>
             </GenericForm>
         )
     }

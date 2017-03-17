@@ -33,7 +33,7 @@ export const initialState = Immutable.fromJS({
             isAll: true,
             isCustom: false
         },
-        categories: ["chat", "news"],
+        categories: ["medical", "religion", "alcohol", "shopping"],
         downloadsPerCategory: 200,
         connectTimeout: 5000,
         readTimeout: 5000,
@@ -53,14 +53,14 @@ export const initialState = Immutable.fromJS({
         isTagStat: true,
         defaultSkipTags: true,
         defaultTextTags: true,
-        categories: ["chat", "news"],
+        categories: ["medical", "religion", "alcohol", "shopping"],
         tagsWithText: ["h1", "h2", "h3", "title", "a", "b", "img", "meta:description", "meta:keywords"],
         maxNGramSize: 6,
         tagsToSkip: ["html", "head", "title", "body"]
     },
     dataSplit: {
         route: "/split",
-        displayName: "Split data set",
+        displayName: "Create data set",
         isOn: false,
         param: [
             {
