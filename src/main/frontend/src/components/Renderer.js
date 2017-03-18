@@ -1,6 +1,5 @@
 import React, {PropTypes} from "react";
 import {List} from "material-ui/List";
-import {Toolbar, ToolbarGroup} from "material-ui/Toolbar";
 import SingleDataSetAdder from "./SingleDataSetAdder";
 
 const Renderer = ({
