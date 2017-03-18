@@ -1,4 +1,5 @@
 import {
+    ADD_NEW,
     CHECKBOX_CHECKED,
     COMPONENT_TOGGLED,
     DIALOG_EDIT,
@@ -9,7 +10,8 @@ import {
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
     ON_LIST_ELEMENT_EDIT,
-    ON_RADIO_CHANGED
+    ON_RADIO_CHANGED,
+    ON_REMOVE_LAST
 } from "../constants/constants";
 import Immutable from "immutable";
 
@@ -114,6 +116,23 @@ export function onRadioChange(target, whereToSeek) {
 export function onInputFieldChange(target, whereToSeek) {
     return {
         type: ON_INPUT_CHANGED,
+        payload: Immutable.Map({
+            target: target,
+            whereToSeek: whereToSeek
+        })
+    }
+}
+
+export function removeLast(whereToSeek) {
+    return {
+        type: ON_REMOVE_LAST,
+        payload: whereToSeek
+    }
+}
+
+export function addNew(target, whereToSeek) {
+    return {
+        type: ADD_NEW,
         payload: Immutable.Map({
             target: target,
             whereToSeek: whereToSeek

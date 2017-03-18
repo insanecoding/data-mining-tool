@@ -1,5 +1,6 @@
 import {initialState} from "./../store/initial";
 import {
+    ADD_NEW,
     CHECKBOX_CHECKED,
     COMPONENT_TOGGLED,
     DIALOG_EDIT,
@@ -10,9 +11,11 @@ import {
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
     ON_LIST_ELEMENT_EDIT,
-    ON_RADIO_CHANGED
+    ON_RADIO_CHANGED,
+    ON_REMOVE_LAST
 } from "../constants/constants";
 import {isEmptyObject} from "./../util/misc";
+import Immutable from "immutable";
 
 export default function processForm(state = initialState, action) {
     switch (action.type) {
@@ -124,6 +127,20 @@ export default function processForm(state = initialState, action) {
             return state.setIn(whereToSeek, target);
         }
 
+        case ON_REMOVE_LAST: {
+            const whereToSeek = action.payload;
+            let wasArray = state.getIn(whereToSeek);
+            // remove last element
+            wasArray = wasArray.splice(-1,1);
+            return state.setIn(whereToSeek, wasArray);
+        }
+
+        case ADD_NEW: {
+            const {target, whereToSeek} = action.payload.toObject();
+            let wasArray = state.getIn(whereToSeek);
+            wasArray = wasArray.push(Immutable.fromJS(target));
+            return state.setIn(whereToSeek, wasArray);
+        }
 
         default:
             return state;

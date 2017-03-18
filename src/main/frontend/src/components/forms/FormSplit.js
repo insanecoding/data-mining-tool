@@ -23,15 +23,39 @@ const style = {
     }
 };
 
-// todo: make separate component: dataSet form
-// this class should keep an array of such forms, foreach array elem - render it
 class FormExtract extends Component {
+
+    amIDisabled = () => {
+        const arr = this.props.formReducer.getIn(['dataSplit', 'param']).toArray();
+        return arr.length === 0;
+    };
+
+    handleClick = (buttonName) => {
+        if (buttonName === "remove") {
+            const {removeLast} = this.props.formActions;
+            removeLast(['dataSplit', 'param']);
+        } else if (buttonName === "create") {
+            const {addNew} = this.props.formActions;
+            const newElem = {
+                dataSetName: "set_0",
+                description: "some data set",
+                categories: ["adult", "alcohol"],
+                partitionLearn: 0.8,
+                lang: "en",
+                minTextLength: 500,
+                maxTextLength: 5000,
+                websitesPerCategory: 1000
+            };
+            addNew(newElem, ['dataSplit', 'param']);
+        }
+    };
 
     render() {
         const {formReducer} = this.props;
         const {
             onListElementAdd, onListElementDelete, onListElementEdit, onInputFieldChange
         } = this.props.formActions;
+
         const param = {
             elements: formReducer.getIn(['dataSplit', 'param']).toArray(),
             onListElementAdd: onListElementAdd,
@@ -41,29 +65,14 @@ class FormExtract extends Component {
             style: style
         };
 
-        // const arr = formReducer.getIn(['dataSplit', 'param']).toArray();
-        // const first = arr[0].getIn(['categories']);
-        // // console.log(first);
-        //
-        // const categories = {
-        //     elements: first,
-        //     title: "Choose categories",
-        //     placeholder: "input and press Enter to submit",
-        //     whereToSave: ['extract', 'categories'],
-        //     onAdd: onListElementAdd,
-        //     onEdit: onListElementEdit,
-        //     onDelete: onListElementDelete,
-        //     listElementStyle: style.listElementWidth
-        // };
-        // console.log(formReducer.getIn(['dataSplit', 'param', 1, 'categories']).toArray());
-
         return (
             <GenericForm title={formReducer.getIn(['dataSplit', 'displayName'])}>
                 <div style={style.buttonContainer}>
                     <RaisedButton className={"button"} label="Create" secondary={true}
-                                  style={style.buttons}/>
+                                  style={style.buttons} onClick={ () => this.handleClick("create") }/>
                     <RaisedButton className={"button"} label="Remove" secondary={true}
-                                  style={style.buttons}/>
+                                  style={style.buttons} onClick={ () => this.handleClick("remove") }
+                                  disabled={this.amIDisabled()}/>
                 </div>
                 <div>
                     <Renderer {...param}/>

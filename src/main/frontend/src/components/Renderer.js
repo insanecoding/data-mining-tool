@@ -44,7 +44,8 @@ const Renderer = ({
                         maxTextLength: elem.getIn(['maxTextLength']),
                         websitesPerCategory: elem.getIn(['websitesPerCategory']),
                         changeEvent: (e) => changeMe(key, e)
-                    }
+                    },
+                    orderNum: key + 1
                 };
 
                 return <SingleDataSetAdder {...params} key={key}/>

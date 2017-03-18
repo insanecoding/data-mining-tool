@@ -15,13 +15,23 @@ const style = {
         width: "68%"
     },
     divider: {
-        margin: "20px"
+        marginTop: "10px"
+    },
+    text: {
+        textAlign: "center",
+        marginBottom: "0px"
     }
 };
 
-const SingleDataSetAdder = ({categories, inputFields}) => {
+const SingleDataSetAdder = ({orderNum, categories, inputFields}) => {
+
+    const title = `New dataset ${orderNum}`;
+
     return (
         <div>
+            <h2 style={style.text}>
+                {title}
+            </h2>
             <Row>
                 <Col xs={12} md={7}>
                     <AdvancedTextField label={"dataset name"}
