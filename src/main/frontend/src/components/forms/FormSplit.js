@@ -5,7 +5,7 @@ import * as connectionActions from "./../../actions/connectionActions";
 import * as formActions from "./../../actions/formActions";
 import GenericForm from "./GenericForm";
 import RaisedButton from "material-ui/RaisedButton";
-import Renderer from "./../Renderer";
+import DataSetRenderer from "../DataSetRenderer";
 
 const style = {
     buttonContainer: {
@@ -75,7 +75,7 @@ class FormExtract extends Component {
                                   disabled={this.amIDisabled()}/>
                 </div>
                 <div>
-                    <Renderer {...param}/>
+                    <DataSetRenderer {...param}/>
                 </div>
 
             </GenericForm>

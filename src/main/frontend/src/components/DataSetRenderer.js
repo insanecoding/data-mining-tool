@@ -2,7 +2,7 @@ import React, {PropTypes} from "react";
 import {List} from "material-ui/List";
 import SingleDataSetAdder from "./SingleDataSetAdder";
 
-const Renderer = ({
+const DataSetRenderer = ({
                       elements, onListElementAdd, onListElementEdit,
                       onListElementDelete, onInputFieldChange, style
                   }) => {
@@ -32,7 +32,7 @@ const Renderer = ({
                         onAdd: onListElementAdd,
                         onEdit: onListElementEdit,
                         onDelete: onListElementDelete,
-                        listElementStyle: style
+                        listElementStyle: style.listElementWidth
                     },
                     inputFields: {
                         dataSetName: elem.getIn(['dataSetName']),
@@ -59,7 +59,7 @@ const Renderer = ({
     );
 };
 
-Renderer.propTypes = {
+DataSetRenderer.propTypes = {
     elements: PropTypes.array.isRequired,
     onListElementAdd: PropTypes.func.isRequired,
     onListElementEdit: PropTypes.func.isRequired,
@@ -68,4 +68,4 @@ Renderer.propTypes = {
     style: PropTypes.object.isRequired,
 };
 
-export default Renderer;
+export default DataSetRenderer;

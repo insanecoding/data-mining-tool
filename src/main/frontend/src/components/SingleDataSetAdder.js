@@ -123,6 +123,7 @@ const SingleDataSetAdder = ({orderNum, categories, inputFields}) => {
 };
 
 SingleDataSetAdder.propTypes = {
+    orderNum: PropTypes.number.isRequired,
     categories: PropTypes.object.isRequired,
     inputFields: PropTypes.object.isRequired,
 };
