@@ -6,6 +6,7 @@ import {
     DIALOG_SUBMIT,
     FIELD_CHANGED,
     ON_BLACKLIST_DELETE,
+    ON_INPUT_CHANGED,
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
     ON_LIST_ELEMENT_EDIT,
@@ -116,6 +117,11 @@ export default function processForm(state = initialState, action) {
                 .setIn(whereToSeek, radiosGroup)
                 // set target to true
                 .setIn(fullPath, true);
+        }
+
+        case ON_INPUT_CHANGED: {
+            const {target, whereToSeek} = action.payload.toObject();
+            return state.setIn(whereToSeek, target);
         }
 
 

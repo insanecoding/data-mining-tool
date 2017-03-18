@@ -5,6 +5,7 @@ import {
     DIALOG_SUBMIT,
     FIELD_CHANGED,
     ON_BLACKLIST_DELETE,
+    ON_INPUT_CHANGED,
     ON_LIST_ELEMENT_ADD,
     ON_LIST_ELEMENT_DELETE,
     ON_LIST_ELEMENT_EDIT,
@@ -101,9 +102,18 @@ export function onCheck(path) {
 }
 
 export function onRadioChange(target, whereToSeek) {
-    console.log("in actions", target, whereToSeek);
     return {
         type: ON_RADIO_CHANGED,
+        payload: Immutable.Map({
+            target: target,
+            whereToSeek: whereToSeek
+        })
+    }
+}
+
+export function onInputFieldChange(target, whereToSeek) {
+    return {
+        type: ON_INPUT_CHANGED,
         payload: Immutable.Map({
             target: target,
             whereToSeek: whereToSeek
