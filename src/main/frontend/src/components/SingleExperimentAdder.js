@@ -25,6 +25,12 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
 
     const title = `New experiment ${orderNum}`;
 
+    const handleSelectChange = (event, index, value) => {
+        const [name, elem] = value.split(":");
+        console.log("name: ", name, "value: ", elem);
+        inputFields.changeSelectField(name, elem);
+    };
+
     const renderOptionalFields = (inputFields) => {
 
 
@@ -134,11 +140,12 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
                 return (
                     <SelectField
                         floatingLabelText="Type"
-                        value={"binomial"}
-                        // onChange={this.handleChange}
-                        style={{width: "100%"}}>
-                        <MenuItem value={"binomial"} primaryText="binomial"/>
-                        <MenuItem value={"real"} primaryText="real"/>
+                        value={"type:" + inputFields.type}
+                        onChange={ handleSelectChange}
+                        style={{width: "100%"}}
+                    >
+                        <MenuItem value={"type:binomial"} primaryText="binomial"/>
+                        <MenuItem value={"type:real"} primaryText="real"/>
                     </SelectField>);
             if (what === "dataset")
                 return (
@@ -155,7 +162,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
     };
 
     const renderInJoin = (inputFields, experiments) => {
-        if (inputFields.mode === "join") {
+        if (inputFields.mode === "join" && inputFields.experiments) {
             return (
                 <ListOfElements {...experiments}/>
             );
@@ -183,16 +190,15 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
                         <Col xs={12} md={7}>
                             <SelectField
                                 floatingLabelText="Mode"
-                                name="mode"
-                                value={inputFields.mode}
-                                onChange={ (value) => inputFields.changeSelectField("mode", value)}
+                                value={"mode:" + inputFields.mode}
+                                onChange={handleSelectChange}
                                 style={{width: "90%"}}
                             >
-                                <MenuItem value={"text_main"} primaryText="text_main"/>
-                                <MenuItem value={"text_from_tags"} primaryText="text_tag"/>
-                                <MenuItem value={"ngrams"} primaryText="ngram"/>
-                                <MenuItem value={"tag_stat"} primaryText="tag_stat"/>
-                                <MenuItem value={"join"} primaryText="join"/>
+                                <MenuItem value={"mode:text_main"} primaryText="text_main"/>
+                                <MenuItem value={"mode:text_from_tags"} primaryText="text_tag"/>
+                                <MenuItem value={"mode:ngrams"} primaryText="ngram"/>
+                                <MenuItem value={"mode:tag_stat"} primaryText="tag_stat"/>
+                                <MenuItem value={"mode:join"} primaryText="join"/>
                             </SelectField>
                         </Col>
                     </Row>

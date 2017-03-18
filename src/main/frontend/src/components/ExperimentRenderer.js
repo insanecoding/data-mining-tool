@@ -65,7 +65,7 @@ const ExperimentRenderer = ({
                         roundToDecimalPlaces: elem.getIn(['roundToDecimalPlaces']),
                         normalizeRatio: elem.getIn(['normalizeRatio']),
                         changeEvent: (e) => changeMe(key, e),
-                        changeSelectField: (name, val) => changeSelectField(key, name, val)
+                        changeSelectField: (name, value) => changeSelectField(key, name, value)
                     },
                     orderNum: key + 1
                 };
