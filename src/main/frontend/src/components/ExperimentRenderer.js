@@ -10,7 +10,6 @@ const ExperimentRenderer = ({
     const changeMe = (key, e) => {
         const path = ['prepare', 'experiments'];
         path.push(key, e.target.name);
-        console.log(path);
 
         onInputFieldChange(e.target.value, path);
     };
@@ -18,7 +17,6 @@ const ExperimentRenderer = ({
     const changeSelectField = (key, name, value) => {
         const path = ['prepare', 'experiments'];
         path.push(key, name);
-        console.log(path, value);
 
         onInputFieldChange(value, path);
     };
@@ -29,7 +27,7 @@ const ExperimentRenderer = ({
             ?
             elem.getIn(['experiments']).toArray()
             :
-            null;
+            [];
     };
 
     const listGenerator = (elements) => {

@@ -45,15 +45,20 @@ class FormPrepare extends Component {
         } else if (buttonName === "create") {
             const {addNew} = this.props.formActions;
             const newElem = {
-                name: "exp_0",
-                description: "text experiment 0",
-                dataSetName: "set_0",
+                name: "exp_1",
+                description: "text experiment 1",
+                dataSetName: "set_1",
                 mode: "text_main",
                 type: "binomial",
                 IDF_Treshold: 0.001,
                 IDF_Type: "M",
                 TF_Type: "S",
-                featuresByCategory: 50
+                tagName: "",
+                nGramSize: "",
+                featuresByCategory: 50,
+                roundToDecimalPlaces: "",
+                normalizeRatio: "",
+                experiments: []
             };
             addNew(newElem, ['prepare', 'experiments']);
         }

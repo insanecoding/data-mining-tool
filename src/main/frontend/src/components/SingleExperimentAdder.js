@@ -34,7 +34,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
     const renderOptionalFields = (inputFields) => {
 
 
-        if (inputFields.tagName)
+        if (inputFields.mode === "text_from_tags")
             return <AdvancedTextField placeHolder={""}
                                       pattern={"path"}
                                       label={"tag name"}
@@ -42,7 +42,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
                                       value={inputFields.tagName}
                                       onChangeEvent={inputFields.changeEvent}
                                       style={style.oneOfTwoInputFields}/>;
-        if (inputFields.nGramSize)
+        if (inputFields.mode === "ngrams")
             return <AdvancedTextField placeHolder={""}
                                       pattern={"not_empty"}
                                       label={"ngram size"}
@@ -51,7 +51,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
                                       onChangeEvent={inputFields.changeEvent}
                                       style={style.oneOfTwoInputFields}/>;
 
-        if (inputFields.roundToDecimalPlaces)
+        if (inputFields.mode === "tag_stat")
             return <AdvancedTextField placeHolder={""}
                                       pattern={"not_empty"}
                                       label={"round to decimal places"}
@@ -63,7 +63,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
     };
 
     const renderThresHoldOrRatio = (inputFields) => {
-        if (inputFields.normalizeRatio) {
+        if (inputFields.mode === "tag_stat") {
             return <AdvancedTextField placeHolder={""}
                                       pattern={"path"}
                                       label={"normal.ratio"}
@@ -72,7 +72,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
                                       onChangeEvent={inputFields.changeEvent}
                                       style={style.oneOfFourInputFields}/>;
         }
-        else if (inputFields.IDF_Treshold) {
+        else if (inputFields.mode !== "join" && inputFields.mode !== "tag_stat") {
             return <AdvancedTextField placeHolder={""}
                                       pattern={"path"}
                                       label={"IDF_Threshold"}
@@ -85,7 +85,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
     };
 
     const renderTFTypeIDFType = (inputFields) => {
-        if (inputFields.TF_Type && inputFields.IDF_Type) {
+        if (inputFields.mode !== "join" && inputFields.mode !== "tag_stat") {
             return (
                 <div style={style.noPadding}>
                     <Col xs={12} md={6} style={style.noPadding}>
@@ -162,7 +162,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
     };
 
     const renderInJoin = (inputFields, experiments) => {
-        if (inputFields.mode === "join" && inputFields.experiments) {
+        if (inputFields.mode === "join") {
             return (
                 <ListOfElements {...experiments}/>
             );

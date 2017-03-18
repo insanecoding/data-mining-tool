@@ -82,7 +82,7 @@ export const initialState = Immutable.fromJS({
         stopWordsPath: "\\stopwords.dat",
         experiments: [
             {
-                name: "exp_6",
+                name: "exp_1",
                 description: "text experiment 1",
                 dataSetName: "set_1",
                 mode: "text_main",
@@ -90,86 +90,12 @@ export const initialState = Immutable.fromJS({
                 IDF_Treshold: 0.001,
                 IDF_Type: "M",
                 TF_Type: "S",
-                featuresByCategory: 50
-            },
-            {
-                name: "exp_7",
-                description: "text experiment 2",
-                dataSetName: "set_2",
-                mode: "text_main",
-                type: "binomial",
-                IDF_Treshold: 0.001,
-                IDF_Type: "M",
-                TF_Type: "S",
-                featuresByCategory: 50
-            },
-            {
-                name: "exp_8",
-                description: "text from tag experiment 1",
-                dataSetName: "set_2",
-                mode: "text_from_tags",
-                type: "binomial",
-                tagName: "h1",
-                IDF_Treshold: 0.001,
-                IDF_Type: "M",
-                TF_Type: "S",
-                featuresByCategory: 50
-            },
-            {
-                name: "exp_9",
-                description: "text from tag experiment 2",
-                dataSetName: "set_1",
-                mode: "text_from_tags",
-                type: "binomial",
-                tagName: "h2",
-                IDF_Treshold: 0.001,
-                IDF_Type: "M",
-                TF_Type: "S",
-                featuresByCategory: 50
-            },
-            {
-                name: "exp_10",
-                description: "ngram experiment 1",
-                dataSetName: "set_2",
-                mode: "ngrams",
-                type: "binomial",
-                nGramSize: 3,
-                IDF_Treshold: 0.001,
-                IDF_Type: "M",
-                TF_Type: "S",
-                featuresByCategory: 50
-            },
-            {
-                name: "exp_13",
-                description: "tag stat",
-                dataSetName: "set_2",
-                mode: "tag_stat",
-                type: "real",
-                roundToDecimalPlaces: 3,
-                normalizeRatio: 0.95,
-                featuresByCategory: 50
-            },
-            {
-                name: "exp_14",
-                description: "tag stat",
-                dataSetName: "set_1",
-                mode: "tag_stat",
-                type: "real",
-                roundToDecimalPlaces: 3,
-                normalizeRatio: 0.95,
-                featuresByCategory: 50
-            },
-            {
-                name: "united_1",
-                description: "have the same dataSet #2",
-                mode: "join",
-                experiments: ["exp_7", "exp_8", "exp_10", "exp_13"]
-            },
-            {
-                name: "united_2",
-                description: "have the same dataSet #1",
-                mode: "join",
-                experiments: ["exp_6", "exp_9", "exp_14"]
+                tagName: "",
+                nGramSize: "",
+                featuresByCategory: 50,
+                roundToDecimalPlaces: "",
+                normalizeRatio: "",
+                experiments: []
             }
         ]
     },
