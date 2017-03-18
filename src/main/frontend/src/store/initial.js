@@ -72,16 +72,6 @@ export const initialState = Immutable.fromJS({
                 minTextLength: 500,
                 maxTextLength: 5000,
                 websitesPerCategory: 2000
-            },
-            {
-                dataSetName: "set_2",
-                description: "small data set",
-                categories: ["religion", "alcohol", "adult"],
-                partitionLearn: 0.7,
-                lang: "en",
-                minTextLength: 500,
-                maxTextLength: 5000,
-                websitesPerCategory: 1000
             }
         ]
     },
