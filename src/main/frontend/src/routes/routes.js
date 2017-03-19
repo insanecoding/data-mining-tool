@@ -1,14 +1,14 @@
-import {App, Body, Welcome, Results} from "./../containers/index";
+import {App, Body, Welcome} from "./../containers/index";
 import {
     FormDescription,
-    FormImport,
     FormDownload,
     FormExtract,
+    FormImport,
     FormPrepare,
-    FormSplit,
-    FormSchemes
+    FormSchemes,
+    FormSplit
 } from "./../components/forms/index";
-import {Route, IndexRoute} from "react-router";
+import {IndexRoute, Route} from "react-router";
 import React from "react";
 
 module.exports = (
@@ -23,7 +23,6 @@ module.exports = (
             <Route path="/prepare" component={FormPrepare}/>
             <Route path="/schemes" component={FormSchemes}/>
         </Route>
-        <Route path="/results" component={Results}/>
     </Route>
 );
 

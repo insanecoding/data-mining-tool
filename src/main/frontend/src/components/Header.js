@@ -43,8 +43,9 @@ export default class Header extends Component {
         })
     };
 
-    helpText = "Here you'll get help";
-    aboutText = "We are great! Learn more about us!";
+    helpText = "This is control panel to prepare and run experiments with website classification. " +
+        "For further details, please, consult manual";
+    aboutText = "(c) Novozhilov Dmitry, ComSec Laboratory, SPIIRAS, 2017";
 
     iconMenu =
         <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
@@ -58,17 +59,17 @@ export default class Header extends Component {
         return (
             <div>
                 <AppBar
-                    title="Comsec laboratory at SPIIRAS"
+                    title="ComSec laboratory at SPIIRAS"
                     titleStyle={styles.title}
                     iconElementLeft={<IconButton><Build /></IconButton>}
                     iconElementRight={this.iconMenu}
                 />
 
-                <MyDialog amIOpen={this.state.isHelpOpen} title="I'm help!" handleRequestClose={this.handleRequestClose}>
+                <MyDialog amIOpen={this.state.isHelpOpen} title="Help" handleRequestClose={this.handleRequestClose}>
                     {this.helpText}
                 </MyDialog>
 
-                <MyDialog amIOpen={this.state.isAboutOpen} title="I'm about!" handleRequestClose={this.handleRequestClose}>
+                <MyDialog amIOpen={this.state.isAboutOpen} title="About" handleRequestClose={this.handleRequestClose}>
                     {this.aboutText}
                 </MyDialog>
             </div>

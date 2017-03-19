@@ -6,7 +6,6 @@ import {browserHistory} from "react-router";
 
 const homeIcon = <FontIcon className="fa fa-home"/>;
 const settingsIcon = <FontIcon className="fa fa-cog"/>;
-const resultsIcon = <FontIcon className="fa fa-bar-chart"/>;
 
 const Footer = ({activeTab, tabChanged}) => {
 
@@ -48,11 +47,6 @@ const Footer = ({activeTab, tabChanged}) => {
                         label="Settings"
                         icon={settingsIcon}
                         onTouchTap={() => select(1)}
-                    />
-                    <BottomNavigationItem
-                        label="Results"
-                        icon={resultsIcon}
-                        onTouchTap={() => select(2)}
                     />
                 </BottomNavigation>
             </Paper>
