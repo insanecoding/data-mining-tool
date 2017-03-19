@@ -32,10 +32,10 @@ public class DownloadInitializer implements Initializer {
         if ((boolean) settings.get("isOn")) {
 
             List<String> categories = (List<String>) settings.get("categories");
-            int downloadsPerCategory = (int) settings.get("downloadsPerCategory");
-            int threadsNumber = (int) settings.get("threadsNumber");
-            int readTimeout = (int) settings.get("readTimeout");
-            int connectTimeout = (int) settings.get("connectTimeout");
+            int downloadsPerCategory = Utils.stringToInt(settings.get("downloadsPerCategory"));
+            int threadsNumber = Utils.stringToInt(settings.get("threadsNumber"));
+            int readTimeout = Utils.stringToInt(settings.get("readTimeout"));
+            int connectTimeout = Utils.stringToInt(settings.get("connectTimeout"));
             Map<String, Object> categoriesRadio = (Map<String, Object>) settings.get("categoriesRadio");
 
             boolean useAllMoreThan1000 = (boolean) categoriesRadio.get("isAll");

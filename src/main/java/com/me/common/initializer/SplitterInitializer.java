@@ -56,7 +56,7 @@ public class SplitterInitializer implements Initializer {
     private DataSet createDataSet(Map<String, Object> settings) {
         String dataSetName = (String) settings.get("dataSetName");
         String description = (String) settings.get("description");
-        double learn = Double.parseDouble((String)settings.get("partitionLearn"));
+        double learn = Utils.stringToDouble(settings.get("partitionLearn"));
         DataSet dataSet = new DataSet();
         dataSet.setName(dataSetName);
         dataSet.setDescription(description);
@@ -66,9 +66,9 @@ public class SplitterInitializer implements Initializer {
 
     private MainDataSplitParams createMainParams(Map<String, Object> settings) {
         String lang = (String) settings.get("lang");
-        int minLength = Integer.parseInt((String)settings.get("minTextLength"));
-        int maxLength = Integer.parseInt((String)settings.get("maxTextLength"));
-        int websitesPerCategory = Integer.parseInt((String)settings.get("websitesPerCategory"));
+        int minLength = Utils.stringToInt(settings.get("minTextLength"));
+        int maxLength = Utils.stringToInt(settings.get("maxTextLength"));
+        int websitesPerCategory = Utils.stringToInt(settings.get("websitesPerCategory"));
 
         return new MainDataSplitParams(lang, minLength, maxLength, websitesPerCategory);
     }

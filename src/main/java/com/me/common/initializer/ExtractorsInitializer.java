@@ -88,7 +88,7 @@ public class ExtractorsInitializer implements Initializer {
                             List<MyExecutable> executables) {
         boolean isNGrams = (boolean) settings.get("isNgrams");
         if (isNGrams) {
-            int maxNGramSize = (int) settings.get("maxNGramSize");
+            int maxNGramSize = Utils.stringToInt(settings.get("maxNGramSize"));
             nGramExtractorService.setMaxNGramSize(maxNGramSize);
             nGramExtractorService.setCategories(new ArrayList<>(stringCategories));
             nGramExtractorService.setUseAllRelevantCategories(useAllCategories);
