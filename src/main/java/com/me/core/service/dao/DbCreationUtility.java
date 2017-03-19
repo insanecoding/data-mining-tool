@@ -2,7 +2,6 @@ package com.me.core.service.dao;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -12,10 +11,7 @@ import java.util.Properties;
 public class DbCreationUtility {
 
     public static void createDbIfAbsent() throws IOException, SQLException {
-        String currentDir = System.getProperty("user.dir");
-        String propsPath = "/src/main/resources/application-prod.properties";
-
-        String[] elems = readProperties(currentDir + propsPath);
+        String[] elems = readProperties();
         String url = elems[0];
         String user = elems[1];
         String password = elems[2];
@@ -27,12 +23,15 @@ public class DbCreationUtility {
      * reads property-file for production use
      * parses url, username and password
      */
-    private static String[] readProperties(String fullPropsPath) throws IOException {
+    private static String[] readProperties() throws IOException {
         String url;
         String user;
         String password;
 
-        try (InputStream in = new FileInputStream(fullPropsPath)) {
+        try (InputStream in = DbCreationUtility.class
+                .getClassLoader()
+                .getResourceAsStream("application-prod.properties")
+        ) {
             Properties prop = new Properties();
             prop.load(in);
 
