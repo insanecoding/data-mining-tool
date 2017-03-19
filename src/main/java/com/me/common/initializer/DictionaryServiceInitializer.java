@@ -90,7 +90,8 @@ public class DictionaryServiceInitializer implements Initializer {
         result.add(experimentCreator);
         setFullPaths(dto, settings);
 
-        if (modes.contains(Modes.TEXT_MAIN) || modes.contains(Modes.TEXT_FROM_TAGS)) {
+        if (modes.contains(Modes.TEXT_MAIN) || modes.contains(Modes.TEXT_FROM_TAGS)
+                || modes.contains(Modes.NGRAMS)) {
             textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
             textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
             result.addAll(Arrays.asList(textDictionaryCreator, textAmlDatPrepareService));
