@@ -36,8 +36,9 @@ public class DownloadInitializer implements Initializer {
             int threadsNumber = (int) settings.get("threadsNumber");
             int readTimeout = (int) settings.get("readTimeout");
             int connectTimeout = (int) settings.get("connectTimeout");
+            Map<String, Object> categoriesRadio = (Map<String, Object>) settings.get("categoriesRadio");
 
-            boolean useAllMoreThan1000 = (boolean) settings.get("useAllCategories");
+            boolean useAllMoreThan1000 = (boolean) categoriesRadio.get("isAll");
 
             DownloaderParameters downloaderParameters =
                     new DownloaderParameters(downloadsPerCategory, threadsNumber, readTimeout, connectTimeout);

@@ -45,7 +45,9 @@ public class ExtractorsInitializer implements Initializer {
         Map<String, Object> settings = (Map<String, Object>) dto.get("extract");
         if ((boolean) settings.get("isOn")) {
             List<String> stringCategories = (List<String>) settings.get("categories");
-            boolean useAllCategories = (boolean) settings.get("useAllCategories");
+            Map<String, Object> categoriesRadio = (Map<String, Object>) settings.get("categoriesRadio");
+
+            boolean useAllCategories = (boolean) categoriesRadio.get("isAll");
             initTextMain(settings, useAllCategories, stringCategories, executables);
             initTextFromTags(settings, useAllCategories, stringCategories, executables);
             initNGrams(settings, useAllCategories, stringCategories, executables);
@@ -54,8 +56,8 @@ public class ExtractorsInitializer implements Initializer {
         next.initialize(dto, executables);
     }
 
-    private void initTextMain(Map<String, Object> settings, boolean useAllCategories, List<String> stringCategories,
-                              List<MyExecutable> executables) {
+    private void initTextMain(Map<String, Object> settings, boolean useAllCategories,
+                              List<String> stringCategories, List<MyExecutable> executables) {
         boolean isTextMain = (boolean) settings.get("isTextMain");
         if (isTextMain) {
             textMainExtractor.setCategories(new ArrayList<>(stringCategories));

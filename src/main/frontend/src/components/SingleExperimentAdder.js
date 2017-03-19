@@ -45,6 +45,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
         if (inputFields.mode === "ngrams")
             return <AdvancedTextField placeHolder={""}
                                       pattern={"not_empty"}
+                                      type="number"
                                       label={"ngram size"}
                                       fieldName={"nGramSize"}
                                       value={inputFields.nGramSize}
@@ -54,6 +55,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
         if (inputFields.mode === "tag_stat")
             return <AdvancedTextField placeHolder={""}
                                       pattern={"not_empty"}
+                                      type="number"
                                       label={"round to decimal places"}
                                       fieldName={"roundToDecimalPlaces"}
                                       value={inputFields.roundToDecimalPlaces}
@@ -117,6 +119,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
             return <AdvancedTextField placeHolder={""}
                                       pattern={"path"}
                                       label={"features by category"}
+                                      type="number"
                                       fieldName={"featuresByCategory"}
                                       value={inputFields.featuresByCategory}
                                       onChangeEvent={inputFields.changeEvent}
@@ -127,6 +130,7 @@ const SingleExperimentAdder = ({orderNum, experiments, inputFields}) => {
             return <AdvancedTextField placeHolder={""}
                                       pattern={"path"}
                                       label={"features by category"}
+                                      type="number"
                                       fieldName={"featuresByCategory"}
                                       value={inputFields.featuresByCategory}
                                       onChangeEvent={inputFields.changeEvent}

@@ -66,10 +66,12 @@ public class DictionaryServiceInitializer implements Initializer {
                     (List<Map<String, Object>>) settings.get("experiments");
 
             List<Experiment> experimentDataSetName = new ArrayList<>();
-            experiments.forEach(elem -> processElem(elem, experimentDataSetName));
+            List<Modes> modesUsed = experiments.stream()
+                    .map(elem -> processElem(elem, experimentDataSetName))
+                    .collect(Collectors.toList());
 
             List<MyExecutable> myExecutables =
-                    initializeServices(dto, settings, experimentDataSetName);
+                    initializeServices(dto, settings, experimentDataSetName, modesUsed);
             executables.addAll(myExecutables);
         }
         next.initialize(dto, executables);
@@ -77,21 +79,33 @@ public class DictionaryServiceInitializer implements Initializer {
 
     private List<MyExecutable> initializeServices(Map<String, Object> dto,
                                                   Map<String, Object> settings,
-                                                  List<Experiment> experimentDataSetName) {
+                                                  List<Experiment> experimentDataSetName, List<Modes> modes) {
         List<String> textExperimentsNames = createTextExperimentsNames(experimentDataSetName);
         List<String> tagExperimentNames = createTagExperimentsNames(experimentDataSetName);
         List<String> allExperimentNames = createAllExperimentsNames(experimentDataSetName);
 
-        experimentCreator.setExperiments(new ArrayList<>(experimentDataSetName));
-        textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
-        setFullPaths(dto, settings);
-        textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
-        tagDictionaryCreator.setExpNames(tagExperimentNames);
-        tagAmlDatPrepareService.setExpNames(tagExperimentNames);
-        amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
+        List<MyExecutable> result = new ArrayList<>();
 
-        return Arrays.asList(experimentCreator, textDictionaryCreator, textAmlDatPrepareService,
-                tagDictionaryCreator, tagAmlDatPrepareService, amldatWriter);
+        experimentCreator.setExperiments(new ArrayList<>(experimentDataSetName));
+        result.add(experimentCreator);
+        setFullPaths(dto, settings);
+
+        if (modes.contains(Modes.TEXT_MAIN) || modes.contains(Modes.TEXT_FROM_TAGS)) {
+            textDictionaryCreator.setExpNames(new ArrayList<>(textExperimentsNames));
+            textAmlDatPrepareService.setExpNames(new ArrayList<>(textExperimentsNames));
+            result.addAll(Arrays.asList(textDictionaryCreator, textAmlDatPrepareService));
+        }
+
+        if (modes.contains(Modes.TAG_STAT)) {
+            tagDictionaryCreator.setExpNames(tagExperimentNames);
+            tagAmlDatPrepareService.setExpNames(tagExperimentNames);
+            result.addAll(Arrays.asList(tagDictionaryCreator, tagAmlDatPrepareService));
+        }
+
+        amldatWriter.setExpNames(new ArrayList<>(allExperimentNames));
+        result.add(amldatWriter);
+
+        return result;
     }
 
     private List<String> createAllExperimentsNames(List<Experiment> experiments) {
@@ -115,7 +129,7 @@ public class DictionaryServiceInitializer implements Initializer {
     }
 
     @SuppressWarnings("unchecked")
-    private void processElem(Map<String, Object> settings,
+    private Modes processElem(Map<String, Object> settings,
                                    List<Experiment> experiments) {
         // these are common for all experiments
         String name = (String) settings.get("name");
@@ -127,7 +141,7 @@ public class DictionaryServiceInitializer implements Initializer {
         ExperimentParam experimentParam = new ExperimentParam();
         // text experiments only
         if (!mode.equals(Modes.TAG_STAT) && !mode.equals(Modes.JOIN)) {
-            double IDF_Threshold = (double) settings.get("IDF_Treshold");
+            double IDF_Threshold = Utils.stringToDouble(settings.get("IDF_Treshold"));
             experimentParam.setIDF_Threshold(IDF_Threshold);
             String IDF_Type = (String) settings.get("IDF_Type");
             experimentParam.setIDF_Type(IDF_Type);
@@ -140,7 +154,7 @@ public class DictionaryServiceInitializer implements Initializer {
             String strType = (String) settings.get("type");
             type = Types.valueOf(strType.toUpperCase());
 
-            int featuresByCategory = (int) settings.get("featuresByCategory");
+            int featuresByCategory = Utils.stringToInt(settings.get("featuresByCategory"));
             String dataSetName = (String) settings.get("dataSetName");
             experimentParam.setFeaturesByCategory(featuresByCategory);
             experimentParam.setDataSetName(dataSetName);
@@ -150,7 +164,7 @@ public class DictionaryServiceInitializer implements Initializer {
         }
 
         if (mode.equals(Modes.NGRAMS)) {
-            int nGramSize = (int) settings.get("nGramSize");
+            int nGramSize = Utils.stringToInt(settings.get("nGramSize"));
             experimentParam.setNGramSize(nGramSize);
         }
 
@@ -160,9 +174,9 @@ public class DictionaryServiceInitializer implements Initializer {
         }
 
         if (mode.equals(Modes.TAG_STAT)) {
-            double normalizeRatio = (double) settings.get("normalizeRatio");
+            double normalizeRatio = Utils.stringToDouble(settings.get("normalizeRatio"));
             experimentParam.setNormalizeRatio(normalizeRatio);
-            int roundToDecimalPlaces = (int) settings.get("roundToDecimalPlaces");
+            int roundToDecimalPlaces = Utils.stringToInt(settings.get("roundToDecimalPlaces"));
             experimentParam.setRoundToDecimalPlaces(roundToDecimalPlaces);
         }
 
@@ -172,6 +186,7 @@ public class DictionaryServiceInitializer implements Initializer {
         experiment.setExperimentParam(experimentParam);
 
         experiments.add(experiment);
+        return mode;
     }
 
     @SuppressWarnings("unchecked")

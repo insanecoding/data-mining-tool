@@ -56,7 +56,7 @@ const SingleDataSetAdder = ({orderNum, categories, inputFields}) => {
                     <AdvancedTextField label={"sites per category"}
                                        placeHolder={"1000"}
                                        pattern={"not_empty"}
-                                       type="not_empty"
+                                       type="number"
                                        fieldName={"websitesPerCategory"}
                                        style={style.wideInputField}
                                        value={inputFields.websitesPerCategory}
@@ -88,7 +88,7 @@ const SingleDataSetAdder = ({orderNum, categories, inputFields}) => {
                         <Col xs={12} md={7}>
                             <AdvancedTextField placeHolder={"200"}
                                                pattern={"not_empty"}
-                                               type="not_empty"
+                                               type="number"
                                                label={"min text length"}
                                                fieldName={"minTextLength"}
                                                style={style.smallInputField}
@@ -97,7 +97,7 @@ const SingleDataSetAdder = ({orderNum, categories, inputFields}) => {
                             />
                             <AdvancedTextField placeHolder={"2000"}
                                                pattern={"not_empty"}
-                                               type="not_empty"
+                                               type="number"
                                                label={"max text length"}
                                                fieldName={"maxTextLength"}
                                                style={style.smallInputField}

@@ -5,10 +5,6 @@ export const initialState = Immutable.fromJS({
         route: "/import",
         displayName: "Import Blacklist",
         isOn: false,
-        userName: "postgres",
-        password: "postgresql",
-        dbName: "Website_Classification",
-        port: 5432,
         cwd: "C:\\DataMining\\experiment_data\\",
         blacklists: [
             {
